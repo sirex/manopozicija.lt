@@ -28,7 +28,7 @@ class Topic(models.Model):
 
 class Position(models.Model):
     topic = models.ForeignKey('Topic')
-    weight = models.PositiveSmallIntegerField(default=1)
+    weight = models.SmallIntegerField(default=1)
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
