@@ -6,7 +6,7 @@
 
 <h1>{{ topic.title }}</h1>
 
-<h2>{% trans "Svarstymai seime" %}</h2>
+<h2>{% trans "Seimas" %}</h2>
 
 {% if votings %}
 <table class="table">
@@ -33,6 +33,49 @@
 
 {% if request.user.is_superuser %}
 <a href="{% url "add-voting" topic.slug %}" class="btn btn-default pull-right">{% trans "Pridėti balsavimą" %}</a>
+{% endif %}
+
+{% if supporters or critics %}
+<h2>{% trans "Žmonės" %}</h2>
+
+<div class="row">
+  <div class="col-md-6">
+    {% if supporters %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>{% trans "Palaikantieji" %} ({{ supporters_count }})</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pos in supporters %}
+        <tr>
+          <td>{{ pos.person__name }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+  <div class="col-md-6">
+    {% if critics %}
+    <table class="table">
+      <thead>
+        <tr>
+          <th>{% trans "Kritikai" %} ({{ critics_count}})</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for pos in critics %}
+        <tr>
+          <td>{{ pos.person__name }}</td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+    {% endif %}
+  </div>
+</div>
 {% endif %}
 
 {% endblock %}

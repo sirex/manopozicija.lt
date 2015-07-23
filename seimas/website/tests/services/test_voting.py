@@ -3,8 +3,8 @@ import pkg_resources as pres
 import django.test
 
 from seimas.website.parsers import parse_votes
-from seimas.website.services.voting import import_votes, update_voting
-from seimas.website.models import Voting
+from seimas.website.services.voting import import_votes, update_voting, create_vote_positions
+from seimas.website.models import Voting, Vote, Person, Topic, Position
 
 
 class ImportVotesTests(django.test.TestCase):
@@ -20,3 +20,17 @@ class ImportVotesTests(django.test.TestCase):
 
         import_votes(voting, result['table'])
         self.assertEqual(len(result['table']), voting.vote_set.count())
+        self.assertEqual(len(result['table']), Person.objects.filter(vote__voting=voting).count())
+
+    def test_create_vote_positions(self):
+        topic = Topic.objects.create(title='Balsavimas internetu')
+        voting = Voting.objects.create()
+
+        Vote.objects.create(voting=voting, vote=Vote.AYE)
+        Vote.objects.create(voting=voting, vote=Vote.ABSTAIN)
+        Vote.objects.create(voting=voting, vote=Vote.NO)
+
+        create_vote_positions(topic, voting, weight=-1)
+
+        weights = Position.objects.filter(vote__voting=voting).order_by('pk').values_list('weight', flat=True)
+        self.assertEqual(list(weights), [-2, 1, 2])

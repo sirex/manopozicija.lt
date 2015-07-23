@@ -10,6 +10,8 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.models import ContentType
 
+from seimas.website.lists import professions
+
 
 class Topic(models.Model):
     created = CreationDateTimeField()
@@ -26,12 +28,51 @@ class Topic(models.Model):
         return reverse('topic-details', args=[self.slug])
 
 
+class Person(models.Model):
+    PROFESSION_CHOICES = [('', 'Nenurodyta')] + [(profession, profession.title()) for profession in professions]
+
+    slug = autoslug.AutoSlugField(populate_from='name')
+    name = models.CharField(max_length=255)
+    profession = models.CharField(max_length=64, blank=True, choices=PROFESSION_CHOICES)
+
+    def __str__(self):
+        return self.title
+
+
 class Position(models.Model):
     topic = models.ForeignKey('Topic')
+    person = models.ForeignKey(Person, null=True, blank=True)
     weight = models.SmallIntegerField(default=1)
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
+
+
+class Quote(models.Model):
+    NONE = 0
+    YEAR = 1
+    MONTH = 2
+    DAY = 3
+    HOUR = 4
+    MINUTE = 5
+    SECOND = 6
+    TIMESTAMP_DISPLAY_CHOICES = (
+        (NONE, _('Nėra')),
+        (YEAR, _('Metai')),
+        (MONTH, _('Mėnuo')),
+        (DAY, _('Diena')),
+        (HOUR, _('Valanda')),
+        (MINUTE, _('Minutė')),
+        (SECOND, _('Sekundė')),
+    )
+
+    person = models.ForeignKey(Person)
+    quote = models.TextField(_("Citata"))
+    link = models.URLField(_("Nuoroda"), blank=True)
+    source = models.CharField(_("Šaltinis"), max_length=255, blank=True)
+    timestamp = models.DateTimeField(_("Data"), blank=True, null=True)
+    timestamp_display = models.PositiveSmallIntegerField(choices=TIMESTAMP_DISPLAY_CHOICES)
+    position = GenericRelation(Position, related_query_name='quote')
 
 
 class Voting(models.Model):
@@ -85,13 +126,15 @@ class Vote(models.Model):
     }
 
     voting = models.ForeignKey(Voting)
+    person = models.ForeignKey(Person, null=True, blank=True)
     name = models.CharField(max_length=255)
     link = models.URLField()
     fraction = models.CharField(max_length=255)
-    position = models.PositiveSmallIntegerField(choices=POSITION_CHOICES, default=NO_VOTE)
+    vote = models.PositiveSmallIntegerField(choices=POSITION_CHOICES, default=NO_VOTE)
     score = models.SmallIntegerField()
+    position = GenericRelation(Position, related_query_name='vote')
 
     def save(self, *args, **kw):
         if self.position is not None:
-            self.score = self.SCORE_TABLE[self.position]
+            self.score = self.SCORE_TABLE[self.vote]
         return super().save(*args, **kw)

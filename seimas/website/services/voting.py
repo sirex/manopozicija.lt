@@ -1,5 +1,7 @@
 from seimas.website.models import Voting
 from seimas.website.models import Vote
+from seimas.website.models import Person
+from seimas.website.models import Position
 
 
 def update_voting(voting: Voting, data: dict):
@@ -26,10 +28,25 @@ def import_votes(voting: Voting, votes: list):
     }
 
     for vote in votes:
+        person = get_or_create_person_by_name(vote['name'])
+
         Vote.objects.create(
             voting=voting,
+            person=person,
             name=vote['name'],
             link=vote['link'],
             fraction=vote['fraction'],
-            position=position_map[vote['position']],
+            vote=position_map[vote['position']],
         )
+
+
+def get_or_create_person_by_name(name):
+    try:
+        return Person.objects.get(name__iexact=name)
+    except Person.DoesNotExist:
+        return Person.objects.create(name=name)
+
+
+def create_vote_positions(topic, voting, weight):
+    for vote in voting.vote_set.order_by('pk'):
+        Position.objects.create(topic=topic, person=vote.person, content_object=vote, weight=vote.score * weight)
