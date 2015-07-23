@@ -12,8 +12,8 @@ from seimas.website.models import Topic
 from seimas.website.models import Position
 from seimas.website.models import Voting
 from seimas.website.parsers import parse_votes
-from seimas.website.services import update_voting
-from seimas.website.services import import_votes
+from seimas.website.services.voting import update_voting
+from seimas.website.services.voting import import_votes
 from seimas.website.helpers.decorators import superuser_required
 
 

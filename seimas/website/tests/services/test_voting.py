@@ -3,7 +3,7 @@ import pkg_resources as pres
 import django.test
 
 from seimas.website.parsers import parse_votes
-from seimas.website.services import import_votes, update_voting
+from seimas.website.services.voting import import_votes, update_voting
 from seimas.website.models import Voting
 
 
