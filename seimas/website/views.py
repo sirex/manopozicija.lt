@@ -52,6 +52,6 @@ def topic_details(request, slug):
 
     return render(request, 'website/topic_details.html', {
         'topic': topic,
-        'votings': Voting.objects.filter(position__topic=topic),
+        'votings': Voting.objects.filter(position__topic=topic).order_by('datetime'),
         'form': formrenderer.render(request, form, title=ugettext('Naujas balsavimas'), submit=ugettext('Pridėti')),
     })
