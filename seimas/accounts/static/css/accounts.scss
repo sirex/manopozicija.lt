@@ -1,0 +1,30 @@
+.auth-providers {
+    margin: 0px;
+    padding: 0px;
+
+    li {
+        list-style-type: none;
+        float: left;
+        margin: 10px;
+        margin-right: 40px;
+
+        a {
+            line-height: 100px;
+        }
+    }
+}
+
+.openid-input-line {
+    margin: 20px 0px;
+
+    .input-group-addon {
+        padding: 2px 5px;
+        line-height: 21px;
+        img {
+            margin: 0;
+            padding: 0;
+        }
+    }
+}
+
+

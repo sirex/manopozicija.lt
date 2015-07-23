@@ -1,0 +1,6 @@
+[run]
+omit =
+    pylab/settings/*
+    */migrations/*
+    */tests/*
+    */__init__.py

@@ -1,0 +1,15 @@
+.installed.cfg
+bin
+buildout.cfg
+settings.json
+develop-eggs
+include
+lib
+parts
+var
+tags
+.ropeproject
+.coverage
+__pycache__
+*.egg-info
+*.pyc

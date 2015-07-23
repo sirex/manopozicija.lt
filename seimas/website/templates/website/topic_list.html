@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+{% load trans from i18n %}
+
+
+{% block content %}
+
+{% if topics %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>{% trans "Temos" %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for topic in topics %}
+    <tr>
+      <td><a href="{% url 'topic-details' topic.slug %}">{{ topic.title }}</a></td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div><p class="text-info">{% trans "Nėra nei vienos temos." %}</p></div>
+{% endif %}
+
+{% endblock %}

@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% load trans from i18n %}
+
+
+{% block content %}
+
+<h1>{{ topic.title }}</h1>
+
+<h2>{% trans "Svarstymai seime" %}</h2>
+
+{% if votings %}
+<table class="table">
+  <thead>
+    <tr>
+      <th>{% trans "Data" %}</th>
+      <th>{% trans "Balsavimas" %}</th>
+      <th>{% trans "Pozicija" %}</th>
+    </tr>
+  </thead>
+  <tbody>
+    {% for voting in votings %}
+    <tr>
+      <td>{{ voting.datetime|date:"Y-m-d" }}</td>
+      <td>{{ voting.title }}</td>
+      <td>{{ voting.result }}</td>
+    </tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% else %}
+<div><p class="text-info">{% trans "Nėra nei vieno balsavimo." %}</p></div>
+{% endif %}
+
+{% if request.user.is_superuser %}
+{{ form|safe }}
+{% endif %}
+
+{% endblock %}

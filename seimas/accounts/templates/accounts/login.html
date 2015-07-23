@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% load trans from i18n %}
+{% load static from staticfiles %}
+{% load providers_media_js from accountstags %}
+
+
+{% block content %}
+
+<h1>{% trans "Login" %}</h1>
+
+
+<div class="row">
+  <div class="col-md-4">
+    <p>{% trans 'Enter your <a href="http://openidexplained.com/">OpenID</a> address:' %}</p>
+    {% for provider in openid_providers %}
+    <div class="openid-input-line">
+      <form id="openid-{{ provider.name }}" method="post">
+        {% csrf_token %}
+        <div class="form-group{% if provider.errors %} has-error{% endif %}">
+          <div class="input-group input-group-sm">
+            <span class="input-group-addon"><img src="{% static 'auth/openid-icon.png'%}"> {{ provider.url }}</span>
+            <input name="openid" type="text" class="form-control" placeholder="OpenID URL...">
+            <span class="input-group-btn">
+              <button class="btn btn-default" type="submit" name="login" value="{{ provider.name }}">{% trans "Login" %}</button>
+            </span>
+          </div>
+          {% if provider.errors %}
+          <div class="help-block">
+            {% for error in provider.errors %}
+            <p class="text-danger">{{ error }}</p>
+            {% endfor %}
+          </div>
+          {% endif %}
+        </div>
+      </form>
+    </div>
+    {% endfor %}
+  </div>
+
+  <div class="col-md-8">
+    <p>{% trans "or choose one of available authorization providers:" %}</p>
+    <ul class="auth-providers">
+      {% for provider in auth_providers %}
+      {% if provider.logo %}
+      <li><a href="{{ provider.url }}"><img src="{{ provider.logo }}"></a></li>
+      {% else %}
+      <li><a href="{{ provider.url }}">{{ provider.name }}</a></li>
+      {% endif %}
+      {% endfor %}
+    </ul>
+  </div>
+</div>
+
+{% providers_media_js %}
+{% endblock %}
