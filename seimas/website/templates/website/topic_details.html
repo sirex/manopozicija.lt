@@ -21,7 +21,7 @@
     {% for voting in votings %}
     <tr>
       <td>{{ voting.datetime|date:"Y-m-d" }}</td>
-      <td>{{ voting.title }}</td>
+      <td><a href="{{ voting.link }}" target="_blank">{{ voting.title }}</a></td>
       <td>{{ voting.get_result_string }}</td>
     </tr>
     {% endfor %}
