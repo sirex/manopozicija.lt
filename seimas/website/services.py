@@ -7,6 +7,8 @@ def update_voting(voting: Voting, data: dict):
     voting.datetime = data['datetime']
     voting.vid = data['id']
     voting.question = data['question']
+    voting.question_a = data['question_a']
+    voting.question_b = data['question_b']
     voting.result = data['result']
     voting.sitting_no = str(data['sitting_no'])
     voting.link = data['url']

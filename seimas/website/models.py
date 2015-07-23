@@ -56,6 +56,14 @@ class Voting(models.Model):
     def get_absolute_url(self):
         return reverse('topic-details', args=[self.slug])
 
+    def get_result_string(self):
+        if self.question == '':
+            if self.result == 'pritarta formuluotei A':
+                return self.question_a
+            elif self.result == 'pritarta formuluotei B':
+                return self.question_b
+        return self.result
+
 
 class Vote(models.Model):
     NO_VOTE = 0

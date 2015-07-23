@@ -22,7 +22,7 @@
     <tr>
       <td>{{ voting.datetime|date:"Y-m-d" }}</td>
       <td>{{ voting.title }}</td>
-      <td>{{ voting.result }}</td>
+      <td>{{ voting.get_result_string }}</td>
     </tr>
     {% endfor %}
   </tbody>
