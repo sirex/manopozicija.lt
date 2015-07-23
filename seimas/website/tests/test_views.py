@@ -34,7 +34,7 @@ class ImportVotesTests(WebTest):
 
         self.assertEqual(Voting.objects.count(), 0)
 
-        resp = self.app.get('/temos/balsavimas-internetu/', user='admin')
+        resp = self.app.get('/temos/balsavimas-internetu/add-voting/', user='admin')
         resp.form['title'] = 'Balsavimo internetu koncepcijos patvirtinimas'
         resp.form['link'] = 'http://www3.lrs.lt/pls/inter/w5_sale.bals?p_bals_id=18573'
         resp.form['weight'] = '3'
@@ -62,7 +62,7 @@ class ImportVotesTests(WebTest):
 
         self.assertEqual(Voting.objects.count(), 1)
 
-        resp = self.app.get('/temos/balsavimas-internetu/', user='admin')
+        resp = self.app.get('/temos/balsavimas-internetu/add-voting/', user='admin')
         resp.form['title'] = 'Balsavimo internetu koncepcijos patvirtinimas'
         resp.form['link'] = 'http://www3.lrs.lt/pls/inter/w5_sale.bals?p_bals_id=18573'
         resp = resp.form.submit()

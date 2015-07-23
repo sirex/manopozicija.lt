@@ -1,0 +1,8 @@
+{% extends "base.html" %}
+{% load trans from i18n %}
+
+
+{% block content %}
+<h1>{{ topic.title }}</h1>
+{{ form|safe }}
+{% endblock %}

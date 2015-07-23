@@ -9,6 +9,7 @@ slug = r'?P<slug>[a-z0-9-]+'
 urlpatterns = [
     url(r'^$', views.topic_list, name='topic-list'),
     url(r'^temos/(%s)/$' % slug, views.topic_details, name='topic-details'),
+    url(r'^temos/(%s)/add-voting/$' % slug, views.voting_form, name='add-voting'),
 ]
 
 urlpatterns += [
