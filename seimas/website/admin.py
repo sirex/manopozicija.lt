@@ -13,7 +13,7 @@ import allauth.socialaccount.admin as allauth
 
 import seimas.website.models as website_models
 
-from seimas.website.parsers import parse_votes
+from seimas.website.parsers.votings import parse_votes
 from seimas.website.services.voting import update_voting
 from seimas.website.services.voting import import_votes
 

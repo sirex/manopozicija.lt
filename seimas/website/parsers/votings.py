@@ -3,6 +3,8 @@ import re
 import datetime
 import urllib.parse
 
+from seimas.website.lists import first_names
+
 
 SPACES_RE = re.compile(r'\s+')
 
@@ -32,6 +34,21 @@ def get_position(cols):
 def get_voting_id(url):
     query = dict(urllib.parse.parse_qsl(urllib.parse.urlparse(url).query))
     return query['p_bals_id']
+
+
+def norm_name(full_name):
+    first_name = []
+    last_name = []
+    for name in full_name.split():
+        if name.lower() in first_names:
+            first_name.append(name)
+        else:
+            last_name.append(name)
+
+    if not first_name:
+        raise ValueError('Could not detect first iname for "%s".' % full_name)
+
+    return ' '.join(first_name) + ' ' + ' '.join(last_name)
 
 
 def parse_votes(url, html):
@@ -102,7 +119,7 @@ def parse_votes(url, html):
         if len(cols) == 5:
             result['table'].append({
                 'link': cols[0].a['href'],
-                'name': cols[0].a.string.strip(),
+                'name': norm_name(cols[0].a.string.strip()),
                 'fraction': cols[1].string.strip(),
                 'position': get_position([x.string.strip() for x in cols[2:]]),
             })

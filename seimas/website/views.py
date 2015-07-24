@@ -12,7 +12,7 @@ from seimas.website.forms import NewVotingForm
 from seimas.website.models import Topic
 from seimas.website.models import Position
 from seimas.website.models import Voting
-from seimas.website.parsers import parse_votes
+from seimas.website.parsers.votings import parse_votes
 from seimas.website.services.voting import update_voting, import_votes, create_vote_positions
 from seimas.website.helpers.decorators import superuser_required
 

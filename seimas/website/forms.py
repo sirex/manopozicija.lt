@@ -2,7 +2,7 @@ from django import forms
 from django.utils.translation import ugettext
 
 from seimas.website.models import Voting
-from seimas.website.parsers import get_voting_id
+from seimas.website.parsers.votings import get_voting_id
 
 
 class NewVotingForm(forms.ModelForm):

@@ -44,3 +44,8 @@ professions = [
     'žinių pranešėjas',
     'žurnalistas',
 ]
+
+
+first_names = {
+    'mantas',
+}
