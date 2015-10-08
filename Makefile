@@ -18,7 +18,7 @@ tags: bin/django ; bin/ctags -v --tag-relative
 
 buildout.cfg: ; ./scripts/genconfig.py config/env/development.cfg
 
-bin/pip: ; virtualenv --no-site-packages --python=python3 .
+bin/pip: ; virtualenv --no-site-packages --python=python3.4 .
 
 bin/buildout: bin/pip ; $< install --upgrade setuptools zc.buildout==2.3.1
 
