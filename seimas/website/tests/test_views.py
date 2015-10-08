@@ -25,6 +25,17 @@ class ViewTests(WebTest):
         self.assertEqual(resp.status_int, 200)
         resp.mustcontain('Balsavimo internetu koncepcijos patvirtinimas')
 
+    def test_topic_form(self):
+        user = User.objects.create_user('user', 'user@example.com', 'secret')
+
+        resp = self.app.get('/temos/nauja-tema/', user='user')
+        resp.form['title'] = 'Darželių problema'
+        resp.form['description'] = 'Darželių problema.'
+        resp = resp.form.submit()
+
+        topic = Topic.objects.get(slug='darzeliu-problema')
+        self.assertEqual(topic.author, user)
+
 
 class ImportVotesTests(WebTest):
 

@@ -6,9 +6,10 @@ from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext
 from django.contrib import messages
 from django.db.models import Sum
+from django.contrib.auth.decorators import login_required
 
 from seimas.website.helpers import formrenderer
-from seimas.website.forms import NewVotingForm
+from seimas.website.forms import NewVotingForm, TopicForm
 from seimas.website.models import Topic
 from seimas.website.models import Position
 from seimas.website.models import Voting
@@ -76,4 +77,22 @@ def voting_form(request, slug):
     return render(request, 'website/voting_form.html', {
         'topic': topic,
         'form': formrenderer.render(request, form, title=ugettext('Naujas balsavimas'), submit=ugettext('Pridėti')),
+    })
+
+
+@login_required
+def topic_form(request):
+    if request.method == 'POST':
+        form = TopicForm(request.POST)
+        if form.is_valid():
+            topic = form.save(commit=False)
+            topic.author = request.user
+            topic.save()
+            messages.success(request, ugettext("Topic „%s“ created." % topic))
+            return redirect(topic)
+    else:
+        form = TopicForm()
+
+    return render(request, 'website/topic_form.html', {
+        'form': formrenderer.render(request, form, title=ugettext('Nauja tema'), submit=ugettext('Pridėti')),
     })

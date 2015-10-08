@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext
 
-from seimas.website.models import Voting
+from seimas.website.models import Voting, Topic
 from seimas.website.parsers.votings import get_voting_id
 
 
@@ -25,3 +25,13 @@ class NewVotingForm(forms.ModelForm):
         if Voting.objects.filter(position__topic=self.topic, vid=vid).exists():
             raise forms.ValidationError(ugettext('Šis balsavimas jau yra pridėtas.'))
         return link
+
+
+class TopicForm(forms.ModelForm):
+
+    class Meta:
+        model = Topic
+        fields = ('title', 'description')
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 16}),
+        }
