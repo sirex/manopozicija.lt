@@ -8,6 +8,8 @@ from django.contrib import admin
 from django.http import HttpResponseRedirect
 from django.core.urlresolvers import reverse
 from django.contrib.auth.views import redirect_to_login
+from django.contrib.sites.models import Site
+from django.contrib.sites.admin import SiteAdmin
 
 import allauth.socialaccount.admin as allauth
 
@@ -73,3 +75,5 @@ site.register(website_models.Vote)
 site.register(allauth.SocialApp, allauth.SocialAppAdmin)
 site.register(allauth.SocialToken, allauth.SocialTokenAdmin)
 site.register(allauth.SocialAccount, allauth.SocialAccountAdmin)
+
+site.register(Site, SiteAdmin)
