@@ -206,7 +206,7 @@ SORTED_AUTH_PROVIDERS = (
     ('facebook', STATIC_URL + 'auth/facebook.png'),
     ('linkedin', STATIC_URL + 'auth/linkedin.png'),
     ('twitter', STATIC_URL + 'auth/twitter.png'),
-    ('github', STATIC_URL + 'auth/github.png'),
+    # ('github', STATIC_URL + 'auth/github.png'),
 )
 
 SORTED_OPENID_PROVIDERS = (
