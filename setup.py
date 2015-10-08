@@ -25,6 +25,7 @@ setup(
         'docutils',
         'exportrecipe',
         'beautifulsoup4',
+        'pathlib',
     ],
     classifiers=[
         'Development Status :: 1 - Planning',
