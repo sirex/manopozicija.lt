@@ -23,7 +23,7 @@ def login(request):
 
 def logout(request):
     auth.logout(request)
-    return redirect('project-list')
+    return redirect('topic-list')
 
 
 @login_required
