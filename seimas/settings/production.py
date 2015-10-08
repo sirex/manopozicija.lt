@@ -4,7 +4,7 @@ from seimas.settings.base import *  # noqa
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['manoseimas.lpylab.lt', 'localhost']
+ALLOWED_HOSTS = ['manopozicija.lt', 'meras.lt', 'localhost']
 
 DATABASES = {
     'default': {
