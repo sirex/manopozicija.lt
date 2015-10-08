@@ -19,4 +19,4 @@ LOGGING['root'] = {
     'handlers': ['stdout'],
 }
 
-SOCIALACCOUNT_PROVIDERS['persona']['AUDIENCE'] = 'manoseimas.pylab.lt'
+SOCIALACCOUNT_PROVIDERS['persona']['AUDIENCE'] = 'meras.lt'
