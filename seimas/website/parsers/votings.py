@@ -3,7 +3,7 @@ import re
 import datetime
 import urllib.parse
 
-from seimas.website.lists import first_names
+from seimas.website.lists import get_first_names
 
 
 SPACES_RE = re.compile(r'\s+')
@@ -39,6 +39,7 @@ def get_voting_id(url):
 def norm_name(full_name):
     first_name = []
     last_name = []
+    first_names = get_first_names()
     for name in full_name.split():
         if name.lower() in first_names:
             first_name.append(name)
