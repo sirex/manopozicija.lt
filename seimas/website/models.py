@@ -1,4 +1,6 @@
 import autoslug
+import csv
+import io
 
 from django_extensions.db.fields import CreationDateTimeField, ModificationDateTimeField
 
@@ -27,6 +29,37 @@ class Topic(models.Model):
     def get_absolute_url(self):
         return reverse('topic-details', args=[self.slug])
 
+class PersonManager(models.Manager):
+    def get_or_create(self, name, meeting_id, meetings_file):
+        name_args = name.split()
+        first_name = None
+        last_name = None
+        person = None
+
+        if name.lower() == 'pirmininkas':
+            with meetings_file as csvfile:
+                reader = csv.reader(csvfile, delimiter=';', quotechar='"')
+                for meeting_args in reader:
+                    name = meeting_args[14]
+                    if meeting_args[0] == meeting_id:
+                        break
+
+        if len(name_args) == 3:
+            raise ValueError('Name contains more than 2 words: ' + name)
+        elif len(name_args) == 2:
+            first_name = name_args[0].strip('.')
+            last_name = name_args[1]
+        elif len(name_args) == 1:
+            last_name = name_args[0]
+
+        try:
+            person = Person.objects.get(name__contains=last_name)
+        except Person.DoesNotExist:
+            person = Person.objects.create(name=name)
+        except Person.MultipleObjectsReturned:
+            person = Person.objects.filter(name__contains=last_name).get(name__contains=first_name)
+        return person
+
 
 class Person(models.Model):
     PROFESSION_CHOICES = [('', 'Nenurodyta')] + [(profession, profession.title()) for profession in professions]
@@ -34,6 +67,8 @@ class Person(models.Model):
     slug = autoslug.AutoSlugField(populate_from='name')
     name = models.CharField(max_length=255)
     profession = models.CharField(max_length=64, blank=True, choices=PROFESSION_CHOICES)
+
+    objects = PersonManager()
 
     def __str__(self):
         return self.title
@@ -113,6 +148,13 @@ class Voting(models.Model):  # Klausimas dėl kurio balsuojama
         return self.result
 
 
+class VoteManager(models.Manager):
+    def get_vote_id(self, display_name):
+        for choice, name in Vote.POSITION_CHOICES:
+            if name.lower() == display_name.lower():
+                return choice
+
+
 class Vote(models.Model):  # Balsas už konkretų klausimą
     NO_VOTE = 0
     AYE = 1
@@ -140,6 +182,8 @@ class Vote(models.Model):  # Balsas už konkretų klausimą
     vote = models.PositiveSmallIntegerField(choices=POSITION_CHOICES, default=NO_VOTE)
     score = models.SmallIntegerField()
     position = GenericRelation(Position, related_query_name='vote')
+
+    objects = VoteManager()
 
     def save(self, *args, **kw):
         if self.position is not None:
