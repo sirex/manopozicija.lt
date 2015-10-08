@@ -9,8 +9,8 @@ ALLOWED_HOSTS = ['manoseimas.lpylab.lt', 'localhost']
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.postgresql_psycopg2',
-        'NAME': 'seimas',
-        'USER': 'seimas',
+        'NAME': 'manopozicija',
+        'USER': 'manopozicija',
     }
 }
 
