@@ -42,13 +42,13 @@ class Person(models.Model):
 class Position(models.Model):
     topic = models.ForeignKey('Topic')
     person = models.ForeignKey(Person, null=True, blank=True)
-    weight = models.SmallIntegerField(default=1)
+    weight = models.SmallIntegerField(default=1)   # visada 1 arba -1
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
 
-class Quote(models.Model):
+class Quote(models.Model):  # Laikraščio citata
     NONE = 0
     YEAR = 1
     MONTH = 2
@@ -75,7 +75,13 @@ class Quote(models.Model):
     position = GenericRelation(Position, related_query_name='quote')
 
 
-class Voting(models.Model):
+class Voting(models.Model):  # Klausimas dėl kurio balsuojama
+    SEIMAS = 1
+    SAVIVALDYBE = 2
+    VOTING_TYPE_CHOICES = (
+        (SEIMAS, _('Seimo')),
+        (SAVIVALDYBE, _('Savivaldybės')),
+    )
     created = CreationDateTimeField()
     modified = ModificationDateTimeField()
     author = models.ForeignKey(User, null=True, blank=True)
@@ -90,6 +96,7 @@ class Voting(models.Model):
     result = models.CharField(_("Rezultatas"), max_length=40, blank=True)
     sitting_no = models.CharField(_("Posėdžio Nr."), max_length=40, blank=True)
     position = GenericRelation(Position, related_query_name='voting')
+    voting_type = models.PositiveSmallIntegerField(choices=VOTING_TYPE_CHOICES, default=SAVIVALDYBE)
 
     def __str__(self):
         return self.title
@@ -106,7 +113,7 @@ class Voting(models.Model):
         return self.result
 
 
-class Vote(models.Model):
+class Vote(models.Model):  # Balsas už konkretų klausimą
     NO_VOTE = 0
     AYE = 1
     NO = 2
