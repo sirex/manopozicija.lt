@@ -1,6 +1,5 @@
 import autoslug
 import csv
-import io
 
 from django_extensions.db.fields import CreationDateTimeField, ModificationDateTimeField
 
@@ -28,6 +27,7 @@ class Topic(models.Model):
 
     def get_absolute_url(self):
         return reverse('topic-details', args=[self.slug])
+
 
 class PersonManager(models.Manager):
     def get_or_create(self, name, meeting_id, meetings_file):
