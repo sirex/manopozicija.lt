@@ -9,7 +9,7 @@ from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
 
 from seimas.website.helpers import formrenderer
-from seimas.website.forms import NewVotingForm, TopicForm
+from seimas.website.forms import NewVotingForm, TopicForm, QuoteForm
 from seimas.website.models import Topic
 from seimas.website.models import Position
 from seimas.website.models import Voting
@@ -77,6 +77,28 @@ def voting_form(request, slug):
     return render(request, 'website/voting_form.html', {
         'topic': topic,
         'form': formrenderer.render(request, form, title=ugettext('Naujas balsavimas'), submit=ugettext('Pridėti')),
+    })
+
+
+@superuser_required
+def news_form(request, slug):
+    topic = get_object_or_404(Topic, slug=slug)
+
+    if request.method == 'POST':
+        form = QuoteForm(request.POST)
+        if form.is_valid():
+            news = form.save(commit=False)
+
+            weight = form.cleaned_data['weight']
+            Position.objects.create(topic=topic, content_object=news, weight=weight)
+
+            messages.success(request, ugettext("News „%s“ created." % news))
+            return redirect(topic)
+    else:
+        form = QuoteForm()
+
+    return render(request, 'website/news_form.html', {
+        'form': formrenderer.render(request, form, title=ugettext('Nauja naujiena'), submit=ugettext('Pridėti')),
     })
 
 

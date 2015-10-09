@@ -1,7 +1,7 @@
 from django import forms
 from django.utils.translation import ugettext
 
-from seimas.website.models import Voting, Topic
+from seimas.website.models import Voting, Topic, Quote, Person
 from seimas.website.parsers.votings import get_voting_id
 
 
@@ -35,3 +35,17 @@ class TopicForm(forms.ModelForm):
         widgets = {
             'description': forms.Textarea(attrs={'rows': 16}),
         }
+
+
+class QuoteForm(forms.ModelForm):
+    weight = forms.IntegerField(initial=1)
+    person = forms.CharField(max_length=255)
+
+    class Meta:
+        model = Quote
+        fields = ('title', 'link', 'person', 'weight', 'description')
+
+    def clean_person(self):
+        name = self.cleaned_data.get('person')
+        person = Person.objects.get(name=name)
+        return person
