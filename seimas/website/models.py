@@ -106,7 +106,7 @@ class Quote(models.Model):  # Laikraščio citata
     link = models.URLField(_("Nuoroda"), blank=True)
     source = models.CharField(_("Šaltinis"), max_length=255, blank=True)
     timestamp = models.DateTimeField(_("Data"), blank=True, null=True)
-    timestamp_display = models.PositiveSmallIntegerField(choices=TIMESTAMP_DISPLAY_CHOICES)
+    timestamp_display = models.PositiveSmallIntegerField(choices=TIMESTAMP_DISPLAY_CHOICES, default=DAY)
     position = GenericRelation(Position, related_query_name='quote')
     title = models.CharField(_("Pavadinimas"), max_length=255)
     description = models.TextField(_("Aprašymas"), blank=True)
