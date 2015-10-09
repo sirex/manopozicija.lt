@@ -71,7 +71,7 @@ class Person(models.Model):
     objects = PersonManager()
 
     def __str__(self):
-        return self.title
+        return self.name
 
 
 class Position(models.Model):
