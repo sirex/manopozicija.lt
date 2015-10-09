@@ -15,6 +15,6 @@ class Item(object):
 
 menus = {
     'topmenu': [
-        Item(_('Seimo pozicija'), 'topic-list'),
+        Item(_('Temos'), 'topic-list'),
     ],
 }
