@@ -108,6 +108,8 @@ class Quote(models.Model):  # Laikraščio citata
     timestamp = models.DateTimeField(_("Data"), blank=True, null=True)
     timestamp_display = models.PositiveSmallIntegerField(choices=TIMESTAMP_DISPLAY_CHOICES)
     position = GenericRelation(Position, related_query_name='quote')
+    title = models.CharField(_("Pavadinimas"), max_length=255)
+    description = models.TextField(_("Aprašymas"), blank=True)
 
 
 class Voting(models.Model):  # Klausimas dėl kurio balsuojama
