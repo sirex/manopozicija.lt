@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^temos/nauja-tema/$', views.topic_form, name='topic-create'),
     url(r'^temos/(%s)/$' % slug, views.topic_details, name='topic-details'),
     url(r'^temos/(%s)/add-voting/$' % slug, views.voting_form, name='add-voting'),
+    url(r'^temos/(%s)/add-news/$' % slug, views.news_form, name='add-news'),
 ]
 
 urlpatterns += [

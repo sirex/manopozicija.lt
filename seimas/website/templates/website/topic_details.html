@@ -33,6 +33,7 @@
 
 {% if request.user.is_superuser %}
 <a href="{% url "add-voting" topic.slug %}" class="btn btn-default pull-right">{% trans "Pridėti balsavimą" %}</a>
+<a href="{% url "add-news" topic.slug %}" class="btn btn-default pull-right">{% trans "Pridėti naujieną" %}</a>
 {% endif %}
 
 {% if supporters or critics %}
