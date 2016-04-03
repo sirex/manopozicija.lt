@@ -1,0 +1,7 @@
+{% extends "_base.html" %}
+
+{% block content %}
+{% for topic in topics %}
+<div><a href="{% url 'topic_details' %}">{{ topic.title }}</a></div>
+{% endfor %}
+{% endblock %}

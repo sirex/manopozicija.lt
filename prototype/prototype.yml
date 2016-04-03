@@ -1,0 +1,19 @@
+urls:
+  /:
+    name: index
+    context:
+      topics:
+        - title: Balsavimas internetu
+        - title: Eilės darželiuose
+  /topic/details/:
+    name: topic_details
+    context:
+      page_title: Balsavimas internetu
+      topic:
+        title: Balsavimas internetu
+
+globals:
+  page_title: manopozicija.lt
+  cdn:
+    twbs: https://cdnjs.cloudflare.com/ajax/libs/twitter-bootstrap/3.3.6
+    jquery: https://cdnjs.cloudflare.com/ajax/libs/jquery/2.2.2

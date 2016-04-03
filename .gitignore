@@ -13,3 +13,4 @@ tags
 __pycache__
 *.egg-info
 *.pyc
+prototype/static/css/main.css
