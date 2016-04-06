@@ -3,24 +3,26 @@
 <!DOCTYPE html>
 <html>
   <head>
-    <meta charset="utf-8"> 
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>{{ page_title }}</title>
     <link rel="stylesheet" href="{% static 'css/main.css' %}" type="text/css">
     <link rel="stylesheet" href="{{ cdn.twbs }}/css/bootstrap.min.css" type="text/css">
     <link rel="stylesheet" href="{{ cdn.twbs }}/css/bootstrap-theme.min.css" type="text/css">
   </head>
   <body>
+    <div id="body">
     <nav class="navbar navbar-default">
       <div class="container">
         <div class="navbar-header">
           <a class="navbar-brand" href="{% url 'index' %}">ManoPozicija.lt</a>
         </div>
     </nav>
-
+    <div id="maintitle"><h1><a href="{% url 'index' %}">Manopozicija.lt</h1></a><h2>Politika suprantamai</h2></div>
     <div class="container">
       {% block content %}{% endblock %}
     </div>
-
+    </div>
     <script src="{{ cdn.jquery }}/jquery.min.js"></script>
     <script src="{{ cdn.twbs }}/js/bootstrap.min.js"></script>
   </body>
