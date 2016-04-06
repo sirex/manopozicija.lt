@@ -5,6 +5,23 @@ urls:
       topics:
         - title: Balsavimas internetu
         - title: Eilės darželiuose
+        - title: Aplinka
+        - title: Apgyvendinimas
+        - title: Asmeninis transportas
+        - title: Darbo rinka
+        - title: Gatvės ir pastatai
+        - title: Kainų lygiai
+        - title: Kultūra
+        - title: Parduotuvių pasiekiamumas
+        - title: Saugumas
+        - title: Sportas
+        - title: Sveikata
+        - title: Švietimas
+        - title: Tarptautiškumas
+        - title: Valdymas
+        - title: Verslo vystymas
+        - title: Viešasis transportas
+        - title: Viešosios erdvės
   /topic/details/:
     name: topic_details
     context:
