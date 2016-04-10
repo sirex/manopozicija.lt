@@ -6,22 +6,22 @@
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ffffff" x="300" y="180" width="780" height="680"/>
   </g>
   <g>
-    <rect style="fill: #e7f8c1" x="431.249" y="205.476" width="458.806" height="628.129"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #008000" x="431.249" y="205.476" width="458.806" height="628.129"/>
+    <rect style="fill: #e7f8c1" x="431.25" y="205.476" width="458.806" height="628.129"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #008000" x="431.25" y="205.476" width="458.806" height="628.129"/>
   </g>
   <g>
-    <rect style="fill: #f5dfdb" x="733.151" y="690.086" width="141.27" height="128.869"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" x="733.151" y="690.086" width="141.27" height="128.869"/>
+    <rect style="fill: #f5dfdb" x="733.15" y="690.086" width="141.27" height="128.869"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" x="733.15" y="690.086" width="141.27" height="128.869"/>
   </g>
   <g>
-    <rect style="fill: #f5dfdb" x="733.067" y="426.003" width="141.27" height="250.586"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" x="733.067" y="426.003" width="141.27" height="250.586"/>
+    <rect style="fill: #f5dfdb" x="733.066" y="426.004" width="141.27" height="250.586"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" x="733.066" y="426.004" width="141.27" height="250.586"/>
   </g>
   <g>
     <rect style="fill: #ffc0cb" x="460" y="732.288" width="80" height="36" rx="10" ry="10"/>
     <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" x="460" y="732.288" width="80" height="36" rx="10" ry="10"/>
     <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="500" y="754.188">
-      <tspan x="500" y="754.188">Balsuoja</tspan>
+      <tspan x="500" y="754.188">Renka</tspan>
     </text>
   </g>
   <g>
@@ -71,7 +71,7 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="481.783,410.489 484.12,399.556 473.971,404.246 "/>
   </g>
   <g>
-    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="365.475" y1="566" x2="458.895" y2="730.344"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="365.474" y1="566" x2="458.895" y2="730.344"/>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="450.159,725.093 459.447,731.316 458.852,720.152 "/>
   </g>
   <g>
@@ -134,7 +134,7 @@
     <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="853.198,624.084 844.196,630.716 854.903,633.938 "/>
   </g>
   <g>
-    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="681.009" y1="742.912" x2="758.887" y2="728.906"/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="681.009" y1="742.912" x2="758.888" y2="728.906"/>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="751.031,735.399 759.988,728.708 749.261,725.557 "/>
   </g>
   <g>
@@ -185,10 +185,10 @@
     </text>
   </g>
   <g>
-    <rect style="fill: #ffc0cb" x="762.097" y="703.134" width="80" height="36" rx="10" ry="10"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" x="762.097" y="703.134" width="80" height="36" rx="10" ry="10"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="802.097" y="725.034">
-      <tspan x="802.097" y="725.034">Laimi</tspan>
+    <rect style="fill: #ffc0cb" x="762.098" y="703.134" width="80" height="36" rx="10" ry="10"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" x="762.098" y="703.134" width="80" height="36" rx="10" ry="10"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="802.098" y="725.034">
+      <tspan x="802.098" y="725.034">Laimi</tspan>
     </text>
   </g>
   <g>
@@ -270,43 +270,43 @@
     <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke-dasharray: 4; stroke: #000000" x1="640.005" y1="566.96" x2="639.656" y2="636.804"/>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="634.7,627.897 639.65,637.922 644.7,627.947 "/>
   </g>
-  <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="771.325" y="605.856">
-    <tspan x="771.325" y="605.856">(Stenogramos)</tspan>
+  <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="771.324" y="605.856">
+    <tspan x="771.324" y="605.856">(Stenogramos)</tspan>
   </text>
   <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="773.95" y="408.12">
     <tspan x="773.95" y="408.12">(Žiniasklaida)</tspan>
   </text>
-  <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="774.875" y="665.542">
-    <tspan x="774.875" y="665.542">(Teisės aktai)</tspan>
+  <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="774.874" y="665.542">
+    <tspan x="774.874" y="665.542">(Teisės aktai)</tspan>
   </text>
   <g>
-    <rect style="fill: #ffffaf" x="319.937" y="220.457" width="90.95" height="36" rx="10" ry="10"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ffa500" x="319.937" y="220.457" width="90.95" height="36" rx="10" ry="10"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="365.412" y="242.357">
-      <tspan x="365.412" y="242.357">Visuomenė</tspan>
+    <rect style="fill: #ffffaf" x="319.936" y="220.456" width="90.95" height="36" rx="10" ry="10"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ffa500" x="319.936" y="220.456" width="90.95" height="36" rx="10" ry="10"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="365.411" y="242.356">
+      <tspan x="365.411" y="242.356">Visuomenė</tspan>
     </text>
   </g>
   <g>
-    <rect style="fill: #90ee90" x="581.497" y="220.457" width="117.1" height="36" rx="10" ry="10"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #008000" x="581.497" y="220.457" width="117.1" height="36" rx="10" ry="10"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="640.047" y="242.357">
-      <tspan x="640.047" y="242.357">manopozicija.lt</tspan>
+    <rect style="fill: #90ee90" x="581.498" y="220.456" width="117.1" height="36" rx="10" ry="10"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #008000" x="581.498" y="220.456" width="117.1" height="36" rx="10" ry="10"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="640.048" y="242.356">
+      <tspan x="640.048" y="242.356">manopozicija.lt</tspan>
     </text>
   </g>
   <g>
-    <rect style="fill: #ffc0cb" x="935.162" y="220.457" width="80" height="36" rx="10" ry="10"/>
-    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" x="935.162" y="220.457" width="80" height="36" rx="10" ry="10"/>
-    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="975.162" y="242.357">
-      <tspan x="975.162" y="242.357">Išrinktieji</tspan>
+    <rect style="fill: #ffc0cb" x="935.162" y="220.456" width="80" height="36" rx="10" ry="10"/>
+    <rect style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #ff0000" x="935.162" y="220.456" width="80" height="36" rx="10" ry="10"/>
+    <text font-size="12.8" style="fill: #000000;text-anchor:middle;font-family:sans-serif;font-style:normal;font-weight:normal" x="975.162" y="242.356">
+      <tspan x="975.162" y="242.356">Išrinktieji</tspan>
     </text>
   </g>
   <g>
-    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="411.886" y1="238.457" x2="578.263" y2="238.457"/>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="569.381,243.457 579.381,238.457 569.381,233.457 "/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="411.885" y1="238.456" x2="578.263" y2="238.456"/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="569.381,243.456 579.381,238.456 569.381,233.456 "/>
   </g>
   <g>
-    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="699.282" y1="238.457" x2="931.927" y2="238.457"/>
-    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="923.045,243.457 933.045,238.457 923.045,233.457 "/>
+    <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="699.282" y1="238.456" x2="931.926" y2="238.456"/>
+    <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="923.044,243.456 933.044,238.456 923.044,233.456 "/>
   </g>
   <line style="fill: none; fill-opacity:0; stroke-width: 2; stroke: #000000" x1="320" y1="276" x2="1052" y2="276"/>
   <g>
@@ -328,14 +328,14 @@
     <line style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" x1="759.023" y1="318" x2="683.213" y2="318"/>
     <polyline style="fill: none; fill-opacity:0; stroke-width: 1; stroke: #000000" points="692.095,313 682.095,318 692.095,323 "/>
   </g>
-  <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="779.625" y="546.195">
-    <tspan x="779.625" y="546.195">(Posėdžiai)</tspan>
+  <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="779.624" y="546.194">
+    <tspan x="779.624" y="546.194">(Posėdžiai)</tspan>
   </text>
-  <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="783.175" y="486.858">
-    <tspan x="783.175" y="486.858">(Išvados)</tspan>
+  <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="783.176" y="486.858">
+    <tspan x="783.176" y="486.858">(Išvados)</tspan>
   </text>
-  <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="602.575" y="686.612">
-    <tspan x="602.575" y="686.612">(Atviri duomenys)</tspan>
+  <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="602.574" y="686.612">
+    <tspan x="602.574" y="686.612">(Atviri duomenys)</tspan>
   </text>
   <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="764.55" y="346.47">
     <tspan x="764.55" y="346.47">(Temų kuratoriai)</tspan>
@@ -347,7 +347,7 @@
   <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="761.072" y="748.088">
     <tspan x="761.072" y="748.088">(Rinkimų rezultatai)</tspan>
   </text>
-  <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="761.7" y="808.273">
-    <tspan x="761.7" y="808.273">(Kandidatų sąrašai)</tspan>
+  <text font-size="8.28604" style="fill: #000000;text-anchor:start;font-family:sans-serif;font-style:normal;font-weight:normal" x="761.7" y="808.272">
+    <tspan x="761.7" y="808.272">(Kandidatų sąrašai)</tspan>
   </text>
 </svg>
