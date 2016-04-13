@@ -1,4 +1,4 @@
-(function (d3) {
+(function (d3, c3) {
     d3.json("/topic/balsavimas-internetu/kpi/", function(jsonData) {
         var i = 1;
         var yLabel;
@@ -16,7 +16,7 @@
             jsonEachData.data.forEach(function(dateAndMark) {
                 dateAndMark.forEach(function(dateOrMark, j) {
                     if (j % 2 == 0) 
-                        date.push(dateOrMark)
+                        date.push(dateOrMark);
                     else 
                         mark.push(dateOrMark);
                 });
@@ -45,14 +45,13 @@
             i++;
         });
 
-        // window.alert(dataToChart);
-        var chart = c3.generate( {	
+        c3.generate( {	
             data: {
                 xs: dataAndX,
                 columns: dataToChart,
                 names: dataNames,
                 types: chartType,
-                axes: yAxe,
+                axes: yAxe
             },
             axis: {
                 x: {
@@ -74,4 +73,4 @@
             }
         });	
     });
-}(d3));
+}(d3, c3));  //eslint-disable-line no-undef
