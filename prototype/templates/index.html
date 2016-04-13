@@ -2,6 +2,6 @@
 
 {% block content %}
 {% for topic in topics %}
-<div><a href="{% url 'topic_details' %}">{{ topic.title }}</a></div>
+<div class="col-sm-3 maintopics"><a href="{% url 'topic_details' %}">{{ topic.title }}</a></div>
 {% endfor %}
 {% endblock %}
