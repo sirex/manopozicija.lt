@@ -1,7 +1,18 @@
 {% extends "_base.html" %}
 
+
+{% block body_class %}landing-page{% endblock %}
+
+
 {% block content %}
-{% for topic in topics %}
-<div class="col-sm-3 maintopics"><a href="{% url 'topic_details' %}">{{ topic.title }}</a></div>
-{% endfor %}
+<div class="main-title">
+  <h1><a href="{% url 'index' %}">ManoPozicija.lt</a></h1>
+  <h2>Politika suprantamai</h2>
+</div>
+
+<div class="main-topics">
+  {% for topic in topics %}
+  <a class="col-sm-3" href="{% url 'topic_details' %}"><span>{{ topic.title }}</span></a>
+  {% endfor %}
+</div>
 {% endblock %}
