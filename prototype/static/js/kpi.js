@@ -17,8 +17,7 @@
                 dateAndMark.forEach(function(dateOrMark, j) {
                     if (j % 2 == 0) {
                         date.push(dateOrMark);
-                    } 
-                    else {
+                    } else {
                         mark.push(dateOrMark);
                         dataMin = Math.min(dataMin, dateOrMark);
                         dataMax = Math.max(dataMax, dateOrMark);
@@ -43,8 +42,7 @@
             date.push(jsonEachData.date);
             if (tempDate == jsonEachData.date) {
                 tempLevel += eventsLevelSameDay;
-            }
-            else {
+            } else {
                 tempLevel = eventsLevel;
             }
             tempDate = jsonEachData.date;
