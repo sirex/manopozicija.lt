@@ -3,6 +3,7 @@
         var i = 1; 
         var yLabel, eventsLevel, eventsLevelSameDay, tempDate, tempLevel;
         var dataMin = Number.MAX_VALUE, dataMax = Number.MIN_VALUE;
+        var yearMin = Number.MAX_VALUE, yearMax = Number.MIN_VALUE;
         var dataToChart = [], dataNames = [], dataAndX = [], chartType = [], dataHide = [];
 
         jsonData.indicators.forEach(function(jsonEachData) {
@@ -17,6 +18,9 @@
                 dateAndMark.forEach(function(dateOrMark, j) {
                     if (j % 2 == 0) {
                         date.push(dateOrMark);
+                        var year = new Date(dateOrMark);
+                        yearMin = Math.min(yearMin, year.getFullYear());
+                        yearMax = Math.max(yearMax, year.getFullYear());
                     } else {
                         mark.push(dateOrMark);
                         dataMin = Math.min(dataMin, dateOrMark);
@@ -31,6 +35,7 @@
 
         eventsLevel = dataMin - (dataMax - dataMin) * 0.1;
         eventsLevelSameDay = (dataMax - dataMin) * 0.02;
+        yearMax = yearMax - yearMin;
 
         jsonData.events.forEach(function(jsonEachData) {
             var itemName = "data" + i;
@@ -67,8 +72,8 @@
                 x: {
                     type: 'timeseries',
                     tick: {
-                        rotate: 45,
-                        format: '%Y-%m-%d'
+                        count: yearMax,
+                        format: '%Y'
                     }
                 },
                 y: {
