@@ -46,3 +46,6 @@
       display: inline-block;
       line-height: 26px;
       vertical-align: middle; }
+
+.events-table {
+  width: 100%; }

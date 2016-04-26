@@ -24,13 +24,6 @@ urls:
         - title: Viešasis transportas
         - title: Viešosios erdvės
 
-  /topic/details/:
-    name: topic_details
-    context:
-      page_title: Balsavimas internetu
-      topic:
-        title: Balsavimas internetu
-
   /topic/balsavimas-internetu/kpi/:
     type: json
     context:
@@ -96,10 +89,62 @@ urls:
           source: http://www3.lrs.lt/pls/inter/w5_sale.bals?p_bals_id=-19203
           date: 2014-11-06
           position: 1
-        - title: Seimas atmentė balsavimo internetu sistemos sukūrimo ir įgyvendinimo įstatymą
+        - title: Seimas atmetė balsavimo internetu sistemos sukūrimo ir įgyvendinimo įstatymą
           source: http://www.lrs.lt/sip/portal.show?p_r=15275&p_k=1&p_a=sale_bals&p_bals_id=-22217
           date: 2016-03-22
           position: -1
+
+  /topic/details/:
+    name: topic_details
+    context:
+      page_title: Balsavimas internetu
+      topic:
+        title: Balsavimas internetu
+      events:
+        - title: Seimas atmetė balsavimo internetu sistemos sukūrimo ir įgyvendinimo įstatymą
+          source: http://www.lrs.lt/sip/portal.show?p_r=15275&p_k=1&p_a=sale_bals&p_bals_id=-22217
+          date: 2016-03-22
+          position: -1
+        - title: Seimas pritarė svarstyti įstatymų pataisas įteisinančias balsavimą internetu
+          source: http://www3.lrs.lt/pls/inter/w5_sale.bals?p_bals_id=-19203
+          date: 2014-11-06
+          position: 1
+        - title: Seimas nepritarė įstatymų pataisoms įteisinančioms balsavimą internetu
+          source: http://www3.lrs.lt/pls/inter/w5_sale.bals?p_bals_id=-14616
+          date: 2012-09-25
+          position: -1
+        - title: Seimas nepritarė įstatymų pataisoms įteisinančioms balsavimą internetu
+          source: http://www3.lrs.lt/pls/inter/w5_sale.bals?p_bals_id=-9466
+          date: 2010-09-28
+          position: -1
+        - title: Seimas nepritarė įstatymų pataisoms įteisinančioms balsavimą internetu
+          source: http://www3.lrs.lt/pls/inter/w5_sale.bals?p_bals_id=-7109
+          date: 2009-12-03
+          position: -1
+        - title: Nutrauktas balsavimo internetu sistemos kūrimas
+          source:
+          date: 2008-10-24
+          position:
+        - title: Seimas atmetė įstatymų projektus, kuriais norėta įteisinti balsavimą internetu
+          source: http://www.lrs.lt/sip/portal.show?p_r=15275&p_k=1&p_a=sale_bals&p_bals_id=-1132
+          date: 2008-01-17
+          position: -1
+        - title: Balsavimo internetu sistemos viešasis konkursas
+          source: http://ivpk.lrv.lt/lt/naujienos/atviram-konkursui-balsavimo-internetu-sistemos-sukurimas-pateikti-du-pasiulymai
+          date: 2007-08-23
+          position:
+        - title: Balsavimo internetu programos patvirtinimas
+          source: https://e-seimas.lrs.lt/portal/legalAct/lt/TAD/TAIS.302125?positionInSearchResults=0&searchModelUUID=35dfe168-3d5e-46d9-a4af-8eead37694f6
+          date: 2007-07-11
+          position:
+        - title: Patvirtinta darbo grupė balsavimo internetu sistemos diegimui koordinuoti
+          source: http://www3.lrs.lt/pls/inter3/dokpaieska.showdoc_l?p_id=295063&p_query=&p_tr2=
+          date: 2007-04-04
+          position:
+        - title: Balsavimo internetu koncepcijos patvirtinimas
+          source: https://e-seimas.lrs.lt/portal/legalAct/lt/TAD/TAIS.287235?positionInSearchResults=0&searchModelUUID=eaee1625-cf9f-46c0-931c-482a218029e8
+          date: 2006-11-16
+          position: 1
 
 globals:
   page_title: manopozicija.lt
