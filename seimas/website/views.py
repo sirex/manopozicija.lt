@@ -19,7 +19,7 @@ from seimas.website.helpers.decorators import superuser_required
 
 
 def topic_list(request):
-    return render(request, 'website/topic_list.html', {
+    return render(request, 'index.html', {
         'topics': Topic.objects.all(),
     })
 

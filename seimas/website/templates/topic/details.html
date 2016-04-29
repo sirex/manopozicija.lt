@@ -4,13 +4,13 @@
 
 
 {% block css %}
-<link href="{{ cdn.c3 }}/c3.css" rel="stylesheet" type="text/css">
+<link href="{% static 'c3.css' %}" rel="stylesheet" type="text/css">
 {% endblock %}
 
 
 {% block js %}
-<script src="{{ cdn.d3 }}/d3.min.js" charset="utf-8"></script>
-<script src="{{ cdn.c3 }}/c3.min.js"></script>
+<script src="{% static 'd3.min.js' %}" charset="utf-8"></script>
+<script src="{% static 'c3.min.js' %}"></script>
 <script src="{% static 'js/kpi.js' %}"></script>
 {% endblock %}
 

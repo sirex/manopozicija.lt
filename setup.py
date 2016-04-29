@@ -25,10 +25,16 @@ setup(
         'docutils',
         'exportrecipe',
         'beautifulsoup4',
+        'pyyaml',
     ],
     classifiers=[
         'Development Status :: 1 - Planning',
         'Programming Language :: Python :: 3 :: Only',
         'License :: OSI Approved :: GNU Affero General Public License v3 or later (AGPLv3+)',
     ],
+    entry_points={
+        'console_scripts': [
+            'prototype = seimas.prototype.main:main',
+        ],
+    },
 )
