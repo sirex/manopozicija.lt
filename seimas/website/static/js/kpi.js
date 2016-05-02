@@ -1,17 +1,19 @@
 (function (d3, c3) {
     d3.json("/topic/balsavimas-internetu/kpi/", function(jsonData) {
-        var i = 1; 
+        var i = 1;
+        var DATA_NAME = "data", SCATTER_CHART = "scatter";
         var yLabel, eventsLevel, eventsLevelSameDay, tempDate, tempLevel;
         var dataMin = Number.MAX_VALUE, dataMax = Number.MIN_VALUE;
         var yearMin = Number.MAX_VALUE, yearMax = Number.MIN_VALUE;
-        var dataToChart = [], dataNames = [], dataAndX = [], chartType = [], dataHide = [];
+        var dataToChart = [], dataNames = [], dataAndX = [], chartType = [], dataHide = [], webSource = [];
 
         jsonData.indicators.forEach(function(jsonEachData) {
-            var itemName = "data" + i;
+            var itemName = DATA_NAME + i;
             var date = ["x" + i];
             var mark = [itemName]; 
             dataAndX[itemName] = date[0];
             dataNames[itemName] = jsonEachData.title;
+            webSource[itemName] = jsonEachData.source;
             chartType[itemName] = "line";
             yLabel = jsonEachData.ylabel;
             jsonEachData.data.forEach(function(dateAndMark) {
@@ -38,12 +40,13 @@
         yearMax = yearMax - yearMin;
 
         jsonData.events.forEach(function(jsonEachData) {
-            var itemName = "data" + i;
+            var itemName = DATA_NAME + i;
             var date = ["x"+i];
             var mark = [itemName];
             dataAndX[itemName] = date[0];
             dataNames[itemName] = jsonEachData.title;
-            chartType[itemName] = "scatter";
+            webSource[itemName] = jsonEachData.source;
+            chartType[itemName] = SCATTER_CHART;
             date.push(jsonEachData.date);
             if (tempDate == jsonEachData.date) {
                 tempLevel += eventsLevelSameDay;
@@ -58,12 +61,24 @@
             i++;
         });
 
+        function changePointSize(typeOfChart){
+            if (typeOfChart == SCATTER_CHART){
+                return 6;
+            } else return 2.5; 
+        }
+
         c3.generate( {
             data: {
                 xs: dataAndX,
                 columns: dataToChart,
                 names: dataNames,
-                types: chartType
+                types: chartType,
+                onclick: function (d){
+                    window.open(webSource[d.id]);
+                }
+            },
+            zoom: {
+                enabled: true
             },
             legend: {
                 hide: dataHide
@@ -81,6 +96,11 @@
                         text: yLabel,
                         position: 'outer-middle'
                     }
+                }
+            },
+            point: {
+                r: function(d) { 
+                    return  changePointSize(chartType[d.id]);
                 }
             }
         });
