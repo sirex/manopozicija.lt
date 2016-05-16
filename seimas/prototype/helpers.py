@@ -3,11 +3,12 @@ import os.path
 
 from django.http import Http404
 from django.conf.urls import url
+from django.conf import settings
 
 
 def get_page(path):
     url = ('/%s/' % path) if path else '/'
-    with open('prototype.yml') as f:
+    with (settings.PROJECT_DIR / 'prototype.yml').open() as f:
         data = yaml.load(f)
     try:
         page = data['urls'][url] or {
