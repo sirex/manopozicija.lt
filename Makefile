@@ -5,6 +5,8 @@ help:
 	@echo 'make            set up the development environment'
 	@echo 'make run        start the web server'
 	@echo 'make tags       build ctags file'
+	@echo 'make clean      clean whole environment'
+	@echo 'make cleanpyc   clean all *.pyc files'
 
 ubuntu:
 	sudo apt-get update
@@ -28,5 +30,11 @@ var/www/static var/www/media: ; mkdir -p $@
 
 bin/django: bin/buildout buildout.cfg $(wildcard config/*.cfg) $(wildcard config/env/*.cfg) mkdirs ; $<
 
+cleanpyc:
+	find -iname '*.pyc' -delete
 
-.PHONY: all help run mkdirs tags
+clean: cleanpyc
+	rm -rf bin develop-eggs include .installed.cfg lib *.egg-info parts settings.json var/www/static/
+
+
+.PHONY: all help run mkdirs tags clean cleanpyc
