@@ -35,7 +35,7 @@ def get_template(path):
 
 
 def get_urls(view):
-    with open('prototype.yml') as f:
+    with (settings.PROJECT_DIR / 'prototype.yml').open() as f:
         data = yaml.load(f)
 
     urls = []
