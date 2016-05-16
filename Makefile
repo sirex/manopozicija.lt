@@ -22,7 +22,7 @@ buildout.cfg: ; ./scripts/genconfig.py config/env/development.cfg
 
 bin/pip: ; virtualenv --no-site-packages --python=python3.5 .
 
-bin/buildout: bin/pip ; $< install --upgrade setuptools zc.buildout==2.3.1
+bin/buildout: bin/pip ; $< install -r requirements.txt
 
 mkdirs: var/www/static var/www/media
 
