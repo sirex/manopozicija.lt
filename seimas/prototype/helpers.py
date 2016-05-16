@@ -8,7 +8,7 @@ from django.conf import settings
 
 def get_page(path):
     url = ('/%s/' % path) if path else '/'
-    with (settings.PROJECT_DIR / 'prototype.yml').open() as f:
+    with (settings.PROJECT_DIR / 'prototype.yml').open(encoding='utf-8') as f:
         data = yaml.load(f)
     try:
         page = data['urls'][url] or {
@@ -24,18 +24,18 @@ def get_page(path):
 
 
 def get_template(path):
-    base = os.path.join('seimas', 'website')
+    base = settings.PROJECT_DIR / 'seimas/website'
     candidates = [
         os.path.join(path, 'index.html'),
         '%s.html' % path,
     ]
     for template in candidates:
-        if os.path.exists(os.path.join(base, 'templates', template)):
+        if (base / 'templates' / template).exists():
             return template
 
 
 def get_urls(view):
-    with (settings.PROJECT_DIR / 'prototype.yml').open() as f:
+    with (settings.PROJECT_DIR / 'prototype.yml').open(encoding='utf-8') as f:
         data = yaml.load(f)
 
     urls = []
