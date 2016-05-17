@@ -2,7 +2,7 @@ import pkg_resources as pres
 
 import django.test
 
-from seimas.website.parsers import parse_votes
+from seimas.website.parsers.votings import parse_votes
 from seimas.website.services.voting import import_votes, update_voting, create_vote_positions
 from seimas.website.models import Voting, Vote, Person, Topic, Position
 

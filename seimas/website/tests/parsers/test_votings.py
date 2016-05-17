@@ -2,7 +2,7 @@ import unittest
 import pkg_resources as pres
 import datetime
 
-from seimas.website.parsers import parse_votes
+from seimas.website.parsers.votings import parse_votes
 
 
 class ParseVotesTests(unittest.TestCase):
@@ -32,7 +32,7 @@ class ParseVotesTests(unittest.TestCase):
         self.assertEqual(table[0], {
             'fraction': 'TTF',
             'link': 'http://www3.lrs.lt/docs3/kad5/w5_istorija.show5-p_r=786&p_k=1&p_a=5&p_asm_id=47852.html',
-            'name': 'Ačas Remigijus',
+            'name': 'Remigijus Ačas',
             'position': 'no',
         })
 
@@ -67,7 +67,7 @@ class ParseVotesTests(unittest.TestCase):
         self.assertEqual(table[0], {
             'fraction': 'TTF',
             'link': 'http://www3.lrs.lt/pls/inter/w5_show?p_r=6113&p_k=1&p_a=5&p_asm_id=47852&p_kade_id=6',
-            'name': 'Ačas Remigijus',
+            'name': 'Remigijus Ačas',
             'position': 'no',
         })
 
@@ -104,7 +104,7 @@ class ParseVotesTests(unittest.TestCase):
         self.assertEqual(table[0], {
             'fraction': 'TTF',
             'link': 'http://www3.lrs.lt/docs3/kad5/w5_istorija.show5-p_r=786&p_k=1&p_a=5&p_asm_id=47852.html',
-            'name': 'Ačas Remigijus',
+            'name': 'Remigijus Ačas',
             'position': 'no',
         })
 
