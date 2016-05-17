@@ -22,3 +22,4 @@ pyyaml
 # testing
 pytest
 pytest-django
+pytest-flake8
