@@ -22,18 +22,32 @@ buildout.cfg: ; ./scripts/genconfig.py config/env/development.cfg
 
 bin/pip: ; virtualenv --no-site-packages --python=python3.5 .
 
-bin/buildout: bin/pip requirements.txt ; $< install -r requirements.txt
-
-mkdirs: var/www/static var/www/media
+bin/buildout: bin/pip requirements.txt ; bin/pip install -r requirements.txt
 
 var/www/static var/www/media: ; mkdir -p $@
 
-bin/django: bin/buildout buildout.cfg $(wildcard config/*.cfg) $(wildcard config/env/*.cfg) mkdirs ; $<
+bin/django: \
+  bin/buildout \
+  buildout.cfg \
+  $(wildcard config/*.cfg) \
+  $(wildcard config/env/*.cfg) \
+  var/www/static \
+  var/www/media
+	bin/buildout && touch -c bin/django
 
 cleanpyc: ; find -iname '*.pyc' -delete
 
 clean: cleanpyc
-	rm -rf bin develop-eggs include .installed.cfg lib *.egg-info parts settings.json var/www/static/
+	rm -rf \
+	  *.egg-info \
+	  .installed.cfg \
+	  bin \
+	  develop-eggs \
+	  include \
+	  lib \
+	  parts \
+	  settings.json \
+	  var/www/static/
 
 
-.PHONY: all help run mkdirs tags clean cleanpyc
+.PHONY: all help run tags clean cleanpyc
