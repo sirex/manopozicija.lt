@@ -30,8 +30,7 @@ var/www/static var/www/media: ; mkdir -p $@
 
 bin/django: bin/buildout buildout.cfg $(wildcard config/*.cfg) $(wildcard config/env/*.cfg) mkdirs ; $<
 
-cleanpyc:
-	find -iname '*.pyc' -delete
+cleanpyc: ; find -iname '*.pyc' -delete
 
 clean: cleanpyc
 	rm -rf bin develop-eggs include .installed.cfg lib *.egg-info parts settings.json var/www/static/
