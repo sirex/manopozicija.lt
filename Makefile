@@ -22,7 +22,11 @@ buildout.cfg: ; ./scripts/genconfig.py config/env/development.cfg
 
 bin/pip: ; virtualenv --no-site-packages --python=python3.5 .
 
-bin/buildout: bin/pip requirements.txt ; bin/pip install -r requirements.txt
+bin/pip-compile: bin/pip ; bin/pip install --upgrade pip==8.1.1 pip-tools==1.6.5 && touch -c bin/pip-compile
+
+requirements.txt: bin/pip-compile requirements.in ; pip-compile
+
+bin/buildout: bin/pip requirements.txt ; bin/pip install -r requirements.txt && touch -c bin/buildout
 
 var/www/static var/www/media: ; mkdir -p $@
 

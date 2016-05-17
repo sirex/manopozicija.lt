@@ -17,3 +17,5 @@ prototype/static/css/main.css
 /lib64
 /man/
 /share/
+/.cache/
+/pip-selfcheck.json
