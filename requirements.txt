@@ -6,6 +6,7 @@
 #
 
 beautifulsoup4==4.4.1
+coverage==4.0.3           # via pytest-cov
 defusedxml==0.4.1         # via python3-openid
 django-allauth==0.19.1
 django-appconf==1.0.2     # via django-compressor
@@ -33,6 +34,7 @@ pep8==1.7.0               # via flake8
 psycopg2==2.6.1
 py==1.4.31                # via pytest
 pyflakes==1.0.0           # via flake8
+pytest-cov==2.2.1
 pytest-django==2.9.1
 pytest-flake8==0.5
 pytest==2.9.1

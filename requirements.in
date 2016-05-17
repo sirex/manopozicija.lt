@@ -21,5 +21,6 @@ pyyaml
 
 # testing
 pytest
+pytest-cov
 pytest-django
 pytest-flake8

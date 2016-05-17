@@ -12,7 +12,7 @@ install:
   - scripts/genconfig.py config/env/production.cfg
   - buildout
 script:
-  - py.test -vvra --tb=native --flake8 --doctest-modules seimas
+  - py.test -vvra --tb=native --flake8 --doctest-modules --cov seimas --cov-report term-missing seimas
 after_success:
   - coveralls
 cache:
