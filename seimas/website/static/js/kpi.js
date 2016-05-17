@@ -2,7 +2,7 @@
     d3.json("/topic/balsavimas-internetu/kpi/", function(jsonData) {
         var i = 1;
         var DATA_NAME = "data", SCATTER_CHART = "scatter";
-        var yLabel, eventsLevel, eventsLevelSameDay, tempDate, tempLevel;
+        var yLabel, eventsLevel, eventsLevelSameDay, tempDate, tempLevel, eventDate;
         var dataMin = Number.MAX_VALUE, dataMax = Number.MIN_VALUE;
         var yearMin = Number.MAX_VALUE, yearMax = Number.MIN_VALUE;
         var dataToChart = [], dataNames = [], dataAndX = [], chartType = [], dataHide = [], webSource = [];
@@ -36,7 +36,7 @@
         });
 
         eventsLevel = dataMin - (dataMax - dataMin) * 0.1;
-        eventsLevelSameDay = (dataMax - dataMin) * 0.02;
+        eventsLevelSameDay = (dataMax - dataMin) * 0.07;
         yearMax = yearMax - yearMin;
 
         jsonData.events.forEach(function(jsonEachData) {
@@ -48,12 +48,14 @@
             webSource[itemName] = jsonEachData.source;
             chartType[itemName] = SCATTER_CHART;
             date.push(jsonEachData.date);
-            if (tempDate == jsonEachData.date) {
+            eventDate = new  Date(jsonEachData.date);
+            if (tempDate > eventDate){
                 tempLevel += eventsLevelSameDay;
             } else {
                 tempLevel = eventsLevel;
             }
-            tempDate = jsonEachData.date;
+            tempDate = eventDate; 
+            tempDate.setDate(tempDate.getDate() + 100);
             mark.push(tempLevel);
             dataToChart.push(date);
             dataToChart.push(mark);
@@ -92,6 +94,7 @@
                     }
                 },
                 y: {
+                    min: eventsLevel + 3,
                     label:{
                         text: yLabel,
                         position: 'outer-middle'
