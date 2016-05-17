@@ -15,9 +15,10 @@ script:
   - py.test -vvra --tb=native --flake8 --doctest-modules seimas
 after_success:
   - coveralls
-# cache: pip seems not to work if `install` is replaced (https://github.com/travis-ci/travis-ci/issues/3239)
 cache:
   directories:
     - $HOME/.cache/pip
+    - $HOME/.cache/buildout
 before_cache:
     - rm -f $HOME/.cache/pip/log/debug.log
+    - mkdir -p $HOME/.cache/buildout/eggs $HOME/.cache/buildout/downloads
