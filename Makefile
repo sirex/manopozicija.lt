@@ -26,7 +26,7 @@ bin/pip-compile: bin/pip ; bin/pip install --upgrade pip==8.1.1 pip-tools==1.6.5
 
 requirements.txt: bin/pip-compile requirements.in ; pip-compile
 
-bin/buildout: bin/pip requirements.txt ; bin/pip install -r requirements.txt && touch -c bin/buildout
+bin/buildout: bin/pip requirements.txt ; bin/pip install -e . -r requirements.txt && touch -c bin/buildout
 
 var/www/static var/www/media: ; mkdir -p $@
 
