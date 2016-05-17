@@ -20,11 +20,9 @@ tags: bin/django ; bin/ctags -v --tag-relative
 
 buildout.cfg: ; ./scripts/genconfig.py config/env/development.cfg
 
-bin/pip: ; virtualenv --no-site-packages --python=python3.5 .
-
-bin/pip-compile: bin/pip ; bin/pip install --upgrade pip==8.1.1 pip-tools==1.6.5 && touch -c bin/pip-compile
-
-requirements.txt: bin/pip-compile requirements.in ; pip-compile
+bin/pip:
+	virtualenv --no-site-packages --python=python3.5 .
+	bin/pip install --upgrade pip==8.1.1 pip-tools==1.6.5 wheel==0.29.0
 
 bin/buildout: bin/pip requirements.txt ; bin/pip install -e . -r requirements.txt && touch -c bin/buildout
 
