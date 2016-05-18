@@ -5,11 +5,8 @@ import pytest
 
 
 def get_eslint_path():
-    paths = [
-        '/usr/local/bin/eslint',
-        '/usr/bin/eslint',
-    ]
-    for path in paths:
+    for path in os.environ['PATH'].split(':'):
+        path = os.path.join(path, 'eslint')
         if os.path.exists(path):
             return path
 
