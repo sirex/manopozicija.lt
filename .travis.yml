@@ -11,6 +11,9 @@ install:
   - mkdir -p var/www/static var/www/media
   - scripts/genconfig.py config/env/production.cfg
   - buildout
+
+  # Install test dependencies
+  - npm install -g eslint
 script:
   - py.test -vvra --tb=native --flake8 --doctest-modules --cov seimas --cov-report term-missing seimas
 after_success:
