@@ -19,6 +19,9 @@ exportrecipe
 beautifulsoup4
 pyyaml
 
+# key performance indicators
+pandas
+
 # testing
 pytest
 pytest-cov
