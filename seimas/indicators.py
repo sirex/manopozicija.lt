@@ -1,9 +1,11 @@
 import pandas as pd
 
 
-def voter_turnout():
+def voter_turnout(source=(
+    'http://ec.europa.eu/eurostat/estat-navtree-portlet-prod/BulkDownloadListing?file=data/tsdgo310.tsv.gz'
+)):
     frame = pd.read_csv(
-        'http://ec.europa.eu/eurostat/estat-navtree-portlet-prod/BulkDownloadListing?file=data/tsdgo310.tsv.gz',
+        source,
         sep='\t',
         compression='gzip',
         index_col=0,
