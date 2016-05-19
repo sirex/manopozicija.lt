@@ -1,14 +1,31 @@
+import logging
+import os.path
 import datetime
+import traceback
 import pandas as pd
+
+from django.conf import settings
+from django.db.models import Func, F, Q
 
 from seimas.website.models import Indicator
 
+logger = logging.getLogger(__name__)
 
-def voter_turnout(source=(
-    'http://ec.europa.eu/eurostat/estat-navtree-portlet-prod/BulkDownloadListing?file=data/tsdgo310.tsv.gz'
-)):
+
+def get_params(params, defaults):
+    params = dict(params or {})
+    for key, value in defaults.items():
+        params.setdefault(key, value)
+    return params
+
+
+def voter_turnout(params=None):
+    params = get_params(params, {
+        'source': 'http://ec.europa.eu/eurostat/estat-navtree-portlet-prod/BulkDownloadListing?file=data/tsdgo310.tsv.gz',
+    })
+
     frame = pd.read_csv(
-        source,
+        params['source'],
         sep='\t',
         compression='gzip',
         index_col=0,
@@ -22,6 +39,7 @@ def voter_turnout(source=(
     )
 
     frame.index = pd.to_datetime(frame.index.str.strip(), format='%Y')
+    frame.index.name = 'datetime'
     frame[0] = frame[0].astype(float)
     frame = frame.rename(columns={0: 'Seimo'})
 
@@ -30,7 +48,7 @@ def voter_turnout(source=(
 
 INDICATORS = [
     ('voter-turnout', {
-        'fetch': 'seimas.indicators.voter_turnout',
+        'fetch': voter_turnout,
         'title': 'Rinkimuose dalyvavusių rinkėjų skaičius, palyginti su visų rinkėjų skaičiumi',
         'ylabel': 'Aktyvumas procentais',
     }),
@@ -56,6 +74,39 @@ def import_indicators(indicators):
         Indicator.objects.filter(pk__in=deleted_indicators).update(deleted=None)
 
 
-def update_indicators(indicators):
-    for indicator in indicators:
-        pass
+class SecondsSince(Func):
+    template = "%(now)d - DATE_PART('epoch', %(expressions)s)::int"
+
+
+def update_indicators(indicators, now=None):
+    indicators_dir = os.path.join(settings.MEDIA_ROOT, 'indicators')
+    if not os.path.exists(indicators_dir):
+        os.mkdir(indicators_dir)
+
+    now_ = datetime.datetime.utcnow()
+    now = now or now_
+
+    indicators = dict(indicators)
+
+    qs = Indicator.objects.filter(
+        Q(last_update__isnull=True) | Q(update_freq__lt=SecondsSince(F('last_update'), now=int(now.timestamp()))),
+        deleted__isnull=True,  # only non-deleted objects
+        error_count__lt=10,  # don't try to fetch indicators who returned error 10 times in a row
+    )
+
+    for indicator in qs:
+        params = indicators[indicator.slug]
+        fetch = params['fetch']
+        try:
+            frame = fetch()
+        except Exception:
+            logger.exception('error while updating %r indicator' % indicator.slug)
+            indicator.error_count = indicator.error_count + 1
+            indicator.traceback = traceback.format_exc()
+            indicator.save()
+        else:
+            frame.to_csv(os.path.join(indicators_dir, '%s.csv' % indicator.slug))
+            indicator.error_count = 0
+            indicator.traceback = ''
+            indicator.last_update = now + (datetime.datetime.utcnow() - now_)
+            indicator.save()
