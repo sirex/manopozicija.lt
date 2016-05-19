@@ -14,6 +14,17 @@ from django.contrib.contenttypes.models import ContentType
 from seimas.website.lists import professions
 
 
+class Indicator(models.Model):
+    slug = models.SlugField(unique=True, editable=False)
+    created = CreationDateTimeField(editable=False)
+    modified = ModificationDateTimeField(editable=False)
+    deleted = models.DateTimeField(null=True, blank=True, editable=False)
+    last_update = models.DateTimeField(null=True, blank=True, editable=False)
+    update_freq = models.PositiveIntegerField(default=60 * 60 * 24)  # update frequency in seconds since last update
+    title = models.CharField(max_length=255)
+    ylabel = models.CharField(max_length=255)
+
+
 class Topic(models.Model):
     created = CreationDateTimeField()
     modified = ModificationDateTimeField()

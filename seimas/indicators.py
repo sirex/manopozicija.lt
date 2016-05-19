@@ -1,4 +1,7 @@
+import datetime
 import pandas as pd
+
+from seimas.website.models import Indicator
 
 
 def voter_turnout(source=(
@@ -22,12 +25,37 @@ def voter_turnout(source=(
     frame[0] = frame[0].astype(float)
     frame = frame.rename(columns={0: 'Seimo'})
 
-    return frame, {
-        'title': 'Rinkimuose dalyvavusių rinkėjų skaičius, palyginti su visų rinkėjų skaičiumi',
-        'ylabel': 'Aktyvumas procentais',
-    }
+    return frame
 
 
 INDICATORS = [
-    ('voter_turnout', 'seimas.indicators.voter_turnout'),
+    ('voter-turnout', {
+        'fetch': 'seimas.indicators.voter_turnout',
+        'title': 'Rinkimuose dalyvavusių rinkėjų skaičius, palyginti su visų rinkėjų skaičiumi',
+        'ylabel': 'Aktyvumas procentais',
+    }),
 ]
+
+
+def import_indicators(indicators):
+    """Import all defined indicators to database."""
+    deleted_indicators = set()
+    existing_indicators = set(Indicator.objects.values_list('pk', flat=True))
+    for name, params in indicators:
+        params = {k: v for k, v in params.items() if k != 'fetch'}
+        indictor, created = Indicator.objects.get_or_create(slug=name, defaults=params)
+        if indictor.pk in existing_indicators:
+            existing_indicators.remove(indictor.pk)
+        if indictor.deleted:
+            deleted_indicators.add(indictor.pk)
+    # Mark no longer existing indicators as deleted
+    if existing_indicators:
+        Indicator.objects.filter(pk__in=existing_indicators).update(deleted=datetime.datetime.utcnow())
+    # Clear deletion flag for resurected indicators
+    if deleted_indicators:
+        Indicator.objects.filter(pk__in=deleted_indicators).update(deleted=None)
+
+
+def update_indicators(indicators):
+    for indicator in indicators:
+        pass
