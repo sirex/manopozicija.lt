@@ -17,6 +17,7 @@ MEDIA_ROOT = str(PROJECT_DIR / 'var/www/media')
 STATIC_URL = '/static/'
 STATIC_ROOT = str(PROJECT_DIR / 'var/www/static')
 LANGUAGE_CODE = 'lt'
+USE_L10N = True
 
 INSTALLED_APPS = (
     'django.contrib.staticfiles',

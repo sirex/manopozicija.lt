@@ -1,5 +1,8 @@
+import os.path
 import requests
 import urllib.parse
+import pandas as pd
+import posixpath
 
 import django.contrib.auth.models as auth_models
 import django.contrib.auth.admin as auth_admin
@@ -10,6 +13,8 @@ from django.core.urlresolvers import reverse
 from django.contrib.auth.views import redirect_to_login
 from django.contrib.sites.models import Site
 from django.contrib.sites.admin import SiteAdmin
+from django.utils.safestring import mark_safe
+from django.utils.translation import ugettext_lazy as _
 
 import allauth.socialaccount.admin as allauth
 
@@ -64,9 +69,39 @@ class VotingAdmin(admin.ModelAdmin):
             import_votes(obj, data['table'])
 
 
+class IndicatorAdmin(admin.ModelAdmin):
+    list_display = (
+        'title',
+        'last_update',
+        'error_count',
+    )
+    readonly_fields = (
+        'created',
+        'modified',
+        'deleted',
+        'last_update',
+        'error_count',
+        'traceback',
+        'indicator_file',
+        'indicator_preview',
+    )
+
+    def indicator_file(self, instance):
+        file_url = posixpath.join(settings.MEDIA_URL, 'indicators', '%s.csv' % instance.slug)
+        return mark_safe('<a href="%s" target="_blank">%s</a>' % (file_url, file_url))
+
+    def indicator_preview(self, instance):
+        indicators_dir = os.path.join(settings.MEDIA_ROOT, 'indicators')
+        frame = pd.read_csv(os.path.join(indicators_dir, '%s.csv' % instance.slug))
+        return mark_safe('<div style="float:left;">%s</div>' % ''.join(frame.head(10).to_html().splitlines()))
+
+    indicator_preview.short_description = _('Indicator preview')
+
+
 site = AdminSite()
 
 site.register(auth_models.User, auth_admin.UserAdmin)
+site.register(website_models.Indicator, IndicatorAdmin)
 site.register(website_models.Topic)
 site.register(website_models.Position)
 site.register(website_models.Voting, VotingAdmin)

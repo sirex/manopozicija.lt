@@ -51,6 +51,7 @@ INDICATORS = [
         'fetch': voter_turnout,
         'title': 'Rinkimuose dalyvavusių rinkėjų skaičius, palyginti su visų rinkėjų skaičiumi',
         'ylabel': 'Aktyvumas procentais',
+        'source': 'http://ec.europa.eu/eurostat/tgm/table.do?tab=table&init=1&language=en&pcode=tsdgo310&plugin=1',
     }),
 ]
 
@@ -61,11 +62,18 @@ def import_indicators(indicators):
     existing_indicators = set(Indicator.objects.values_list('pk', flat=True))
     for name, params in indicators:
         params = {k: v for k, v in params.items() if k != 'fetch'}
-        indictor, created = Indicator.objects.get_or_create(slug=name, defaults=params)
-        if indictor.pk in existing_indicators:
-            existing_indicators.remove(indictor.pk)
-        if indictor.deleted:
-            deleted_indicators.add(indictor.pk)
+        indicator, created = Indicator.objects.get_or_create(slug=name, defaults=params)
+        if indicator.pk in existing_indicators:
+            existing_indicators.remove(indicator.pk)
+        if indicator.deleted:
+            deleted_indicators.add(indicator.pk)
+        updated = False
+        for key, value in params.items():
+            if not getattr(indicator, key):
+                setattr(indicator, key, value)
+                updated = True
+        if updated:
+            indicator.save()
     # Mark no longer existing indicators as deleted
     if existing_indicators:
         Indicator.objects.filter(pk__in=existing_indicators).update(deleted=datetime.datetime.utcnow())

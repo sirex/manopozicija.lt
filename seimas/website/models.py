@@ -20,11 +20,17 @@ class Indicator(models.Model):
     modified = ModificationDateTimeField(editable=False)
     deleted = models.DateTimeField(null=True, blank=True, editable=False)
     last_update = models.DateTimeField(null=True, blank=True, editable=False)
-    update_freq = models.PositiveIntegerField(default=60 * 60 * 24)  # update frequency in seconds since last update
+    update_freq = models.PositiveIntegerField(default=60 * 60 * 24, help_text=_(
+        'Indicator update frequency in seconds (86400 == 1 day).'
+    ))
     error_count = models.PositiveIntegerField(default=0, editable=False)
     traceback = models.TextField(blank=True, editable=False)
     title = models.CharField(max_length=255)
     ylabel = models.CharField(max_length=255)
+    source = models.URLField(_("Šaltinis"))
+
+    def __str__(self):
+        return self.title
 
 
 class Topic(models.Model):

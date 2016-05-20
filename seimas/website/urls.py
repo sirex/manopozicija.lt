@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.conf.urls import url, include
+from django.conf.urls.static import static
 
 from seimas.website import admin
 from seimas.website import views
@@ -17,9 +18,14 @@ urlpatterns = [
 urlpatterns += [
     url(r'^accounts/', include('seimas.accounts.urls')),
     url(r'^admin/', include(admin.site.urls)),
-    url(r'', include('seimas.prototype.urls')),
 ]
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns.append(url(r'^__debug__/', include(debug_toolbar.urls)))
+    urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls))]
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+urlpatterns += [
+    url(r'', include('seimas.prototype.urls')),
+]
