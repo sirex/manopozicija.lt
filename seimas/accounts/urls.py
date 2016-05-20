@@ -9,7 +9,7 @@ import seimas.accounts.views as accounts_views
 
 def get_provider_urls(provider):  # pylint: disable=redefined-outer-name
     try:
-        urls = importlib.import_module(provider.package + '.urls')
+        urls = importlib.import_module(provider.get_package() + '.urls')
     except ImportError:
         return []
     else:

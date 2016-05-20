@@ -37,6 +37,8 @@ bin/django: \
   var/www/media
 	bin/buildout && touch -c bin/django
 
+test: ; bin/py.test -vvra --tb=native --flake8 --doctest-modules --cov seimas --cov-report term-missing seimas
+
 cleanpyc: ; find -iname '*.pyc' -delete
 
 clean: cleanpyc
@@ -52,4 +54,4 @@ clean: cleanpyc
 	  var/www/static/
 
 
-.PHONY: all help run tags clean cleanpyc
+.PHONY: all help run tags test clean cleanpyc

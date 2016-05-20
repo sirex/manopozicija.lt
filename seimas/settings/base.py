@@ -41,7 +41,7 @@ STATICFILES_FINDERS = (
     'django.contrib.staticfiles.finders.AppDirectoriesFinder',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS = [
+_TEMPLATE_CONTEXT_PROCESSORS = [
     'django.contrib.auth.context_processors.auth',
 ]
 TEMPLATES = [
@@ -49,7 +49,7 @@ TEMPLATES = [
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'APP_DIRS': True,
         'OPTIONS': {
-            'context_processors': TEMPLATE_CONTEXT_PROCESSORS,
+            'context_processors': _TEMPLATE_CONTEXT_PROCESSORS,
         }
     },
 ]
@@ -184,9 +184,8 @@ AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
 )
 
-TEMPLATE_CONTEXT_PROCESSORS += [
+_TEMPLATE_CONTEXT_PROCESSORS += [
     'django.template.context_processors.request',
-    'allauth.socialaccount.context_processors.socialaccount',
 ]
 
 INSTALLED_APPS += (
