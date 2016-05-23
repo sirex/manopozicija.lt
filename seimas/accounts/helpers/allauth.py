@@ -72,5 +72,4 @@ def get_openid_providers(request):
 def openid_login(request, form):
     request.POST = request.POST.copy()
     request.POST['openid'] = form.data['openid']
-    request.REQUEST.dicts = ({'openid': form.data['openid']},) + request.REQUEST.dicts
     return openid_views.login(request)
