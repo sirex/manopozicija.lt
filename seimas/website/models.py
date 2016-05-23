@@ -40,6 +40,7 @@ class Topic(models.Model):
     slug = autoslug.AutoSlugField(populate_from='title')
     title = models.CharField(_("Pavadinimas"), max_length=255)
     description = models.TextField(_("Aprašymas"), blank=True)
+    indicators = models.ManyToManyField(Indicator)
 
     def __str__(self):
         return self.title

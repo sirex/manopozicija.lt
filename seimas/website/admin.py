@@ -87,22 +87,28 @@ class IndicatorAdmin(admin.ModelAdmin):
     )
 
     def indicator_file(self, instance):
-        file_url = posixpath.join(settings.MEDIA_URL, 'indicators', '%s.csv' % instance.slug)
-        return mark_safe('<a href="%s" target="_blank">%s</a>' % (file_url, file_url))
+        if instance.slug:
+            file_url = posixpath.join(settings.MEDIA_URL, 'indicators', '%s.csv' % instance.slug)
+            return mark_safe('<a href="%s" target="_blank">%s</a>' % (file_url, file_url))
 
     def indicator_preview(self, instance):
-        indicators_dir = os.path.join(settings.MEDIA_ROOT, 'indicators')
-        frame = pd.read_csv(os.path.join(indicators_dir, '%s.csv' % instance.slug))
-        return mark_safe('<div style="float:left;">%s</div>' % ''.join(frame.head(10).to_html().splitlines()))
+        if instance.slug:
+            indicators_dir = os.path.join(settings.MEDIA_ROOT, 'indicators')
+            frame = pd.read_csv(os.path.join(indicators_dir, '%s.csv' % instance.slug))
+            return mark_safe('<div style="float:left;">%s</div>' % ''.join(frame.head(10).to_html().splitlines()))
 
     indicator_preview.short_description = _('Indicator preview')
+
+
+class TopicAdmin(admin.ModelAdmin):
+    raw_id_fields = ('author', 'indicators')
 
 
 site = AdminSite()
 
 site.register(auth_models.User, auth_admin.UserAdmin)
 site.register(website_models.Indicator, IndicatorAdmin)
-site.register(website_models.Topic)
+site.register(website_models.Topic, TopicAdmin)
 site.register(website_models.Position)
 site.register(website_models.Voting, VotingAdmin)
 site.register(website_models.Vote)

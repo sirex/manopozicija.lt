@@ -118,3 +118,9 @@ def update_indicators(indicators, now=None):
             indicator.traceback = ''
             indicator.last_update = now + (datetime.datetime.utcnow() - now_)
             indicator.save()
+
+
+def get_indicator_data(indicator):
+    indicators_dir = os.path.join(settings.MEDIA_ROOT, 'indicators')
+    frame = pd.read_csv(os.path.join(indicators_dir, '%s.csv' % indicator.slug), index_col=0)
+    return list(map(list, frame.to_records()))

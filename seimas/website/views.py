@@ -1,5 +1,6 @@
 import requests
 
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
@@ -16,6 +17,7 @@ from seimas.website.models import Voting
 from seimas.website.parsers.votings import parse_votes
 from seimas.website.services.voting import update_voting, import_votes, create_vote_positions
 from seimas.website.helpers.decorators import superuser_required
+from seimas.indicators import get_indicator_data
 
 
 def topic_list(request):
@@ -43,6 +45,31 @@ def topic_details(request, slug):
         'supporters_count': supporters.count(),
         'critics': list(critics[:10]),
         'critics_count': critics.count(),
+    })
+
+
+def topic_kpi(request, slug):
+    topic = get_object_or_404(Topic, slug=slug)
+    return JsonResponse({
+        'indicators': [
+            {
+                'title': x.title,
+                'source': x.source,
+                'ylabel': x.ylabel,
+                'data': get_indicator_data(x),
+            }
+            for x in topic.indicators.all()
+        ],
+        'events': [
+            {
+                'title': x.title,
+                'date': x.datetime.strftime('%Y-%m-%d'),
+                'source': x.link,
+                'position': None,  # TODO: Currently position is stored for each voting by person and here we need
+                                   #       aggregated mean of all positions for this one voting.
+            }
+            for x in Voting.objects.filter(position__topic=topic).order_by('datetime')
+        ],
     })
 
 
