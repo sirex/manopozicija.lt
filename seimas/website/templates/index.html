@@ -12,7 +12,7 @@
 
 <div class="main-topics">
   {% for topic in topics %}
-  <a class="col-sm-3" href="{% url 'topic_details' %}"><span>{{ topic.title }}</span></a>
+  <a class="col-sm-3" href="{% url 'topic-details' topic.slug %}"><span>{{ topic.title }}</span></a>
   {% endfor %}
 </div>
 {% endblock %}
