@@ -1,8 +1,10 @@
+import uuid
 import os.path
 import requests
 import urllib.parse
 import pandas as pd
 import posixpath
+import panavatar
 
 import django.contrib.auth.models as auth_models
 import django.contrib.auth.admin as auth_admin
@@ -15,6 +17,7 @@ from django.contrib.sites.models import Site
 from django.contrib.sites.admin import SiteAdmin
 from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
+from django.core.files.base import ContentFile
 
 import allauth.socialaccount.admin as allauth
 
@@ -102,6 +105,13 @@ class IndicatorAdmin(admin.ModelAdmin):
 
 class TopicAdmin(admin.ModelAdmin):
     raw_id_fields = ('author', 'indicators')
+
+    def save_model(self, request, obj, form, change):
+        if not obj.logo:
+            width, height = 256, 200
+            content = ContentFile(panavatar.get_svg(width, height))
+            obj.logo.save('%s.svg' % uuid.uuid4(), content)
+        obj.save()
 
 
 site = AdminSite()

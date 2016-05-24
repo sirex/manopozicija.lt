@@ -34,6 +34,7 @@ panavatar==0.3.2
 pandas==0.18.1
 pbr==1.9.1                # via mock
 pep8==1.7.0               # via flake8
+pillow==3.2.0
 psycopg2==2.6.1
 py==1.4.31                # via pytest
 pyflakes==1.0.0           # via flake8

@@ -19,6 +19,7 @@ exportrecipe
 beautifulsoup4
 pyyaml
 panavatar
+pillow
 
 # key performance indicators
 pandas

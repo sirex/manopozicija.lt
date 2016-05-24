@@ -1,8 +1,6 @@
 import requests
-import datetime
-import panavatar
 
-from django.http import HttpResponse, JsonResponse
+from django.http import JsonResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
@@ -10,7 +8,6 @@ from django.utils.translation import ugettext
 from django.contrib import messages
 from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
-from django.views.decorators.http import last_modified
 
 from seimas.website.helpers import formrenderer
 from seimas.website.forms import NewVotingForm, TopicForm, QuoteForm
@@ -148,10 +145,3 @@ def topic_form(request):
     return render(request, 'website/topic_form.html', {
         'form': formrenderer.render(request, form, title=ugettext('Nauja tema'), submit=ugettext('Pridėti')),
     })
-
-
-@last_modified(lambda request, topic_id: datetime.datetime.min)
-def topic_logo_svg(request, topic_id):
-    width, height = 256, 200
-    parameters = {'topic_id': topic_id}
-    return HttpResponse(panavatar.get_svg(width, height, parameters), content_type="image/svg+xml")
