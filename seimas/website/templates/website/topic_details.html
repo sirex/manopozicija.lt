@@ -19,7 +19,9 @@
 
 <h1>{{ topic.title }}</h1>
 
-<div id="chart"></div>
+{% if has_indicators %}
+<div id="chart" data-kpi-url="{% url 'topic-kpi' topic.slug %}"></div>
+{% endif %}
 
 <h2>{% trans "Seimas" %}</h2>
 

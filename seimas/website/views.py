@@ -22,7 +22,7 @@ from seimas.indicators import get_indicator_data
 
 def topic_list(request):
     return render(request, 'index.html', {
-        'topics': Topic.objects.all(),
+        'topics': Topic.objects.order_by('-modified'),
     })
 
 
@@ -45,6 +45,7 @@ def topic_details(request, slug):
         'supporters_count': supporters.count(),
         'critics': list(critics[:10]),
         'critics_count': critics.count(),
+        'has_indicators': topic.indicators.count() > 0,
     })
 
 
