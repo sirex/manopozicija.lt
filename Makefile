@@ -10,7 +10,7 @@ help:
 
 ubuntu:
 	sudo apt-get update
-	sudo apt-get -y build-dep python-psycopg2
+	sudo apt-get -y build-dep python-psycopg2 python-imaging
 	sudo apt-get -y install build-essential python-dev exuberant-ctags
 
 run: bin/django ; bin/django runserver
