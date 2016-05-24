@@ -8,9 +8,12 @@ from django.contrib.auth.decorators import login_required
 import seimas.accounts.helpers.allauth as allauth_helpers
 import seimas.accounts.forms as accounts_forms
 from seimas.website.helpers import formrenderer
-
+#from allauth.account.auth_backends.AuthenticationBackend import AuthenticationBackend
 
 def login(request):
+    form1 = accounts_forms.LoginForm(request.POST)
+    if form1.is_valid():        
+          print (form1.cleaned_data['username'])
     openid_providers, form = allauth_helpers.get_openid_providers(request)
     if form:
         return allauth_helpers.openid_login(request, form)
@@ -18,6 +21,7 @@ def login(request):
         return render(request, 'accounts/login.html', {
             'auth_providers': allauth_helpers.get_auth_providers(request),
             'openid_providers': openid_providers,
+            'form': accounts_forms.LoginForm,
         })
 
 
@@ -39,3 +43,7 @@ def settings(request):
     return render(request, 'accounts/settings.html', {
         'form': formrenderer.render(request, form, title=ugettext("Profilio nustatymai"), submit=ugettext("Saugoti")),
     })
+
+
+    
+        

@@ -35,6 +35,13 @@
       </form>
     </div>
     {% endfor %}
+   <div class="auth-providers">
+      <form method='post' action="/accounts/login/">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type='submit' value='Login'>
+      </form>
+   </div>
   </div>
 
   <div class="col-md-8">

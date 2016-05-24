@@ -12,3 +12,10 @@ class SettingsForm(forms.ModelForm):
                 "Bus naudojamas komunikacijai. Jei pageidaujate negauti jokių laiškų, palikite šį lauką tuščią."
             ),
         }
+
+
+class LoginForm(forms.ModelForm):
+    class Meta:
+        model = auth_models.User
+        fields = ('username', 'password')
+        
