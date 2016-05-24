@@ -1,5 +1,4 @@
 from django.core.urlresolvers import reverse
-from django.utils.translation import ugettext_lazy as _
 
 
 class Item(object):
@@ -14,7 +13,5 @@ class Item(object):
 
 
 menus = {
-    'topmenu': [
-        # Item(_('Temos'), 'topic-list'),
-    ],
+    'topmenu': [],
 }
