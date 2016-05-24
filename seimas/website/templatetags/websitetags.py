@@ -26,7 +26,7 @@ def topmenu(context):
             with tag('li', role='presentation', klass=classes):
                 with tag('a', href=item.url()):
                     text(item.label)
-    return doc.getvalue()
+    return mark_safe(doc.getvalue())
 
 
 @register.simple_tag(name='messages', takes_context=True)
@@ -43,7 +43,7 @@ def messages_tag(context):
         level = level_mappig.get(message.level, 'info')
         with tag('div', klass='alert alert-%s' % level, role='alert'):
             text(str(message))
-    return doc.getvalue()
+    return mark_safe(doc.getvalue())
 
 
 @register.filter(name='markdown')

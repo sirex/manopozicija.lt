@@ -1,5 +1,6 @@
 from django import template
 from django.core.exceptions import ImproperlyConfigured
+from django.utils.safestring import mark_safe
 
 from allauth.socialaccount import providers
 
@@ -15,7 +16,7 @@ def username(user):
     elif user.email and '@' in user.email:
         return user.email.split('@')[0]
     else:
-        return 'User #%d' % user.pk
+        return mark_safe('User #%d' % user.pk)
 
 
 @register.simple_tag(takes_context=True)
@@ -27,4 +28,4 @@ def providers_media_js(context):
             result.append(p.media_js(request))
         except ImproperlyConfigured:
             pass
-    return '\n'.join(result)
+    return mark_safe('\n'.join(result))
