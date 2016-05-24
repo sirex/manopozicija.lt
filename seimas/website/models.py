@@ -40,7 +40,7 @@ class Topic(models.Model):
     slug = autoslug.AutoSlugField(populate_from='title')
     title = models.CharField(_("Pavadinimas"), max_length=255)
     description = models.TextField(_("Aprašymas"), blank=True)
-    indicators = models.ManyToManyField(Indicator)
+    indicators = models.ManyToManyField(Indicator, blank=True)
     logo = models.ImageField(upload_to='topics/%Y/%m/%d/', blank=True)
 
     def __str__(self):
