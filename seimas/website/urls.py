@@ -14,12 +14,14 @@ urlpatterns = [
     url(r'^temos/(%s)/add-voting/$' % slug, views.voting_form, name='add-voting'),
     url(r'^temos/(%s)/add-news/$' % slug, views.news_form, name='add-news'),
     url(r'^topic/(%s)/kpi/$' % slug, views.topic_kpi, name='topic-kpi'),
+    url(r'^topic-logo/(?P<topic_id>\d+).svg$', views.topic_logo_svg, name='topic-logo'),
 ]
 
 urlpatterns += [
     url(r'^accounts/', include('seimas.accounts.urls')),
     url(r'^admin/', include(admin.site.urls)),
 ]
+
 
 if settings.DEBUG:
     import debug_toolbar

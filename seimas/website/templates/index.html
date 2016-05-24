@@ -1,18 +1,25 @@
 {% extends "_base.html" %}
 
 
-{% block body_class %}landing-page{% endblock %}
-
-
 {% block content %}
-<div class="main-title">
-  <h1><a href="{% url 'index' %}">ManoPozicija.lt</a></h1>
-  <h2>Politika suprantamai</h2>
+<div class="jumbotron">
+  <h1>ManoPozicija.lt</h1>
+  <p>Politika suprantamai.</p>
 </div>
 
-<div class="main-topics">
+<hr/>
+
+<div class="row">
   {% for topic in topics %}
-  <a class="col-sm-3" href="{% url 'topic-details' topic.slug %}"><span>{{ topic.title }}</span></a>
+  <div class="col-sm-6 col-md-3">
+    <div class="thumbnail">
+      <img src="{% url 'topic-logo' topic.pk %}" alt="{{ topic.title }}">
+      <div class="caption">
+        <h3 class="text-center"><a href="{% url 'topic-details' topic.slug %}">{{ topic.title }}</a></h3>
+        <p>{# topic description #}</p>
+      </div>
+    </div>
+  </div>
   {% endfor %}
 </div>
 {% endblock %}

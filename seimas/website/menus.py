@@ -15,6 +15,6 @@ class Item(object):
 
 menus = {
     'topmenu': [
-        Item(_('Temos'), 'topic-list'),
+        # Item(_('Temos'), 'topic-list'),
     ],
 }

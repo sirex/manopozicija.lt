@@ -18,6 +18,7 @@ docutils
 exportrecipe
 beautifulsoup4
 pyyaml
+panavatar
 
 # key performance indicators
 pandas
