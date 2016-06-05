@@ -11,14 +11,14 @@ from seimas.website.factories import TopicFactory
 class ViewTests(WebTest):
 
     def test_topic_list(self):
-        Topic.objects.create(title='Balsavimas internetu')
+        TopicFactory(title='Balsavimas internetu')
 
         resp = self.app.get('/')
         self.assertEqual(resp.status_int, 200)
         resp.mustcontain('Balsavimas internetu')
 
     def test_topic_details(self):
-        topic = Topic.objects.create(title='Balsavimas internetu')
+        topic = TopicFactory(title='Balsavimas internetu')
         voting = Voting.objects.create(title='Balsavimo internetu koncepcijos patvirtinimas')
         Position.objects.create(topic=topic, content_object=voting, weight=1)
 

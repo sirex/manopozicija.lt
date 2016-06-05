@@ -108,7 +108,7 @@ class TopicAdmin(admin.ModelAdmin):
 
     def save_model(self, request, obj, form, change):
         if not obj.logo:
-            width, height = 256, 200
+            width, height = settings.MANOPOZICIJA_TOPIC_LOGO_SIZE
             content = ContentFile(panavatar.get_svg(width, height))
             obj.logo.save('%s.svg' % uuid.uuid4(), content)
         obj.save()

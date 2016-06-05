@@ -1,5 +1,8 @@
 import exportrecipe
 import pathlib
+import collections
+
+Size = collections.namedtuple('Size', ['width', 'height'])
 
 PROJECT_DIR = pathlib.Path(__file__).parents[2]
 
@@ -171,6 +174,8 @@ INSTALLED_APPS += (
     'seimas.accounts',
     'seimas.prototype',
 )
+
+MANOPOZICIJA_TOPIC_LOGO_SIZE = Size(256, 200)
 
 
 # django-allauth

@@ -1,7 +1,7 @@
 import factory
 
 from django.conf import settings
-from factory.django import DjangoModelFactory
+from factory.django import DjangoModelFactory, ImageField
 
 from allauth.account.models import EmailAddress
 
@@ -44,9 +44,11 @@ class TopicFactory(DjangoModelFactory):
     author = factory.SubFactory(UserFactory, username='vardenis')
     title = 'Balsavimas internetu'
     description = ''
+    logo = ImageField(filename='logo.png', **settings.MANOPOZICIJA_TOPIC_LOGO_SIZE._asdict())
 
     class Meta:
         model = Topic
+        django_get_or_create = ('title',)
 
     @factory.post_generation
     def indicators(self, create, extracted, **kwargs):
