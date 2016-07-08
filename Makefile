@@ -17,8 +17,8 @@ run: bin/django ; bin/django runserver
 
 tags: bin/django ; bin/ctags -v --tag-relative
 
-
 buildout.cfg: ; ./scripts/genconfig.py config/env/development.cfg
+
 
 bin/pip:
 	virtualenv --no-site-packages --python=python3.5 .
