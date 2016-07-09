@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='manoseimas-pylab-lt',
+    name='manopozicija-lt',
     version='0.1a1',
     license='AGPLv3+',
     packages=find_packages(),
@@ -13,7 +13,7 @@ setup(
     ],
     entry_points={
         'console_scripts': [
-            'prototype = seimas.prototype.main:main',
+            'prototype = manopozicija.prototype.main:main',
         ],
     },
 )

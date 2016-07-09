@@ -32,7 +32,7 @@ def get_paths(paths):
                 path = path[:path.index(':')]
             yield path
     else:
-        yield 'seimas'
+        yield 'manopozicija'
 
 
 def is_coverage_enabled(args):
@@ -44,9 +44,9 @@ def is_coverage_enabled(args):
 
 def run_tests(args):
     if args.fast:
-        settings = 'seimas.settings.fasttesting'
+        settings = 'manopozicija.settings.fasttesting'
     else:
-        settings = 'seimas.settings.testing'
+        settings = 'manopozicija.settings.testing'
 
     cmd = [
         'bin/django', 'test',
@@ -107,7 +107,7 @@ def main(args=None):
     parser.add_argument('paths', nargs='+', help='paths to test files')
     parser.add_argument(
         '--fast', action='store_true', default=False,
-        help='run tests with seimas.settings.fasttests settings',
+        help='run tests with manopozicija.settings.fasttests settings',
     )
     parser.add_argument(
         '--profile', action='store_true', default=False,

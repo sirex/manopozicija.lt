@@ -37,7 +37,7 @@ bin/django: \
   var/www/media
 	bin/buildout && touch -c bin/django
 
-test: bin/django ; bin/py.test -vvra --tb=native --flake8 --doctest-modules --cov seimas --cov-report term-missing seimas
+test: bin/django ; bin/py.test -vvra --tb=native --flake8 --doctest-modules --cov manopozicija --cov-report term-missing manopozicija
 
 cleanpyc: ; find -iname '*.pyc' -delete
 

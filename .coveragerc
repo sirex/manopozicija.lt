@@ -1,6 +1,6 @@
 [run]
 omit =
-    pylab/settings/*
+    manopozicija/settings/*
     */migrations/*
     */tests/*
     */__init__.py
