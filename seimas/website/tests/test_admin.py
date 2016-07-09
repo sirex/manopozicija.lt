@@ -1,5 +1,6 @@
 from django_webtest import WebTest
 
+from django.core.urlresolvers import reverse
 from django.contrib.auth.models import User
 
 from seimas.website.models import Voting
@@ -12,7 +13,7 @@ class ImportVotesTests(WebTest):
 
         self.assertEqual(Voting.objects.count(), 0)
 
-        resp = self.app.get('/admin/website/voting/add/', user='admin')
+        resp = self.app.get(reverse('admin:website_voting_add'), user='admin')
         resp.form['title'] = 'Balsavimo internetu koncepcijos patvirtinimas'
         resp.form['link'] = 'http://www3.lrs.lt/pls/inter/w5_sale.bals?p_bals_id=18573'
         resp = resp.form.submit()

@@ -1,8 +1,8 @@
 from django.conf import settings
 from django.conf.urls import url, include
 from django.conf.urls.static import static
+from django.contrib import admin
 
-from seimas.website import admin
 from seimas.website import views
 
 slug = r'?P<slug>[a-z0-9-]+'
@@ -18,7 +18,7 @@ urlpatterns = [
 
 urlpatterns += [
     url(r'^accounts/', include('allauth.urls')),
-    url(r'^admin/', include(admin.site.urls)),
+    url(r'^valdymas/', include(admin.site.urls)),
 ]
 
 
