@@ -171,7 +171,6 @@ SERVER_ALIASES = (
 
 INSTALLED_APPS += (
     'manopozicija.website',
-    'manopozicija.prototype',
 )
 
 MANOPOZICIJA_TOPIC_LOGO_SIZE = Size(256, 200)
