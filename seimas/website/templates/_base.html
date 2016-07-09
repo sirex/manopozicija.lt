@@ -2,7 +2,6 @@
 {% load trans from i18n %}
 {% load compress from compress %}
 {% load topmenu from websitetags %}
-{% load username from accountstags %}
 
 <!DOCTYPE html>
 <html>
@@ -14,7 +13,6 @@
     <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap.css" %}">
     <link rel="stylesheet" type="text/css" href="{% static "css/bootstrap-theme.css" %}">
     <link rel="stylesheet" type="text/x-scss" href="{% static "css/main.scss" %}">
-    <link rel="stylesheet" type="text/x-scss" href="{% static "css/accounts.scss" %}">
     {% endcompress %}
     {% block css %}{% endblock %}
   </head>
@@ -28,13 +26,13 @@
         <div class="collapse navbar-collapse">
           <ul class="nav navbar-nav pull-right">
             {% if request.user.is_authenticated %}
-            <li><a href="{% url 'accounts_settings' %}">
+            <li><a href="{% url 'account_change_password' %}">
               <span class="glyphicon glyphicon-user" aria-hidden="true"></span>
-              <strong>{% username request.user %}</strong>
+              <strong>{{ request.user }}</strong>
             </a></li>
-            <li><a href="{% url 'accounts_logout' %}">{% trans "Atsijungti" %}</a></li>
+            <li><a href="{% url 'account_logout' %}">{% trans "Atsijungti" %}</a></li>
             {% else %}
-            <li><a href="{% url 'accounts_login' %}">{% trans "Prisijungti" %}</a></li>
+            <li><a href="{% url 'account_login' %}">{% trans "Prisijungti" %}</a></li>
             {% endif %}
           </ul>
           {% topmenu %}

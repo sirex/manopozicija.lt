@@ -19,4 +19,40 @@ LOGGING['root'] = {
     'handlers': ['stdout'],
 }
 
-SOCIALACCOUNT_PROVIDERS['persona']['AUDIENCE'] = 'meras.lt'
+INSTALLED_APPS += (
+    'allauth.socialaccount.providers.google',
+    'allauth.socialaccount.providers.facebook',
+    'allauth.socialaccount.providers.linkedin',
+    'allauth.socialaccount.providers.twitter',
+    'allauth.socialaccount.providers.github',
+)
+
+SOCIALACCOUNT_PROVIDERS = {
+    'openid': {
+        'SERVERS': [
+            dict(id='google', name='Google', openid_url='https://www.google.com/accounts/o8/id'),
+            dict(id='yahoo', name='Yahoo', openid_url='http://me.yahoo.com'),
+        ],
+    },
+    'google': {
+        'SCOPE': ['profile', 'email'],
+        'AUTH_PARAMS': {
+            'access_type': 'online',
+        }
+    },
+    'facebook': {
+        'SCOPE': ['email', 'public_profile'],
+        'METHOD': 'oauth2',
+        'VERIFIED_EMAIL': True,
+        'VERSION': 'v2.3',
+    },
+    'linkedin': {
+        'SCOPE': ['r_emailaddress'],
+        'PROFILE_FIELDS': [
+            'id',
+            'first-name',
+            'last-name',
+            'email-address',
+        ],
+    },
+}

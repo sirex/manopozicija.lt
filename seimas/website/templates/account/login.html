@@ -1,0 +1,48 @@
+{% extends "account/base.html" %}
+
+{% load i18n %}
+{% load bootstrap %}
+{% load account socialaccount %}
+
+{% block head_title %}{% trans "Sign In" %}{% endblock %}
+
+
+{% block content %}
+
+<h1>{% trans "Prisijunkite prie svetainės" %}</h1>
+
+
+<div class="row">
+  <div class="col-md-4">
+    <p>{% trans "Prisijunkite su slaptažodžiu." %}</p>
+    <p>
+      {% blocktrans %} Jei neturite paskyros šioje svetainėje,
+      <a href="{{ signup_url }}">registruokitės{% endblocktrans %}</a>.
+    </p>
+    <form class="login" method="POST" action="{% url 'account_login' %}">
+      {% csrf_token %}
+      {{ form|bootstrap }}
+      {% if redirect_field_value %}
+      <input type="hidden" name="{{ redirect_field_name }}" value="{{ redirect_field_value }}" />
+      {% endif %}
+      <div class="form-actions">
+        <button class="btn btn-primary" type="submit">{% trans "Sign In" %}</button>
+        <a class="btn" href="{% url 'account_reset_password' %}">{% trans "Forgot Password?" %}</a>
+      </div>
+    </form>
+  </div>
+  <div class="col-md-8">
+    {% get_providers as socialaccount_providers %}
+    {% if socialaccount_providers %}
+      <p>{% blocktrans %}Prisijunkite naudodamiesi viena iš socialinių paskyrų:{% endblocktrans %}</p>
+      <div class="socialaccount_ballot">
+        <ul class="socialaccount_providers">
+          {% include "socialaccount/snippets/provider_list.html" with process="login" %}
+        </ul>
+      </div>
+      {% include "socialaccount/snippets/login_extra.html" %}
+    {% endif %}
+  </div>
+</div>
+
+{% endblock %}

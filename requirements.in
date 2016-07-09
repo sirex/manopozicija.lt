@@ -7,6 +7,7 @@ django-extensions
 django-webtest
 django-autoslug
 django-allauth
+django-bootstrap-form
 factory_boy
 fake-factory
 unidecode

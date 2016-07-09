@@ -171,7 +171,6 @@ SERVER_ALIASES = (
 
 INSTALLED_APPS += (
     'seimas.website',
-    'seimas.accounts',
     'seimas.prototype',
 )
 
@@ -183,7 +182,10 @@ MANOPOZICIJA_TOPIC_LOGO_SIZE = Size(256, 200)
 
 SITE_ID = 1
 LOGIN_REDIRECT_URL = '/'
+ACCOUNT_USERNAME_REQUIRED = False
+ACCOUNT_EMAIL_REQUIRED = True
 ACCOUNT_EMAIL_VERIFICATION = 'none'
+ACCOUNT_AUTHENTICATION_METHOD = 'email'
 
 AUTHENTICATION_BACKENDS = (
     'allauth.account.auth_backends.AuthenticationBackend',
@@ -199,12 +201,6 @@ INSTALLED_APPS += (
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.openid',
-    'allauth.socialaccount.providers.persona',
-    'allauth.socialaccount.providers.google',
-    'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.linkedin',
-    'allauth.socialaccount.providers.twitter',
-    'allauth.socialaccount.providers.github',
 )
 
 SORTED_AUTH_PROVIDERS = (
@@ -217,40 +213,10 @@ SORTED_AUTH_PROVIDERS = (
     # ('github', STATIC_URL + 'auth/github.png'),
 )
 
-SORTED_OPENID_PROVIDERS = (
-    dict(name='openid', url='', pattern=''),
-    dict(name='lp', url='https://launchpad.net/~', pattern='https://launchpad.net/~%s'),
-)
 
-SOCIALACCOUNT_PROVIDERS = {
-    'openid': {
-        'SERVERS': [
-            dict(id='google', name='Google', openid_url='https://www.google.com/accounts/o8/id'),
-            dict(id='yahoo', name='Yahoo', openid_url='http://me.yahoo.com'),
-        ],
-    },
-    'persona': {
-        'AUDIENCE': '127.0.0.1',
-    },
-    'google': {
-        'SCOPE': ['profile', 'email'],
-        'AUTH_PARAMS': {
-            'access_type': 'online',
-        }
-    },
-    'facebook': {
-        'SCOPE': ['email', 'public_profile'],
-        'METHOD': 'oauth2',
-        'VERIFIED_EMAIL': True,
-        'VERSION': 'v2.3',
-    },
-    'linkedin': {
-        'SCOPE': ['r_emailaddress'],
-        'PROFILE_FIELDS': [
-            'id',
-            'first-name',
-            'last-name',
-            'email-address',
-        ],
-    },
-}
+# django-bootstrap-form
+# https://github.com/tzangms/django-bootstrap-form
+
+INSTALLED_APPS += (
+    'bootstrapform',
+)
