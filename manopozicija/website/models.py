@@ -84,71 +84,256 @@ class Curator(models.Model):
 
 class CuratorQueueItem(models.Model):
     topic = models.ForeignKey('Topic')
+    approved = models.DateTimeField(null=True, blank=True)
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
+    class Meta:
+        unique_together = ('topic', 'content_type', 'object_id')
+
 
 class TopicCurator(models.Model):
+    """Topic curators
+
+    Attributes
+    ----------
+
+    approved : bool
+        Time when this topic curator was approved by others.
+
+    queue : CuratorQueueItem
+        First topic curators have to wait in queue while other curators
+        approves his request to become new topic curator.
+
+    """
     created = models.DateTimeField(auto_now_add=True)
-    topic = models.ForeignKey('Topic')
+    approved = models.DateTimeField(null=True, blank=True)
+    topic = models.ForeignKey(Topic)
     curator = models.ForeignKey(Curator)
-    approved = models.BooleanField(default=False)  # approved by topic curators
     queue = GenericRelation(CuratorQueueItem)
 
 
 class CuratorApproval(models.Model):
+    """Votes for new curators and topic timeline suggestions
+
+    Each curator can vote if new curator or suggested new item for the
+    timeline should be approved.
+
+    Attributes
+    ----------
+
+    created : datetime.datetime
+        When vote has been given.
+
+    curator : Curator
+        Who voted.
+
+    item : CuratorQueueItem
+        An item voted for.
+
+    vote : int
+        Positive or negative integer as vote value.
+
+    """
     created = models.DateTimeField(auto_now_add=True)
     curator = models.ForeignKey(Curator)
     item = models.ForeignKey(CuratorQueueItem)
-    value = models.SmallIntegerField()
+    vote = models.SmallIntegerField()
 
 
-class ActorPosition(models.Model):
+class Timeline(models.Model):
+    """Objects shown on topic's timeline.
+
+    Attributes
+    ----------
+
+    body : Body
+        Government body where this object can be shown.
+
+    topic : Topic
+        Timeline topic.
+
+    actor : Actor
+        Actor of the content object if object has an actor.
+
+    queue : CuratorQueueItem
+        Before showing to the public, timeline objects have to wait in
+        queue to be approved by topic curators.
+
+    approved : bool
+        Indicates if this timeline object was approved by topic
+        curators.
+
+    content_object : Event | Quote
+        A timeline object.
+
+    timestamp : datetime.datetime
+        Time of object appearance in the timeline.
+
+    position : float
+        Actor's position of a quote.
+
+    """
     body = models.ForeignKey(Body)
     topic = models.ForeignKey('Topic')
     actor = models.ForeignKey(Actor, null=True, blank=True)
-    value = models.SmallIntegerField()
+    position = models.FloatField()
     queue = GenericRelation(CuratorQueueItem)
-    approved = models.BooleanField(default=False)  # approved by topic curators
+    approved = models.BooleanField(default=False)
+    timestamp = models.DateTimeField()
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
-    # denormalized fields
-    timestamp = models.DateTimeField()
-
 
 class UserPosition(models.Model):
+    """User position on a topic position.
+
+    Each user can express their own position to a Quote or Event.
+
+    Attributes
+    ----------
+
+    item : Timeline
+        Timeline item.
+
+    position : int
+        Value usually is -1, 0 or 1.
+
+    """
     user = models.ForeignKey(User)
-    actor_position = models.ForeignKey(ActorPosition)
-    value = models.SmallIntegerField()
+    item = models.ForeignKey(Timeline)
+    position = models.SmallIntegerField(default=0)
 
 
-class Source(models.Model):
-    actor = models.ForeignKey(Actor)
-    actor_title = models.CharField(max_length=64, blank=True)
+class Reference(models.Model):
+    """Topic positions referring to specific events.
+
+    One event can refer to other events.
+
+    For example, first comes the bill, then a voting. Voting event,
+    can refer to one or more bills voted for.
+
+    Also a quote can directly refer to a specific event (for example
+    a document).
+
+    Attributes
+    ----------
+
+    event : Event
+        Event referred to.
+
+    content_object : Event | Quote
+        An object referring to the event.
+
+    """
+    event = models.ForeignKey('Event')
+
+    content_type = models.ForeignKey(ContentType)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+
+class Event(models.Model):
+    """An event in a topic.
+
+    Event should indicate an action taken by a government body that
+    addresses a topic in question.
+
+    Event can be a new bill, a voting or any other action.
+
+    Attributes
+    ----------
+
+    user : User
+        User who suggested this event.
+
+    type : int
+        Event type. Usually event type is inferred from source link.
+
+    title : str
+        Short title describing event in a human readable form.
+        Bureaucratic formulations should be avoided.
+
+    source_title : str
+        If source title is left empty and source link is a URL, then
+        source title will automatically be filled with the domain of the
+        URL.
+
+        But this can be overridden by specifying different source title.
+
+    source_link : str
+        Can be a URL or in rare cases a textual description pointing to
+        a book, paper, journal, etc. URL should be always preferred if
+        available.
+
+    timestamp : datetime.datetime
+        Time, when this event happened.
+
+    timeline : Timeline
+        Events are shown in the topic timeline.
+
+    position : float
+        Usually events does not have a position, but actors have a
+        position about an event expressed via roles.
+
+        So event position is just an outcome of actors positions that
+        have a voting role in this event. If there is no voting for this
+        event, it's position value stays zero.
+
+    group : Event
+        If set, tells that this event is part a group containing
+        multiple events combined into one event.
+
+        If event is in a group, it is not shown in the main topic event
+        feed.
+
+    """
+    VOTING = 1
+    DOCUMENT = 1
+    TYPE_CHOICES = (
+        (VOTING, _("Balsavimas")),
+        (DOCUMENT, _("Teisės aktas")),
+    )
+
+    user = models.ForeignKey(User)
+    type = models.PositiveSmallIntegerField(choices=TYPE_CHOICES)
+    title = models.CharField(max_length=255)
     source_title = models.CharField(_("Šaltinio antraštė"), max_length=255, blank=True)
     source_link = models.CharField(_("Šaltinio nuoroda"), max_length=255, blank=True)
     timestamp = models.DateTimeField(_("Data, laikas"))
-
-
-class Quote(models.Model):
-    user = models.ForeignKey(User)  # User who suggested this quote
-    source = models.ForeignKey(Source)
-    event_link = models.URLField(_("Nuoroda"), blank=True)
-    quote = models.TextField(_("Citata"))
-
-
-class Argument(models.Model):
-    quote = models.ForeignKey(Quote)
-    title = models.CharField(max_length=255)
-    position = GenericRelation(ActorPosition, related_query_name='argument')
+    timeline = GenericRelation(Timeline, related_query_name='event')
+    position = models.FloatField()
+    references = GenericForeignKey(Reference)
+    group = models.ForeignKey('self', null=True, blank=True)
 
 
 class Role(models.Model):
+    """Actor's role and position in an event.
+
+    Events can have many actors involved in different ways. For example
+    if event is a voting, then there can be many actors who voted whose
+    role would be a voter.
+
+    If event is a document, then there can be actors who proposed or
+    created this document.
+
+    Attributes
+    ----------
+
+    event : Event
+        Event in which actor has a role.
+
+    role : int
+        What role did the actor had in an event.
+
+    position : float
+        Position of an actor about an event.
+
+    """
     VOTED = 1  # an actor voted in a voting event
     PROPOSED = 2  # an actor proposed a document
     ROLE_CHOICES = (
@@ -156,35 +341,111 @@ class Role(models.Model):
         (PROPOSED, _("Teikė")),
     )
 
-    role = models.SmallIntegerField(choices=ROLE_CHOICES)
     actor = models.ForeignKey(Actor)
-    position = GenericRelation(ActorPosition, related_query_name='role')
-
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
+    event = models.ForeignKey(Event)
+    role = models.SmallIntegerField(choices=ROLE_CHOICES)
+    position = models.FloatField()
 
 
-class Document(models.Model):
-    title = models.CharField(max_length=255)
-    source_link = models.CharField(_("Šaltinio nuoroda"), max_length=255, blank=True)
-    timestamp = models.DateTimeField(_("Data, laikas"))
-    position = GenericRelation(ActorPosition, related_query_name='document')
-    roles = GenericRelation(Role, related_query_name='document')
+class Source(models.Model):
+    """Source of a quote.
 
+    Attributes
+    ----------
 
-class Event(models.Model):
-    VOTING = 1
-    TYPE_CHOICES = (
-        (VOTING, _("Balsavimas")),
-    )
+    actor : Actor
+        An actor who is the author of a quote from this source.
 
-    user = models.ForeignKey(User)  # User who suggested this event
-    type = models.PositiveSmallIntegerField(choices=TYPE_CHOICES)
-    title = models.CharField(max_length=255)
+    actor_title : str
+        A domain of an actor in this source. One actor can work in
+        different domains and can express his opinion as and expert of
+        different domains.
+
+        If actor is a group, then actor title can be left blank, it will
+        be taken from Actor.title.
+
+    source_title : str
+        If source title is left empty and source link is a URL, then
+        source title will automatically be filled with the domain of the
+        URL.
+
+        But this can be overridden by specifying different source title.
+
+    source_link : str
+        Can be a URL or in rare cases a textual description pointing to
+        a book, paper, journal, etc. URL should be always preferred if
+        available.
+
+    timestamp : datetime.datetime
+        Time, when this source was published.
+
+    position : float
+        Average position calculated from assigned arguments.
+
+    """
+    actor = models.ForeignKey(Actor)
+    actor_title = models.CharField(max_length=64, blank=True)
     source_title = models.CharField(_("Šaltinio antraštė"), max_length=255, blank=True)
     source_link = models.CharField(_("Šaltinio nuoroda"), max_length=255, blank=True)
     timestamp = models.DateTimeField(_("Data, laikas"))
-    documents = models.ManyToManyField('Document')
-    position = GenericRelation(ActorPosition, related_query_name='event')
-    roles = GenericRelation(Role, related_query_name='event')
+    position = models.FloatField()
+
+
+class Quote(models.Model):
+    """A quote from an actor posted in a public source.
+
+    Attributes
+    ----------
+
+    user : User
+        A user who suggested this quote.
+
+    source : Source
+        A public source, where this comment was published. If not
+        specified it means that source is unknown. Usually unknown
+        source should be always specified unless source is really
+        unknown
+
+    reference_link : str
+        Should be same link as in Event.source_link and if matching
+        Event.source_link is found, Reference instance will be created
+        pointing this quote to matching Event.
+
+    """
+    user = models.ForeignKey(User)  # User who suggested this quote
+    source = models.ForeignKey(Source, null=True, blank=True)
+    reference_link = models.URLField(_("Nuoroda"), blank=True)  # should match
+    quote = models.TextField(_("Citata"))
+    references = GenericForeignKey(Reference)
+
+
+class Argument(models.Model):
+    """Short tag uniquely identifying an argument.
+
+    Multiple quotes can refer to the same argument, but in different
+    words or can come from different actors and different sources.
+    Tagging quotes with arguments helps to identify main ideas behind
+    that quote and helps to better organize quotes.
+
+    Attributes
+    ----------
+
+    counterargument : bool
+        Event if positive attribute value indicates, that an argument is
+        positive about a topic, but quote can criticise it's
+        positiveness making quote itself negative, while general
+        argument stays positive.
+
+    position : Timeline
+        Each quote argument relates to a topic, it can be positive or
+        negative. Positive argument indicates positive aspect of a
+        topic.
+
+        Final position value can be inverted if counterargument is True.
+
+    """
+    topic = models.ForeignKey(Topic)
+    quote = models.ForeignKey(Quote)
+    title = models.CharField(max_length=255)
+    counterargument = models.BooleanField(default=False)
+    position = models.SmallIntegerField()

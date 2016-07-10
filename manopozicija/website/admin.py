@@ -1,6 +1,5 @@
 import uuid
 import os.path
-import requests
 import pandas as pd
 import posixpath
 import panavatar
@@ -11,30 +10,7 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.core.files.base import ContentFile
 
-from manopozicija.website.models import Indicator, Topic, Position, Voting, Vote
-
-from manopozicija.website.parsers.votings import parse_votes
-from manopozicija.website.services.voting import update_voting
-from manopozicija.website.services.voting import import_votes
-
-
-class VotingAdmin(admin.ModelAdmin):
-
-    def save_model(self, request, obj, form, change):
-        data = None
-
-        if not obj.author:
-            obj.author = request.user
-
-        if not obj.vid:
-            resp = requests.get(obj.link)
-            data = parse_votes(obj.link, resp.content)
-            update_voting(obj, data)
-
-        obj.save()
-
-        if data:
-            import_votes(obj, data['table'])
+from manopozicija.website.models import Indicator, Topic, Timeline
 
 
 class IndicatorAdmin(admin.ModelAdmin):
@@ -81,6 +57,4 @@ class TopicAdmin(admin.ModelAdmin):
 
 admin.site.register(Indicator, IndicatorAdmin)
 admin.site.register(Topic, TopicAdmin)
-admin.site.register(Position)
-admin.site.register(Voting, VotingAdmin)
-admin.site.register(Vote)
+admin.site.register(Timeline)

@@ -1,10 +1,10 @@
-from manopozicija.website.models import Voting
-from manopozicija.website.models import Vote
-from manopozicija.website.models import Person
-from manopozicija.website.models import Position
+# from manopozicija.website.models import Voting
+# from manopozicija.website.models import Vote
+from manopozicija.website.models import Actor
+from manopozicija.website.models import Timeline
 
 
-def update_voting(voting: Voting, data: dict):
+def update_voting(voting, data: dict):
     """Update voting from data returned by manopozicija.website.parsers.parse_votes."""
     voting.datetime = data['datetime']
     voting.vid = data['id']
@@ -16,7 +16,7 @@ def update_voting(voting: Voting, data: dict):
     voting.link = data['url']
 
 
-def import_votes(voting: Voting, votes: list):
+def import_votes(voting, votes: list):
     """Import votes from data returned by manopozicija.website.parsers.parse_votes."""
     voting.vote_set.all().delete()
 

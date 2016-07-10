@@ -4,7 +4,7 @@ import django.test
 
 from manopozicija.website.parsers.votings import parse_votes
 from manopozicija.website.services.voting import import_votes, update_voting, create_vote_positions
-from manopozicija.website.models import Voting, Vote, Person, Topic, Position
+from manopozicija.website.models import Actor, Topic, Timeline
 
 
 class ImportVotesTests(django.test.TestCase):

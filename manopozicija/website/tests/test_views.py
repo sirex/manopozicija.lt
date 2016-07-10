@@ -3,8 +3,8 @@ from django_webtest import WebTest
 from django.contrib.auth.models import User
 
 from manopozicija.website.models import Topic
-from manopozicija.website.models import Voting
-from manopozicija.website.models import Position
+# from manopozicija.website.models import Voting
+from manopozicija.website.models import Timeline
 from manopozicija.website.factories import TopicFactory
 
 
