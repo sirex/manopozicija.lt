@@ -116,12 +116,12 @@ class Actor(models.Model):
     body = models.ForeignKey(Body, blank=True, null=True)  # required only for group
 
     def __str__(self):
-        return ' '.join(self.first_name, self.last_name)
+        return ' '.join([self.first_name, self.last_name])
 
 
 class Member(models.Model):
     """Actor's membership in a group"""
-    actor = models.ForeignKey(Actor)
+    actor = models.ForeignKey(Actor, related_name='+')
     group = models.ForeignKey(Actor)
     since = models.DateTimeField()
     until = models.DateTimeField()
@@ -180,7 +180,7 @@ class TopicCurator(models.Model):
 class CuratorApproval(models.Model):
     """Votes for new curators and topic timeline suggestions
 
-    Each curator can vote if new curator or suggested new item for the
+    Each curator can vote if new curator or suggested new post for the
     timeline should be approved.
 
     Attributes
@@ -205,8 +205,8 @@ class CuratorApproval(models.Model):
     vote = models.SmallIntegerField()
 
 
-class Timeline(models.Model):
-    """Objects shown on topic's timeline.
+class Post(models.Model):
+    """Topic's timeline posts.
 
     Attributes
     ----------
@@ -215,27 +215,29 @@ class Timeline(models.Model):
         Government body where this object can be shown.
 
     topic : Topic
-        Timeline topic.
+        Post topic.
 
     actor : Actor
         Actor of the content object if object has an actor.
 
     queue : CuratorQueueItem
-        Before showing to the public, timeline objects have to wait in
-        queue to be approved by topic curators.
+        Before showing to the public, post have to wait in queue to be
+        approved by topic curators.
 
     approved : bool
-        Indicates if this timeline object was approved by topic
-        curators.
+        Indicates if this post was approved by topic curators.
 
     content_object : Event | Quote
-        A timeline object.
+        An object associated with this post.
 
     timestamp : datetime.datetime
-        Time of object appearance in the timeline.
+        Timestamp of content_object.
 
     position : float
         Actor's position of a quote.
+
+    upvotes : int
+        Number of users who upvoted this post.
 
     """
     body = models.ForeignKey(Body)
@@ -245,6 +247,7 @@ class Timeline(models.Model):
     queue = GenericRelation(CuratorQueueItem)
     approved = models.BooleanField(default=False)
     timestamp = models.DateTimeField()
+    upvotes = models.PositiveIntegerField(default=0)
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
@@ -259,15 +262,15 @@ class UserPosition(models.Model):
     Attributes
     ----------
 
-    item : Timeline
-        Timeline item.
+    post : Post
+        A post.
 
     position : int
         Value usually is -1, 0 or 1.
 
     """
     user = models.ForeignKey(User)
-    item = models.ForeignKey(Timeline)
+    post = models.ForeignKey(Post)
     position = models.SmallIntegerField(default=0)
 
 
@@ -335,8 +338,8 @@ class Event(models.Model):
     timestamp : datetime.datetime
         Time, when this event happened.
 
-    timeline : Timeline
-        Events are shown in the topic timeline.
+    post : Post
+        Events are shown in the topic timeline as posts.
 
     position : float
         Usually events does not have a position, but actors have a
@@ -355,7 +358,7 @@ class Event(models.Model):
 
     """
     VOTING = 1
-    DOCUMENT = 1
+    DOCUMENT = 2
     TYPE_CHOICES = (
         (VOTING, _("Balsavimas")),
         (DOCUMENT, _("Teisės aktas")),
@@ -367,9 +370,9 @@ class Event(models.Model):
     source_title = models.CharField(_("Šaltinio antraštė"), max_length=255, blank=True)
     source_link = models.CharField(_("Šaltinio nuoroda"), max_length=255, blank=True)
     timestamp = models.DateTimeField(_("Data, laikas"))
-    timeline = GenericRelation(Timeline, related_query_name='event')
+    post = GenericRelation(Post, related_query_name='event')
     position = models.FloatField()
-    references = GenericForeignKey(Reference)
+    references = GenericRelation(Reference, related_query_name='event')
     group = models.ForeignKey('self', null=True, blank=True)
 
 
@@ -477,8 +480,8 @@ class Quote(models.Model):
     user = models.ForeignKey(User)  # User who suggested this quote
     source = models.ForeignKey(Source, null=True, blank=True)
     reference_link = models.URLField(_("Nuoroda"), blank=True)  # should match
-    quote = models.TextField(_("Citata"))
-    references = GenericForeignKey(Reference)
+    text = models.TextField(_("Citata"))
+    references = GenericRelation(Reference, related_query_name='quote')
 
 
 class Argument(models.Model):
@@ -498,7 +501,11 @@ class Argument(models.Model):
         positiveness making quote itself negative, while general
         argument stays positive.
 
-    position : Timeline
+    counterargument_title : str
+        Counterarguments also can be tagged with  short textual
+        identifiers.
+
+    position : int
         Each quote argument relates to a topic, it can be positive or
         negative. Positive argument indicates positive aspect of a
         topic.
@@ -510,4 +517,5 @@ class Argument(models.Model):
     quote = models.ForeignKey(Quote)
     title = models.CharField(max_length=255)
     counterargument = models.BooleanField(default=False)
+    counterargument_title = models.CharField(max_length=255, blank=True)
     position = models.SmallIntegerField()

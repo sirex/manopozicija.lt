@@ -2,10 +2,10 @@ from django_webtest import WebTest
 
 from django.contrib.auth.models import User
 
-from manopozicija.website.models import Topic
-# from manopozicija.website.models import Voting
-from manopozicija.website.models import Timeline
-from manopozicija.website.factories import TopicFactory
+from manopozicija.models import Topic
+# from manopozicija.models import Voting
+from manopozicija.models import Timeline
+from manopozicija.factories import TopicFactory
 
 
 class ViewTests(WebTest):

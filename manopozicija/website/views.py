@@ -10,10 +10,10 @@ from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
 
 from manopozicija.website.helpers import formrenderer
-from manopozicija.website.forms import NewVotingForm, TopicForm, QuoteForm
-from manopozicija.website.models import Topic
-from manopozicija.website.models import Position
-from manopozicija.website.models import Voting
+# from manopozicija.website.forms import NewVotingForm, TopicForm, QuoteForm
+# from manopozicija.models import Topic
+# from manopozicija.models import Position
+# from manopozicija.models import Voting
 from manopozicija.website.parsers.votings import parse_votes
 from manopozicija.website.services.voting import update_voting, import_votes, create_vote_positions
 from manopozicija.website.helpers.decorators import superuser_required

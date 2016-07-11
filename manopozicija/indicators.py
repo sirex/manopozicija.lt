@@ -7,7 +7,7 @@ import pandas as pd
 from django.conf import settings
 from django.db.models import Func, F, Q
 
-from manopozicija.website.models import Indicator
+from manopozicija.models import Indicator
 
 logger = logging.getLogger(__name__)
 

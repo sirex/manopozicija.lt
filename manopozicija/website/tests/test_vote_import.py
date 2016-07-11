@@ -2,9 +2,9 @@ import csv
 import io
 import pytest
 
-# from manopozicija.website.models import Voting
-# from manopozicija.website.models import Vote
-from manopozicija.website.models import Actor
+# from manopozicija.models import Voting
+# from manopozicija.models import Vote
+from manopozicija.models import Actor
 
 
 @pytest.mark.django_db

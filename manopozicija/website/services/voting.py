@@ -1,7 +1,7 @@
-# from manopozicija.website.models import Voting
-# from manopozicija.website.models import Vote
-from manopozicija.website.models import Actor
-from manopozicija.website.models import Timeline
+# from manopozicija.models import Voting
+# from manopozicija.models import Vote
+from manopozicija.models import Actor
+from manopozicija.models import Timeline
 
 
 def update_voting(voting, data: dict):

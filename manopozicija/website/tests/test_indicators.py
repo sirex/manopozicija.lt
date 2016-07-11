@@ -6,7 +6,7 @@ import pkg_resources as pres
 import pandas as pd
 
 from manopozicija import indicators
-from manopozicija.website.models import Indicator
+from manopozicija.models import Indicator
 
 dt = datetime.datetime
 timedelta = datetime.timedelta

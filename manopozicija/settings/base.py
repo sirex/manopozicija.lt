@@ -65,10 +65,10 @@ DATABASES = {
 }
 
 MIGRATION_MODULES = {
-    'account': 'manopozicija.website.migrations.account',
-    'website': 'manopozicija.website.migrations.website',
-    'openid': 'manopozicija.website.migrations.openid',
-    'socialaccount': 'manopozicija.website.migrations.socialaccount',
+    'openid': 'manopozicija.migrations.openid',
+    'account': 'manopozicija.migrations.account',
+    'manopozicija': 'manopozicija.migrations.manopozicija',
+    'socialaccount': 'manopozicija.migrations.socialaccount',
 }
 
 LOGGING = {
@@ -170,6 +170,7 @@ SERVER_ALIASES = (
 )
 
 INSTALLED_APPS += (
+    'manopozicija',
     'manopozicija.website',
 )
 
