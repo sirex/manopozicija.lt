@@ -4,7 +4,7 @@ from django.contrib.auth.models import User
 
 from manopozicija.models import Topic
 # from manopozicija.models import Voting
-from manopozicija.models import Timeline
+from manopozicija.models import Post
 from manopozicija.factories import TopicFactory
 
 

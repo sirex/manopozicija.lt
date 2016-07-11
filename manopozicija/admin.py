@@ -57,4 +57,4 @@ class IndicatorAdmin(admin.ModelAdmin):
 
 admin.site.register(Indicator, IndicatorAdmin)
 # admin.site.register(Topic, TopicAdmin)
-# admin.site.register(Timeline)
+# admin.site.register(Post

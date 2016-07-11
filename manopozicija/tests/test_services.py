@@ -1,5 +1,3 @@
-import datetime
-
 from manopozicija import services
 from manopozicija import factories
 
@@ -19,9 +17,9 @@ def test_get_topic_arguments(app):
         factories.ArgumentFactory(topic=topic, position=position, title=argument, counterargument=counterargument)
     assert list(services.get_topic_arguments(topic).values_list('count', 'position', 'title')) == [
         (2, -1, 'balsų pirkimas'),
-        (1, 1, 'didesnis užsienio lietuvių aktyvumas rinkimuose'),
+        (1, +1, 'didesnis užsienio lietuvių aktyvumas rinkimuose'),
         (1, -1, 'balsavimas nekontroliuojamoje aplinkoje'),
-        (1, 1, 'šiuolaikiška, modernu'),
+        (1, +1, 'šiuolaikiška, modernu'),
     ]
 
 

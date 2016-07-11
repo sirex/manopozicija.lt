@@ -164,7 +164,7 @@ class Migration(migrations.Migration):
             ],
         ),
         migrations.CreateModel(
-            name='Timeline',
+            name='Post
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('position', models.FloatField()),
@@ -204,7 +204,7 @@ class Migration(migrations.Migration):
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
                 ('position', models.SmallIntegerField(default=0)),
-                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='manopozicija.Timeline')),
+                ('item', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='manopozicija.Post
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
             ],
         ),
