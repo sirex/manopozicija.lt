@@ -12,16 +12,39 @@ from django.contrib.contenttypes.models import ContentType
 
 
 class Body(models.Model):
+    """Government body
+
+    Currently supported government body is Lithuanian parliament.
+
+    Attributes
+    ----------
+
+    name : str
+        Name of government body.
+
+    """
     name = models.CharField(max_length=255)
 
 
 class Term(models.Model):
+    """Government body term of office
+
+    This is a period of time for each government body between elections.
+    For example Lithuanian parliament as term of four years.
+
+    """
     body = models.ForeignKey(Body)
     since = models.DateTimeField()
     until = models.DateTimeField()
 
 
 class Indicator(models.Model):
+    """Key performance indicators
+
+    Key performance indicators are data sources plotted on the topic
+    diagram, showing how government impacts certain indicators.
+
+    """
     slug = models.SlugField(unique=True, editable=False)
     created = CreationDateTimeField(editable=False)
     modified = ModificationDateTimeField(editable=False)
@@ -41,6 +64,19 @@ class Indicator(models.Model):
 
 
 class Topic(models.Model):
+    """A political topic
+
+    Political topic is a point of interest around a topic.
+
+    Attributes
+    ----------
+
+    default_body : Body
+        Many government bodies can work on a same topic, but usually one
+        topic is bound to a particular government body. This parameter
+        specifies which political body is most relevant for this topic.
+
+    """
     created = CreationDateTimeField()
     slug = autoslug.AutoSlugField(populate_from='title')
     title = models.CharField(_("Pavadinimas"), max_length=255)
@@ -57,6 +93,21 @@ class Topic(models.Model):
 
 
 class Actor(models.Model):
+    """A public person or group of people like a political party
+
+    Attributes
+    ----------
+
+    first_name : str
+        First person's name or name of a group.
+
+    last_name : str
+        Last person's name or empty string if actor is a group.
+
+    title : str
+        Person's domain of interest of group type.
+
+    """
     first_name = models.CharField(max_length=255)
     last_name = models.CharField(max_length=255)
     title = models.CharField(max_length=255)
@@ -69,6 +120,7 @@ class Actor(models.Model):
 
 
 class Member(models.Model):
+    """Actor's membership in a group"""
     actor = models.ForeignKey(Actor)
     group = models.ForeignKey(Actor)
     since = models.DateTimeField()
@@ -76,6 +128,15 @@ class Member(models.Model):
 
 
 class Curator(models.Model):
+    """User who is a curator of one or more topics
+
+    Attributes
+    ----------
+
+    title : str
+        Person's domain of interest of group type.
+
+    """
     user = models.ForeignKey(User)
     actor = models.ForeignKey(Actor, null=True, blank=True)
     title = models.CharField(max_length=255)
@@ -83,6 +144,7 @@ class Curator(models.Model):
 
 
 class CuratorQueueItem(models.Model):
+    """List of items in a topic shown for curators for approval"""
     topic = models.ForeignKey('Topic')
     approved = models.DateTimeField(null=True, blank=True)
 
