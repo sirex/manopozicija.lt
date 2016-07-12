@@ -6,45 +6,27 @@ from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext
 from django.contrib import messages
-from django.db.models import Sum
 from django.contrib.auth.decorators import login_required
+from django.forms import formset_factory
 
-from manopozicija.website.helpers import formrenderer
-# from manopozicija.website.forms import NewVotingForm, TopicForm, QuoteForm
-# from manopozicija.models import Topic
-# from manopozicija.models import Position
-# from manopozicija.models import Voting
-from manopozicija.website.parsers.votings import parse_votes
-from manopozicija.website.services.voting import update_voting, import_votes, create_vote_positions
-from manopozicija.website.helpers.decorators import superuser_required
 from manopozicija.indicators import get_indicator_data
+from manopozicija import models
+from manopozicija import services
+from manopozicija import forms
 
 
 def topic_list(request):
     return render(request, 'index.html', {
-        'topics': Topic.objects.order_by('-modified'),
+        'topics': models.Topic.objects.order_by('-created'),
     })
 
 
-def topic_details(request, slug):
-    topic = get_object_or_404(Topic, slug=slug)
-    votings = Voting.objects.filter(position__topic=topic).order_by('-datetime')
+def topic_details(request, object_id, slug):
+    topic = get_object_or_404(models.Topic, pk=object_id)
 
-    people = (
-        Position.objects.values('person__name').
-        filter(topic=topic, person__isnull=False).
-        annotate(weight=Sum('weight'))
-    )
-    supporters = people.filter(weight__gt=0).order_by('-weight')
-    critics = people.filter(weight__lt=0).order_by('weight')
-
-    return render(request, 'website/topic_details.html', {
+    return render(request, 'manopozicija/topic_details.html', {
         'topic': topic,
-        'votings': votings,
-        'supporters': list(supporters[:10]),
-        'supporters_count': supporters.count(),
-        'critics': list(critics[:10]),
-        'critics_count': critics.count(),
+        'posts': services.get_topic_posts(topic),
         'has_indicators': topic.indicators.count() > 0,
     })
 
@@ -74,7 +56,7 @@ def topic_kpi(request, slug):
     })
 
 
-@superuser_required
+@login_required
 def voting_form(request, slug):
     topic = get_object_or_404(Topic, slug=slug)
 
@@ -108,7 +90,7 @@ def voting_form(request, slug):
     })
 
 
-@superuser_required
+@login_required
 def news_form(request, slug):
     topic = get_object_or_404(Topic, slug=slug)
 
@@ -145,4 +127,53 @@ def topic_form(request):
 
     return render(request, 'website/topic_form.html', {
         'form': formrenderer.render(request, form, title=ugettext('Nauja tema'), submit=ugettext('Pridėti')),
+    })
+
+
+@login_required
+def quote_form(request, object_id, slug):
+    topic = get_object_or_404(models.Topic, pk=object_id)
+    ArgumentFormSet = formset_factory(
+        forms.ArgumentForm, min_num=1, max_num=3, extra=3,
+        validate_min=True, validate_max=True,
+    )
+
+    if request.method == 'POST':
+        source_form = forms.SourceForm(request.POST)
+        quote_form = forms.QuoteForm(request.POST)
+        arguments_formset = ArgumentFormSet(request.POST)
+        if all([source_form.is_valid(), quote_form.is_valid(), arguments_formset.is_valid()]):
+            services.add_new_quote(
+                request.user, topic,
+                source_form.cleaned_data,
+                quote_form.cleaned_data,
+                arguments_formset.cleaned_data,
+            )
+            return redirect(topic)
+    else:
+        source_form = forms.SourceForm()
+        quote_form = forms.QuoteForm()
+        arguments_formset = ArgumentFormSet()
+
+    return render(request, 'manopozicija/quote_form.html', {
+        'topic': topic,
+        'source_form': source_form,
+        'quote_form': quote_form,
+        'arguments_formset': arguments_formset,
+    })
+
+
+@login_required
+def person_form(request):
+    if request.method == 'POST':
+        form = forms.PersonForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+    else:
+        form = forms.PersonForm()
+    return render(request, 'manopozicija/form.html', {
+        'form_name': 'person-form',
+        'form_title': ugettext('Naujas asmuo'),
+        'form': form,
     })

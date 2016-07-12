@@ -8,6 +8,7 @@ django-webtest
 django-autoslug
 django-allauth
 django-bootstrap-form
+sorl-thumbnail
 factory_boy
 fake-factory
 unidecode

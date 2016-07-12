@@ -1,0 +1,68 @@
+{% extends "_base.html" %}
+
+{% load i18n %}
+{% load bootstrap %}
+
+
+{% block content %}
+<h1>{{ topic }}</h1>
+
+<h2>{% trans "Nauja citata" %}</h2>
+
+<form id="quote-form" method="POST">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-md-4">
+      {{ source_form|bootstrap }}
+    </div>
+    <div class="col-md-8">
+      <div class="form-group">
+        <label>Jei sąraše neradote autoriaus, sukurkite naują</label>
+        <div>
+          <a href="{% url 'person-create' %}" class="btn btn-default" target="_blank">{% trans "Naujas asmuo" %}</a>
+          <a href="#" class="btn btn-default">{% trans "Nauja partija" %}</a>
+        </div>
+      </div>
+      {{ quote_form|bootstrap }}
+    </div>
+  </div>
+  <h3>{% trans "Citatos argumentai" %}</h3>
+  {{ arguments_formset.management_form }}
+  <div class="row">
+    <div class="col-md-6">
+      <p><strong>{% trans "Argumentas" %}</strong></p>
+      <p class="help-block">{% blocktrans %}
+      Argumentas yra trumpa citatos žymė, naudojamas skirtingų citatų, kuriose dėstomas tas pats argumentas
+      žymėjimui. Argumentai gali būti teigiami arba neigiami temos atžvilgiu.
+      {% endblocktrans %}</p>
+    </div>
+    <div class="col-md-6">
+      <p><strong>{% trans "Kontrargumentas" %}</strong></p>
+      <p class="help-block">{% blocktrans %}
+      Jei citatos tekstas yra nurodyto argumento kritika, tuomet tiesiog pažymėkite paukščiuką arba nurodykite
+      kontrargumento antraštę, taip pat kaip argumentui.
+      {% endblocktrans %}</p>
+    </div>
+  </div>
+  {% for argument_form in arguments_formset.forms %}
+  <div class="row arguments-form-table">
+    <div class="col-md-4">
+        {{ argument_form.title|bootstrap_inline }}
+    </div>
+    <div class="col-md-2">
+        {{ argument_form.position|bootstrap_inline }}
+    </div>
+    <div class="col-md-4">
+        {{ argument_form.counterargument_title|bootstrap_inline }}
+    </div>
+    <div class="col-md-1">
+        {{ argument_form.counterargument|bootstrap_inline }}
+    </div>
+  </div>
+  {% endfor %}
+  <hr/>
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">{% trans "Pateikti" %}</button>
+  </div>
+</form>
+{% endblock %}

@@ -10,7 +10,9 @@ from django.utils.safestring import mark_safe
 from django.utils.translation import ugettext_lazy as _
 from django.core.files.base import ContentFile
 
-from manopozicija.models import Indicator, Topic, Post
+from sorl.thumbnail.admin import AdminImageMixin
+
+from manopozicija import models
 
 
 class IndicatorAdmin(admin.ModelAdmin):
@@ -44,17 +46,23 @@ class IndicatorAdmin(admin.ModelAdmin):
     indicator_preview.short_description = _('Indicator preview')
 
 
-# class TopicAdmin(admin.ModelAdmin):
-#     raw_id_fields = ('author', 'indicators')
-#
-#     def save_model(self, request, obj, form, change):
-#         if not obj.logo:
-#             width, height = settings.MANOPOZICIJA_TOPIC_LOGO_SIZE
-#             content = ContentFile(panavatar.get_svg(width, height))
-#             obj.logo.save('%s.svg' % uuid.uuid4(), content)
-#         obj.save()
+class TopicAdmin(admin.ModelAdmin):
+    raw_id_fields = ('default_body', 'indicators')
+
+    def save_model(self, request, obj, form, change):
+        if not obj.logo:
+            width, height = settings.MANOPOZICIJA_TOPIC_LOGO_SIZE
+            content = ContentFile(panavatar.get_svg(width, height))
+            obj.logo.save('%s.svg' % uuid.uuid4(), content)
+        obj.save()
 
 
-admin.site.register(Indicator, IndicatorAdmin)
-# admin.site.register(Topic, TopicAdmin)
+class ActorAdmin(AdminImageMixin, admin.ModelAdmin):
+    pass
+
+
+admin.site.register(models.Indicator, IndicatorAdmin)
+admin.site.register(models.Topic, TopicAdmin)
+admin.site.register(models.Body)
+admin.site.register(models.Actor, ActorAdmin)
 # admin.site.register(Post

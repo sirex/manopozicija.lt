@@ -1,6 +1,7 @@
 import autoslug
 
 from django_extensions.db.fields import CreationDateTimeField, ModificationDateTimeField
+from sorl.thumbnail import ImageField
 
 from django.db import models
 from django.core.urlresolvers import reverse
@@ -24,6 +25,9 @@ class Body(models.Model):
 
     """
     name = models.CharField(max_length=255)
+
+    def __str__(self):
+        return self.name
 
 
 class Term(models.Model):
@@ -83,13 +87,13 @@ class Topic(models.Model):
     description = models.TextField(_("Aprašymas"), blank=True)
     indicators = models.ManyToManyField(Indicator, blank=True)
     default_body = models.ForeignKey(Body)
-    logo = models.ImageField(upload_to='topics/%Y/%m/%d/', blank=True)
+    logo = ImageField(upload_to='topics/%Y/%m/%d/', blank=True)
 
     def __str__(self):
         return self.title
 
     def get_absolute_url(self):
-        return reverse('topic-details', args=[self.slug])
+        return reverse('topic-details', args=[self.pk, self.slug])
 
 
 class Actor(models.Model):
@@ -108,10 +112,12 @@ class Actor(models.Model):
         Person's domain of interest of group type.
 
     """
-    first_name = models.CharField(max_length=255)
-    last_name = models.CharField(max_length=255)
-    title = models.CharField(max_length=255)
-    photo = models.ImageField(upload_to='actors/%Y/%m/%d/', blank=True)
+    first_name = models.CharField(_("Vardas"), max_length=255)
+    last_name = models.CharField(_("Pavardė"), max_length=255)
+    title = models.CharField(_("Autoriaus sritis"), max_length=255, help_text=_(
+        "Autoriaus profesija arba domėjimosi sritis atitinkanti citatos tekstą."
+    ))
+    photo = ImageField(_("Nuotrauka"), upload_to='actors/%Y/%m/%d/', blank=True)
     group = models.BooleanField(default=False)
     body = models.ForeignKey(Body, blank=True, null=True)  # required only for group
 
@@ -140,7 +146,7 @@ class Curator(models.Model):
     user = models.ForeignKey(User)
     actor = models.ForeignKey(Actor, null=True, blank=True)
     title = models.CharField(max_length=255)
-    photo = models.ImageField(upload_to='actors/%Y/%m/%d/')
+    photo = ImageField(upload_to='actors/%Y/%m/%d/')
 
 
 class CuratorQueueItem(models.Model):
@@ -367,8 +373,8 @@ class Event(models.Model):
     user = models.ForeignKey(User)
     type = models.PositiveSmallIntegerField(choices=TYPE_CHOICES)
     title = models.CharField(max_length=255)
+    source_link = models.URLField(_("Šaltinio nuoroda"), max_length=255, blank=True)
     source_title = models.CharField(_("Šaltinio antraštė"), max_length=255, blank=True)
-    source_link = models.CharField(_("Šaltinio nuoroda"), max_length=255, blank=True)
     timestamp = models.DateTimeField(_("Data, laikas"))
     post = GenericRelation(Post, related_query_name='event')
     position = models.FloatField()
@@ -429,17 +435,14 @@ class Source(models.Model):
         If actor is a group, then actor title can be left blank, it will
         be taken from Actor.title.
 
+    source_link : str
+        URL to the source material.
+
     source_title : str
-        If source title is left empty and source link is a URL, then
-        source title will automatically be filled with the domain of the
-        URL.
+        If source title is left empty, then source title will
+        automatically be filled with the domain of the URL.
 
         But this can be overridden by specifying different source title.
-
-    source_link : str
-        Can be a URL or in rare cases a textual description pointing to
-        a book, paper, journal, etc. URL should be always preferred if
-        available.
 
     timestamp : datetime.datetime
         Time, when this source was published.
@@ -448,12 +451,23 @@ class Source(models.Model):
         Average position calculated from assigned arguments.
 
     """
-    actor = models.ForeignKey(Actor)
-    actor_title = models.CharField(max_length=64, blank=True)
+    actor = models.ForeignKey(Actor, verbose_name=_("Citatos autorius"))
+    actor_title = models.CharField(_("Autoriaus sritis"), max_length=64, blank=True, help_text=_(
+        "Autoriaus profesija arba domėjimosi sritis atitinkanti citatos tekstą."
+    ))
+    source_link = models.URLField(_("Šaltinio nuoroda"), max_length=255)
     source_title = models.CharField(_("Šaltinio antraštė"), max_length=255, blank=True)
-    source_link = models.CharField(_("Šaltinio nuoroda"), max_length=255, blank=True)
-    timestamp = models.DateTimeField(_("Data, laikas"))
-    position = models.FloatField()
+    timestamp = models.DateTimeField(_("Kada paskelbtas šaltinis?"), help_text=_("Datos formatas: yyyy-mm-dd HH:MM:SS"))
+    position = models.FloatField(default=0)
+
+    class Meta:
+        unique_together = ('actor', 'source_link')
+
+    def validate_unique(self, exclude=None):
+        # We want database level constraints, but don't want forms to validate actor and source_link uniqueness.
+        exclude = exclude or []
+        exclude.extend(['actor', 'source_link'])
+        super().validate_unique(exclude)
 
 
 class Quote(models.Model):
@@ -477,10 +491,14 @@ class Quote(models.Model):
         pointing this quote to matching Event.
 
     """
-    user = models.ForeignKey(User)  # User who suggested this quote
+    user = models.ForeignKey(User)
     source = models.ForeignKey(Source, null=True, blank=True)
-    reference_link = models.URLField(_("Nuoroda"), blank=True)  # should match
-    text = models.TextField(_("Citata"))
+    reference_link = models.URLField(_("Cituojamo šaltinio nuoroda"), blank=True, help_text=_(
+        "Nuoroda į šaltinį, apie kurį autorius kalba savo citatoje."
+    ))
+    text = models.TextField(_("Citatos tekstas"), help_text=_(
+        "Citatos tekste turėtų būti išreikšta viena mintis. Stenkitės citatos tekstą išlaikyti kiek galima trumpesnį."
+    ))
     references = GenericRelation(Reference, related_query_name='quote')
 
 
@@ -516,6 +534,6 @@ class Argument(models.Model):
     topic = models.ForeignKey(Topic)
     quote = models.ForeignKey(Quote)
     title = models.CharField(max_length=255)
-    counterargument = models.BooleanField(default=False)
+    counterargument = models.BooleanField(_("Kontrargumentas"), default=False, blank=True)
     counterargument_title = models.CharField(max_length=255, blank=True)
-    position = models.SmallIntegerField()
+    position = models.SmallIntegerField(default=0)

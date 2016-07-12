@@ -1,13 +1,76 @@
+import urllib
 import itertools
 
-from django.db.models import Count
+from django.db.models import F, Case, When, Count, Avg
 
-import manopozicija.models as mp
+from manopozicija import models
+
+
+def add_new_quote(user, topic, source_data, quote_data, arguments_data):
+    source_data['actor_title'] = source_data['actor_title'] or source_data['actor'].title
+    source_data['source_title'] = source_data['source_title'] or get_title_from_link(source_data['source_link'])
+    source, created = models.Source.objects.get_or_create(
+        actor=source_data['actor'],
+        source_link=source_data['source_link'],
+        defaults=source_data,
+    )
+
+    quote = models.Quote.objects.create(user=user, source=source, **quote_data)
+
+    for argument_data in arguments_data:
+        if argument_data.get('title'):
+            models.Argument.objects.create(topic=topic, quote=quote, **argument_data)
+
+    source.position = get_source_position(topic, source)
+    source.save()
+
+    models.Post.objects.create(
+        body=topic.default_body,
+        topic=topic,
+        actor=source.actor,
+        position=get_quote_position(topic, quote),
+        approved=True,
+        timestamp=source.timestamp,
+        upvotes=0,
+        content_object=quote,
+    )
+    return quote
+
+
+def get_title_from_link(link):
+    title = urllib.parse.urlparse(link).netloc
+    if title.startswith('www.'):
+        title = title[4:]
+    return title
+
+
+def get_source_position(topic, source):
+    agg = (
+        models.Argument.objects.
+        filter(topic=topic, quote__source=source).
+        aggregate(position=Avg(Case(
+            When(counterargument=True, then=F('position') * -1),
+            default=F('position')
+        )))
+    )
+    return agg['position']
+
+
+def get_quote_position(topic, quote):
+    agg = (
+        models.Argument.objects.
+        filter(topic=topic, quote=quote).
+        aggregate(position=Avg(Case(
+            When(counterargument=True, then=F('position') * -1),
+            default=F('position')
+        )))
+    )
+    return agg['position']
 
 
 def get_topic_arguments(topic):
     return (
-        mp.Argument.objects.
+        models.Argument.objects.
         values('position', 'title').
         filter(topic=topic, counterargument=False).
         annotate(count=Count('title')).
@@ -18,7 +81,7 @@ def get_topic_arguments(topic):
 def get_topic_posts(topic):
     result = []
     qs = (
-        mp.Post.objects.
+        models.Post.objects.
         filter(topic=topic).
         order_by('-timestamp')
     )

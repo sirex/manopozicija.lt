@@ -1,0 +1,70 @@
+{% extends "_base.html" %}
+{% load static from static %}
+{% load trans from i18n %}
+{% load thumbnail %}
+
+
+{% block css %}
+<link href="{% static 'c3.css' %}" rel="stylesheet" type="text/css">
+{% endblock %}
+
+
+{% block js %}
+<script src="{% static 'd3.min.js' %}" charset="utf-8"></script>
+<script src="{% static 'c3.min.js' %}"></script>
+<script src="{% static 'js/kpi.js' %}"></script>
+{% endblock %}
+
+
+{% block content %}
+
+<h1>{{ topic.title }}</h1>
+
+{% if has_indicators %}
+<div id="chart" data-kpi-url="{% url 'topic-kpi' topic.slug %}"></div>
+{% endif %}
+
+<h2>{% trans "Pagrindiniai argumentai" %}</h2>
+
+<h2>{% trans "Sprendimai ir nuomonės" %}</h2>
+
+{% for post in posts %}
+{% if post.type == 'event' %}
+  <p>TODO</p>
+{% else %}
+  <div>
+  {% thumbnail post.source.actor.photo "70x70" crop="center" as photo %}
+    <div class="actor-photo" style="background-image:url({{ photo.url }});">
+      <img src="{% static 'img/actor-negative.png' %}" />
+    </div>
+  {% empty %}
+    <div class="actor-photo">
+      <img src="{% static 'img/actor-negative.png' %}" />
+    </div>
+  {% endthumbnail %}
+  <a href="#">{{ post.source.actor }}</a>
+  <a href="{{ post.source.source_link }}" target="_blank" class="text-muted">{{ post.source.source_title }} {{ post.source.timestamp|date:"Y-m-d"}}</a>
+  </div>
+  {% for post, quote in post.quotes %}
+    <div>
+    {{ quote.text }}
+    ({{ post.upvotes }})
+    </div>
+    <div>
+    {% for argument in quote.argument_set.all %}
+    <a href="#" class="text-{% if argument.position < 0 %}danger{% else %}success{% endif %}">
+      <span class="glyphicon glyphicon-{% if argument.counterargument %}fire{% else%}tag{% endif %}" aria-hidden="true"></span>
+      {{ argument.title }}
+    </a>
+    {% endfor %}
+    </div>
+  {% endfor %}
+{% endif %}
+{% endfor %}
+
+{% if request.user.is_authenticated %}
+<h2>{% trans "Prisijunk prie temos vystymo" %}</h2>
+<a href="{% url "quote-create" topic.pk topic.slug %}" class="btn btn-lg btn-default">{% trans "Pridėk citatą" %}</a>
+{% endif %}
+
+{% endblock %}

@@ -13,7 +13,7 @@ config = exportrecipe.load(str(PROJECT_DIR / 'settings.json'))
 # https://docs.djangoproject.com/en/stable/ref/settings/
 
 DEBUG = False
-ROOT_URLCONF = 'manopozicija.website.urls'
+ROOT_URLCONF = 'manopozicija.urls'
 SECRET_KEY = config.secret_key
 MEDIA_URL = '/media/'
 MEDIA_ROOT = str(PROJECT_DIR / 'var/www/media')
@@ -69,6 +69,7 @@ MIGRATION_MODULES = {
     'account': 'manopozicija.migrations.account',
     'manopozicija': 'manopozicija.migrations.manopozicija',
     'socialaccount': 'manopozicija.migrations.socialaccount',
+    'thumbnail': 'manopozicija.migrations.sorlthumbnail',
 }
 
 LOGGING = {
@@ -220,3 +221,18 @@ SORTED_AUTH_PROVIDERS = (
 INSTALLED_APPS += (
     'bootstrapform',
 )
+
+
+# sorl-thumbnail
+# https://github.com/mariocesar/sorl-thumbnail
+
+INSTALLED_APPS += (
+    'sorl.thumbnail',
+)
+
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',
+        'LOCATION': str(PROJECT_DIR / 'var/cache'),
+    }
+}

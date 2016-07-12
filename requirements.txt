@@ -50,6 +50,7 @@ pyyaml==3.11
 requests-oauthlib==0.6.1  # via django-allauth
 requests==2.10.0          # via django-allauth, requests-oauthlib
 six==1.10.0               # via django-extensions, fake-factory, libsass, mock, python-dateutil, webtest
+sorl-thumbnail==12.3
 sqlparse==0.1.19          # via django-debug-toolbar
 unidecode==0.4.19
 waitress==0.9.0           # via webtest

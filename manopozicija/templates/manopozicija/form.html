@@ -1,0 +1,22 @@
+{% extends "_base.html" %}
+
+{% load i18n %}
+{% load bootstrap %}
+
+
+{% block content %}
+<h2>{{ form_title }}</h2>
+
+<form id="{{ form_name }}" method="POST">
+  {% csrf_token %}
+  <div class="row">
+    <div class="col-md-4">
+      {{ form|bootstrap }}
+    </div>
+  </div>
+  <hr/>
+  <div class="form-actions">
+    <button class="btn btn-primary" type="submit">{% trans "Pateikti" %}</button>
+  </div>
+</form>
+{% endblock %}
