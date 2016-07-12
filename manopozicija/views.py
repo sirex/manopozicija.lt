@@ -13,6 +13,7 @@ from manopozicija.indicators import get_indicator_data
 from manopozicija import models
 from manopozicija import services
 from manopozicija import forms
+from manopozicija import helpers
 
 
 def topic_list(request):
@@ -26,7 +27,7 @@ def topic_details(request, object_id, slug):
 
     return render(request, 'manopozicija/topic_details.html', {
         'topic': topic,
-        'posts': services.get_topic_posts(topic),
+        'posts': helpers.get_posts(services.get_topic_posts(topic)),
         'has_indicators': topic.indicators.count() > 0,
     })
 
@@ -166,7 +167,7 @@ def quote_form(request, object_id, slug):
 @login_required
 def person_form(request):
     if request.method == 'POST':
-        form = forms.PersonForm(request.POST)
+        form = forms.PersonForm(request.POST, request.FILES)
         if form.is_valid():
             form.save()
             return redirect('/')

@@ -24,47 +24,91 @@
 <div id="chart" data-kpi-url="{% url 'topic-kpi' topic.slug %}"></div>
 {% endif %}
 
-<h2>{% trans "Pagrindiniai argumentai" %}</h2>
+<div class="row">
+  <div class="col-md-offset-1 col-md-11">
+    <h3>{% trans "Esminiai veiklos rodikliai" %}</h3>
+  </div>
+</div>
 
-<h2>{% trans "Sprendimai ir nuomonės" %}</h2>
+<div class="row">
+  <div class="col-md-offset-1 col-md-11">
+    <h3>{% trans "Pagrindiniai argumentai" %}</h3>
+  </div>
+</div>
+
+<div class="row">
+  <div class="col-md-offset-1 col-md-11">
+    <h3>{% trans "Sprendimai ir nuomonės" %}</h3>
+    <p class="text-muted">Spauskite <img src="{% static 'img/thumb-up.png' %}"/>, jei pritariate sprendimui ar nuomonei,
+    spauskite <img src="{% static 'img/thumb-down.png' %}"/>, jei prieštaraujate.</p>
+  </div>
+</div>
 
 {% for post in posts %}
 {% if post.type == 'event' %}
   <p>TODO</p>
 {% else %}
-  <div>
-  {% thumbnail post.source.actor.photo "70x70" crop="center" as photo %}
-    <div class="actor-photo" style="background-image:url({{ photo.url }});">
-      <img src="{% static 'img/actor-negative.png' %}" />
+  <div class="row">
+    <div class="col-md-1">
+      {% thumbnail post.source.actor.photo "70x70" crop="50% 0%" as photo %}
+        <div class="actor-photo" style="background-image:url({{ photo.url }});">
+          <img src="{% static post.source.actor.position_image %}" />
+        </div>
+      {% empty %}
+        <div class="actor-photo">
+          <img src="{% static post.source.actor.position_image %}" />
+        </div>
+      {% endthumbnail %}
     </div>
-  {% empty %}
-    <div class="actor-photo">
-      <img src="{% static 'img/actor-negative.png' %}" />
+    <div class="col-md-11">
+      <div class="row">
+        <div class="col-md-11">
+          <a href="{{ post.source.link }}" target="_blank" class="text-muted pull-right">
+            {{ post.source.title }}
+            <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+          </a>
+          <a href="#" class="actor-name">{{ post.source.actor.name }}</a>
+          <a href="#" class="text-muted">{{ post.source.actor.title }}</a>
+        </div>
+      </div>
+      {% for quote in post.quotes %}
+        <div class="row">
+          <div class="col-md-11">
+            <p class="quote-text">{{ quote.text }}</p>
+            <p>
+              {% for argument in quote.arguments %}
+                <a href="#" class="{{ argument.classes }}">
+                  <span class="{{ argument.counterargument.classes }}" aria-hidden="true"></span>
+                  {{ argument.name }}
+                </a>
+              {% endfor %}
+            </p>
+          </div>
+          <div class="col-md-1 post-vote">
+            <div class="thumb top">&nbsp;</div>
+            <div>{{ quote.upvotes }}</div>
+            <div class="thumb bottom">&nbsp;</div>
+          </div>
+        </div>
+        <hr class="post-separator"/>
+      {% endfor %}
     </div>
-  {% endthumbnail %}
-  <a href="#">{{ post.source.actor }}</a>
-  <a href="{{ post.source.source_link }}" target="_blank" class="text-muted">{{ post.source.source_title }} {{ post.source.timestamp|date:"Y-m-d"}}</a>
   </div>
-  {% for post, quote in post.quotes %}
-    <div>
-    {{ quote.text }}
-    ({{ post.upvotes }})
-    </div>
-    <div>
-    {% for argument in quote.argument_set.all %}
-    <a href="#" class="text-{% if argument.position < 0 %}danger{% else %}success{% endif %}">
-      <span class="glyphicon glyphicon-{% if argument.counterargument %}fire{% else%}tag{% endif %}" aria-hidden="true"></span>
-      {{ argument.title }}
-    </a>
-    {% endfor %}
-    </div>
-  {% endfor %}
+
 {% endif %}
 {% endfor %}
 
 {% if request.user.is_authenticated %}
-<h2>{% trans "Prisijunk prie temos vystymo" %}</h2>
-<a href="{% url "quote-create" topic.pk topic.slug %}" class="btn btn-lg btn-default">{% trans "Pridėk citatą" %}</a>
+<div class="row">
+  <div class="col-md-offset-1 col-md-11">
+    <h3>{% trans "Prisijunk prie temos vystymo" %}</h3>
+  </div>
+</div>
+<div class="row">
+  <div class="col-md-offset-1 col-md-11">
+    <a href="{% url "quote-create" topic.pk topic.slug %}" class="btn btn-lg btn-default">{% trans "Pridėk citatą" %}</a>
+  </div>
+</div>
 {% endif %}
 
 {% endblock %}

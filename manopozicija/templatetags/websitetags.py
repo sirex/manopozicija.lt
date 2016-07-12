@@ -6,7 +6,6 @@ from django.contrib import messages
 from django.utils.safestring import mark_safe
 
 from manopozicija.website import menus as website_menus
-from manopozicija.helpers import formrenderer
 
 register = template.Library()
 

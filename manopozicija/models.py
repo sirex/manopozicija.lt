@@ -452,7 +452,7 @@ class Source(models.Model):
 
     """
     actor = models.ForeignKey(Actor, verbose_name=_("Citatos autorius"))
-    actor_title = models.CharField(_("Autoriaus sritis"), max_length=64, blank=True, help_text=_(
+    actor_title = models.CharField(_("Autoriaus veiklos sritis"), max_length=64, blank=True, help_text=_(
         "Autoriaus profesija arba domėjimosi sritis atitinkanti citatos tekstą."
     ))
     source_link = models.URLField(_("Šaltinio nuoroda"), max_length=255)

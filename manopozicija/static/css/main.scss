@@ -35,4 +35,48 @@ $static-url: '/static';
   height: 74px;
   background-color: #ececec;
   background-position: 1px 2px;
+  position: relative;
+  left: 10px;
+}
+
+.actor-name {
+  font-size: 16px;
+  font-weight: bold;
+  margin-right: 16px;
+}
+
+.quote-text {
+  font-size: 16px;
+  color: #4d4d4d;
+}
+
+.post-separator {
+  margin: 0;
+  margin-bottom: 8px;
+}
+
+.post-vote {
+  text-align: center;
+  font-weight: bold;
+  color: #808080;
+  div.thumb {
+    cursor: pointer;
+    position: relative;
+    width: 14px;
+    margin: 0 auto;
+    &.top {
+      top: 3px;
+      background: url($static-url+'/img/thumb-up.png') no-repeat center center;
+    }
+    &.top.active, &.top:hover {
+      background-image: url($static-url+'/img/thumb-up-active.png');
+    }
+    &.bottom {
+      bottom: 6px;
+      background: url($static-url+'/img/thumb-down.png') no-repeat center center;
+    }
+    &.bottom.active, &.bottom:hover {
+      background-image: url($static-url+'/img/thumb-down-active.png');
+    }
+  }
 }
