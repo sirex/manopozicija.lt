@@ -457,7 +457,7 @@ class Source(models.Model):
     ))
     source_link = models.URLField(_("Šaltinio nuoroda"), max_length=255)
     source_title = models.CharField(_("Šaltinio antraštė"), max_length=255, blank=True)
-    timestamp = models.DateTimeField(_("Kada paskelbtas šaltinis?"), help_text=_("Datos formatas: yyyy-mm-dd HH:MM:SS"))
+    timestamp = models.DateTimeField(_("Kada paskelbtas šaltinis?"))
     position = models.FloatField(default=0)
 
     class Meta:

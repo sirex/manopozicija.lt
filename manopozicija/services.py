@@ -7,8 +7,8 @@ from manopozicija import models
 
 
 def add_new_quote(user, topic, source_data, quote_data, arguments_data):
-    source_data['actor_title'] = source_data['actor_title'] or source_data['actor'].title
-    source_data['source_title'] = source_data['source_title'] or get_title_from_link(source_data['source_link'])
+    source_data['actor_title'] = source_data['actor'].title
+    source_data['source_title'] = get_title_from_link(source_data['source_link'])
     source, created = models.Source.objects.get_or_create(
         actor=source_data['actor'],
         source_link=source_data['source_link'],

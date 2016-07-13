@@ -22,7 +22,7 @@ class SourceForm(forms.ModelForm):
 
     class Meta:
         model = mp.Source
-        fields = ('actor', 'actor_title', 'source_link', 'source_title', 'timestamp')
+        fields = ('actor', 'source_link', 'timestamp')
 
 
 class QuoteForm(forms.ModelForm):
@@ -30,6 +30,9 @@ class QuoteForm(forms.ModelForm):
     class Meta:
         model = mp.Quote
         fields = ('reference_link', 'text')
+        widgets = {
+            'text': forms.Textarea(attrs={'rows': 3})
+        }
 
 
 class ArgumentForm(forms.ModelForm):

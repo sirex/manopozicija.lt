@@ -14,16 +14,17 @@
   <div class="row">
     <div class="col-md-4">
       {{ source_form|bootstrap }}
+      {{ quote_form.reference_link|bootstrap }}
     </div>
     <div class="col-md-8">
       <div class="form-group">
         <label>Jei sąraše neradote autoriaus, sukurkite naują</label>
         <div>
           <a href="{% url 'person-create' %}" class="btn btn-default" target="_blank">{% trans "Naujas asmuo" %}</a>
-          <a href="#" class="btn btn-default">{% trans "Nauja partija" %}</a>
+          <a href="#" class="btn btn-default">{% trans "Nauja grupė" %}</a>
         </div>
       </div>
-      {{ quote_form|bootstrap }}
+      {{ quote_form.text|bootstrap }}
     </div>
   </div>
   <h3>{% trans "Citatos argumentai" %}</h3>
