@@ -65,18 +65,37 @@ $static-url: '/static';
     width: 14px;
     margin: 0 auto;
     &.top {
-      top: 3px;
+      top: 6px;
       background: url($static-url+'/img/thumb-up.png') no-repeat center center;
     }
     &.top.active, &.top:hover {
       background-image: url($static-url+'/img/thumb-up-active.png');
     }
     &.bottom {
-      bottom: 6px;
+      bottom: 5px;
       background: url($static-url+'/img/thumb-down.png') no-repeat center center;
     }
     &.bottom.active, &.bottom:hover {
       background-image: url($static-url+'/img/thumb-down-active.png');
     }
   }
+}
+
+.event-name {
+  font-size: 16px;
+  margin: 14px 0;
+}
+
+.event-date {
+  margin: 18px 0;
+}
+
+.event-indicator {
+  text-align: right;
+  padding-top: 12px;
+  padding-right: 0;
+}
+
+.timeline {
+  background: url($static-url+'/img/timeline.png') repeat-y 46px 0px;
 }

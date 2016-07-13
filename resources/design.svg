@@ -16,7 +16,7 @@
    viewBox="0 0 744.09448819 1052.3622047"
    id="svg2"
    version="1.1"
-   inkscape:version="0.91 r13725"
+   inkscape:version="0.48.4 r9939"
    sodipodi:docname="design.svg">
   <defs
      id="defs4">
@@ -897,9 +897,9 @@
      borderopacity="1.0"
      inkscape:pageopacity="0.0"
      inkscape:pageshadow="2"
-     inkscape:zoom="0.99999999"
-     inkscape:cx="1407.808"
-     inkscape:cy="1176.2357"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="740.7586"
+     inkscape:cy="1156.3854"
      inkscape:document-units="px"
      inkscape:current-layer="layer1"
      showgrid="false"
@@ -910,9 +910,9 @@
      inkscape:bbox-nodes="false"
      inkscape:snap-text-baseline="true"
      inkscape:object-nodes="true"
-     inkscape:window-width="1920"
-     inkscape:window-height="1053"
-     inkscape:window-x="0"
+     inkscape:window-width="1280"
+     inkscape:window-height="997"
+     inkscape:window-x="1280"
      inkscape:window-y="27"
      inkscape:window-maximized="1"
      inkscape:snap-grids="true"
@@ -982,7 +982,7 @@
         <dc:format>image/svg+xml</dc:format>
         <dc:type
            rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
-        <dc:title />
+        <dc:title></dc:title>
       </cc:Work>
     </rdf:RDF>
   </metadata>
@@ -991,20 +991,29 @@
      inkscape:groupmode="layer"
      id="layer1">
     <path
-       style="fill:#ffffff;stroke:none;stroke-width:0.99999982;stroke-opacity:1"
-       d="m 696.78125,461.28125 0,75.15625 77.40625,0 0,-75.15625 z M 733.5,465.375 c 19.05381,0 34.5,15.44618 34.5,34.5 0,19.05382 -15.44619,34.5 -34.5,34.5 -19.05382,0 -34.5,-15.44618 -34.5,-34.5 0,-19.05382 15.44618,-34.5 34.5,-34.5 z"
-       id="path5115"
+       style="fill:#008080;stroke:none"
+       d="m 696.78125,463.6348 0,72.09559 77.40625,0 0,-72.09559 z M 733.5,465.375 c 19.05381,0 34.5,15.44618 34.5,34.5 0,19.05382 -15.44619,34.5 -34.5,34.5 -19.05382,0 -34.5,-15.44618 -34.5,-34.5 0,-19.05382 15.44618,-34.5 34.5,-34.5 z"
+       id="path3954"
        inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/sirex/devel/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-positive.png"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-positive.png"
        inkscape:export-xdpi="91"
        inkscape:export-ydpi="91"
        sodipodi:nodetypes="cccccsssss" />
     <path
-       style="fill:#008080;stroke:none;stroke-width:0.99999982;stroke-opacity:1"
-       d="m 696.78125,171.28125 0,75.15625 77.40625,0 0,-75.15625 z M 733.5,175.375 c 19.05381,0 34.5,15.44618 34.5,34.5 0,19.05382 -15.44619,34.5 -34.5,34.5 -19.05382,0 -34.5,-15.44618 -34.5,-34.5 0,-19.05382 15.44618,-34.5 34.5,-34.5 z"
+       sodipodi:nodetypes="cccccsssss"
+       inkscape:export-ydpi="91"
+       inkscape:export-xdpi="91"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-neutral.png"
+       inkscape:connector-curvature="0"
+       id="path3952"
+       d="m 696.78125,333.6348 0,72.09559 77.40625,0 0,-72.09559 z M 733.5,335.375 c 19.05381,0 34.5,15.44618 34.5,34.5 0,19.05382 -15.44619,34.5 -34.5,34.5 -19.05382,0 -34.5,-15.44618 -34.5,-34.5 0,-19.05382 15.44618,-34.5 34.5,-34.5 z"
+       style="fill:#008080;stroke:none" />
+    <path
+       style="fill:#008080;stroke:none"
+       d="m 696.78125,173.6348 0,72.09559 77.40625,0 0,-72.09559 z M 733.5,175.375 c 19.05381,0 34.5,15.44618 34.5,34.5 0,19.05382 -15.44619,34.5 -34.5,34.5 -19.05382,0 -34.5,-15.44618 -34.5,-34.5 0,-19.05382 15.44618,-34.5 34.5,-34.5 z"
        id="rect3958"
        inkscape:connector-curvature="0"
-       inkscape:export-filename="/home/sirex/devel/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-negative.png"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-negative.png"
        inkscape:export-xdpi="91"
        inkscape:export-ydpi="91"
        sodipodi:nodetypes="cccccsssss" />
@@ -5526,13 +5535,13 @@
        cx="1013.5"
        id="circle3946"
        style="fill:none;stroke:#d40000;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
-       inkscape:export-filename="/home/sirex/devel/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-negative.png"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-negative.png"
        inkscape:export-xdpi="91"
        inkscape:export-ydpi="91" />
     <g
        id="g3948"
-       transform="translate(-2183.0607,86)"
-       inkscape:export-filename="/home/sirex/devel/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-negative.png"
+       transform="translate(-2183.0607,86.999965)"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-negative.png"
        inkscape:export-xdpi="91"
        inkscape:export-ydpi="91">
       <g
@@ -5549,7 +5558,8 @@
              cy="102.36221"
              cx="2950"
              id="circle3954"
-             style="fill:#d40000;fill-opacity:1;stroke:#d40000;stroke-width:1.43534732;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0" />
+             style="fill:#d40000;fill-opacity:1;stroke:#d40000;stroke-width:1.43534732;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+             d="m 2965,102.36221 c 0,8.28427 -6.7157,15 -15,15 -8.2843,0 -15,-6.71573 -15,-15 0,-8.284268 6.7157,-14.999997 15,-14.999997 8.2843,0 15,6.715729 15,14.999997 z" />
           <path
              sodipodi:nodetypes="cccscccc"
              inkscape:connector-curvature="0"
@@ -5559,22 +5569,13 @@
         </g>
       </g>
     </g>
-    <path
-       inkscape:export-ydpi="91"
-       inkscape:export-xdpi="91"
-       inkscape:export-filename="/home/sirex/devel/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-neutral.png"
-       inkscape:connector-curvature="0"
-       id="path5089"
-       d="m 696.78125,331.28125 0,75.15625 77.40625,0 0,-75.15625 z M 733.5,335.375 c 19.05381,0 34.5,15.44618 34.5,34.5 0,19.05382 -15.44619,34.5 -34.5,34.5 -19.05382,0 -34.5,-15.44618 -34.5,-34.5 0,-19.05382 15.44618,-34.5 34.5,-34.5 z"
-       style="fill:#008080;stroke:none;stroke-width:0.99999982;stroke-opacity:1"
-       sodipodi:nodetypes="cccccsssss" />
     <circle
        r="34.5"
        cy="369.79785"
        cx="733.5"
        id="circle5103"
        style="fill:none;fill-opacity:1;stroke:#ff6600;stroke-width:3;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       inkscape:export-filename="/home/sirex/devel/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-neutral.png"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-neutral.png"
        inkscape:export-xdpi="91"
        inkscape:export-ydpi="91" />
     <circle
@@ -5583,7 +5584,7 @@
        cx="733.5"
        id="circle5105"
        style="fill:none;stroke:#008000;stroke-width:2;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
-       inkscape:export-filename="/home/sirex/devel/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-positive.png"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-positive.png"
        inkscape:export-xdpi="91"
        inkscape:export-ydpi="91" />
     <circle
@@ -5592,22 +5593,27 @@
        cx="733.5"
        cy="499.86218"
        r="34.5"
-       inkscape:export-filename="/home/sirex/devel/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-positive.png"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-positive.png"
        inkscape:export-xdpi="91"
        inkscape:export-ydpi="91" />
     <g
        id="g5109"
-       transform="translate(-2225,376)"
-       inkscape:export-filename="/home/sirex/devel/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-positive.png"
+       transform="translate(-2225,376.99997)"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/actor-positive.png"
        inkscape:export-xdpi="91"
        inkscape:export-ydpi="91">
       <ellipse
          ry="10.401099"
          rx="10.5"
-         style="fill:#008000;fill-opacity:1;stroke:#008000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-dashoffset:0;stroke-opacity:1"
+         style="fill:#008000;fill-opacity:1;stroke:#008000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
          id="ellipse5111"
          cx="2987.5"
-         cy="97.763313" />
+         cy="97.763313"
+         sodipodi:cx="2987.5"
+         sodipodi:cy="97.763313"
+         sodipodi:rx="10.5"
+         sodipodi:ry="10.401099"
+         d="m 2998,97.763313 c 0,5.744367 -4.701,10.401097 -10.5,10.401097 -5.799,0 -10.5,-4.65673 -10.5,-10.401097 0,-5.744368 4.701,-10.401099 10.5,-10.401099 5.799,0 10.5,4.656731 10.5,10.401099 z" />
       <path
          style="fill:#ffffff;fill-rule:evenodd;stroke:none"
          d="m 2982.2885,99.644785 c 0,-6.967619 2.1431,-1.360865 4.3962,-9.689345 2.1981,0 3.0773,3.157202 0.8792,5.334583 6.9789,-0.05443 6.073,1.639091 5.8762,3.856994 -0.2711,3.056193 -1.6999,4.961393 -4.5573,4.852523 l -4.3962,1e-5 c -2.1981,-1e-5 -2.1981,-1e-5 -2.1981,-2.17738 z"
@@ -5615,6 +5621,122 @@
          inkscape:connector-curvature="0"
          sodipodi:nodetypes="cccscccc" />
     </g>
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path3942"
+       d="m 713.58,6.22833 0,0"
+       style="fill:#ff6600;fill-rule:evenodd;stroke:#ff6600;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3, 3;stroke-dashoffset:0;marker-start:url(#marker38174)"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/event.png"
+       inkscape:export-xdpi="91"
+       inkscape:export-ydpi="91" />
+    <path
+       style="fill:#ff6600;fill-rule:evenodd;stroke:#ff6600;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3, 3;stroke-dashoffset:0;marker-start:url(#marker37244)"
+       d="m 713.58,-128.27167 0,0"
+       id="path3944"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/event-neutral.png"
+       inkscape:export-xdpi="91"
+       inkscape:export-ydpi="91" />
+    <ellipse
+       transform="translate(-303.99999,-60.000252)"
+       sodipodi:ry="10.401099"
+       sodipodi:rx="10.5"
+       sodipodi:cy="-68.771667"
+       sodipodi:cx="1042.5"
+       cy="-68.771667"
+       cx="1042.5"
+       id="ellipse3946"
+       style="fill:#ececec;fill-opacity:1;stroke:#ff6600;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+       rx="10.5"
+       ry="10.401099"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/event-neutral.png"
+       inkscape:export-xdpi="91"
+       inkscape:export-ydpi="91" />
+    <path
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path3948"
+       d="m 733.58,54.25866 0,60.89722"
+       style="fill:#808080;fill-rule:evenodd;stroke:#ffb380;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/timeline.png"
+       inkscape:export-xdpi="91"
+       inkscape:export-ydpi="91" />
+    <g
+       inkscape:export-ydpi="91"
+       inkscape:export-xdpi="91"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/event-positive.png"
+       transform="translate(-2249,-197.00003)"
+       id="g3956">
+      <ellipse
+         d="m 2998,97.763313 c 0,5.744367 -4.701,10.401097 -10.5,10.401097 -5.799,0 -10.5,-4.65673 -10.5,-10.401097 0,-5.744368 4.701,-10.401099 10.5,-10.401099 5.799,0 10.5,4.656731 10.5,10.401099 z"
+         sodipodi:ry="10.401099"
+         sodipodi:rx="10.5"
+         sodipodi:cy="97.763313"
+         sodipodi:cx="2987.5"
+         cy="97.763313"
+         cx="2987.5"
+         id="ellipse3958"
+         style="fill:#008000;fill-opacity:1;stroke:#008000;stroke-width:1;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+         rx="10.5"
+         ry="10.401099" />
+      <path
+         sodipodi:nodetypes="cccscccc"
+         inkscape:connector-curvature="0"
+         id="path3960"
+         d="m 2982.2885,99.644785 c 0,-6.967619 2.1431,-1.360865 4.3962,-9.689345 2.1981,0 3.0773,3.157202 0.8792,5.334583 6.9789,-0.05443 6.073,1.639091 5.8762,3.856994 -0.2711,3.056193 -1.6999,4.961393 -4.5573,4.852523 l -4.3962,1e-5 c -2.1981,-1e-5 -2.1981,-1e-5 -2.1981,-2.17738 z"
+         style="fill:#ffffff;fill-rule:evenodd;stroke:none" />
+    </g>
+    <g
+       inkscape:export-ydpi="91"
+       inkscape:export-xdpi="91"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/event-negative.png"
+       transform="translate(-2207,-167.00004)"
+       id="g3962">
+      <g
+         id="g3964"
+         transform="matrix(-0.7,0,0,-0.69340659,5010.5,168.74195)">
+        <g
+           id="g3966">
+          <circle
+             d="m 2965,102.36221 c 0,8.28427 -6.7157,15 -15,15 -8.2843,0 -15,-6.71573 -15,-15 0,-8.284268 6.7157,-14.999997 15,-14.999997 8.2843,0 15,6.715729 15,14.999997 z"
+             style="fill:#d40000;fill-opacity:1;stroke:#d40000;stroke-width:1.43534732;stroke-linecap:round;stroke-linejoin:round;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:none;stroke-dashoffset:0"
+             id="circle3968"
+             cx="2950"
+             cy="102.36221"
+             r="15"
+             sodipodi:cx="2950"
+             sodipodi:cy="102.36221"
+             sodipodi:rx="15"
+             sodipodi:ry="15" />
+          <path
+             style="fill:#ffffff;fill-rule:evenodd;stroke:none"
+             d="m 2942.555,105.07559 c 0,-10.04839 3.0616,-1.96258 6.2803,-13.973541 3.1401,0 4.3961,4.553176 1.256,7.693297 9.9699,-0.0785 8.6757,2.363824 8.3946,5.562384 -0.3873,4.4075 -2.4284,7.1551 -6.5105,6.99809 l -6.2803,1e-5 c -3.1401,-1e-5 -3.1401,-1e-5 -3.1401,-3.14012 z"
+             id="path3970"
+             inkscape:connector-curvature="0"
+             sodipodi:nodetypes="cccscccc" />
+        </g>
+      </g>
+    </g>
+    <path
+       inkscape:export-ydpi="91"
+       inkscape:export-xdpi="91"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/event-positive.png"
+       sodipodi:nodetypes="cc"
+       inkscape:connector-curvature="0"
+       id="path3972"
+       d="m 713.58,-99.236717 0,0"
+       style="fill:#ff6600;fill-rule:evenodd;stroke:#ff6600;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3, 3;stroke-dashoffset:0;marker-start:url(#marker37244)" />
+    <path
+       style="fill:#ff6600;fill-rule:evenodd;stroke:#ff6600;stroke-width:1;stroke-linecap:butt;stroke-linejoin:miter;stroke-miterlimit:4;stroke-opacity:1;stroke-dasharray:3, 3;stroke-dashoffset:0;marker-start:url(#marker37244)"
+       d="m 713.58,-69.236723 0,0"
+       id="path3974"
+       inkscape:connector-curvature="0"
+       sodipodi:nodetypes="cc"
+       inkscape:export-filename="/home/sirex/devel/other/manopozicija.lt/manopozicija.lt/manopozicija/static/img/event-negative.png"
+       inkscape:export-xdpi="91"
+       inkscape:export-ydpi="91" />
   </g>
   <g
      inkscape:groupmode="layer"
