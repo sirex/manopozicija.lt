@@ -27,6 +27,7 @@ def topic_details(request, object_id, slug):
 
     return render(request, 'manopozicija/topic_details.html', {
         'topic': topic,
+        'arguments': helpers.get_arguments(services.get_topic_arguments(topic)),
         'posts': helpers.get_posts(services.get_topic_posts(topic)),
         'has_indicators': topic.indicators.count() > 0,
     })

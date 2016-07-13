@@ -93,7 +93,7 @@ def get_topic_arguments(topic):
         values('position', 'title').
         filter(topic=topic, counterargument=False).
         annotate(count=Count('title')).
-        order_by('-count')
+        order_by('-position', '-count', 'title')
     )
 
 

@@ -1,3 +1,6 @@
+import itertools
+
+
 def _get_position_image(position, positive, negative, neutral):
     if position > 0.5:
         return positive
@@ -69,3 +72,10 @@ def get_posts(posts):
                 } for post, quote in post['quotes']],
             })
     return result
+
+
+def get_arguments(arguments):
+    groups = itertools.groupby(arguments, key=lambda x: x['position'])
+    positive = list(next(groups, (+1, []))[1])
+    negative = list(next(groups, (-1, []))[1])
+    return list(itertools.zip_longest(positive, negative))

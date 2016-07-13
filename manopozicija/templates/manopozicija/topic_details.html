@@ -38,6 +38,35 @@
       <h3>{% trans "Pagrindiniai argumentai" %}</h3>
     </div>
   </div>
+  <div class="row">
+    <div class="col-md-1 timeline-box text-right"><img src="{% static 'img/thumb-up-big.png' %}" class="positive-args-img" /></div>
+    <div class="col-md-5 arguments-positive-header">{% trans "pliusai" %}</div>
+    <div class="col-md-5 arguments-negative-header">{% trans "minusai" %}</div>
+    <div class="col-md-1"><img src="{% static 'img/thumb-down-big.png' %}" class="negative-args-img" /></div>
+  </div>
+  {% for positive, negative in arguments %}
+  <div class="row">
+    {% if positive %}
+    <div class="col-md-1 timeline-box text-right"><span class="positive-count">{{ positive.count }}</span></div>
+      <div class="col-md-5">
+        <a href="#" class="text-success argument-link">{{ positive.title }}</a>
+      </div>
+    {% else %}
+      <div class="col-md-1 timeline-box"></div>
+      <div class="col-md-5"></div>
+    {% endif %}
+
+    {% if negative %}
+      <div class="col-md-5 text-right">
+        <a href="#" class="text-danger argument-link">{{ negative.title }}</a>
+      </div>
+      <div class="col-md-1"><span class="negative-count">{{ negative.count }}</span></div>
+    {% else %}
+      <div class="col-md-5"></div>
+      <div class="col-md-1"></div>
+    {% endif %}
+  </div>
+  {% endfor %}
 
   <div class="row">
     <div class="col-md-1 timeline-box"></div>

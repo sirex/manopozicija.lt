@@ -105,3 +105,54 @@ $static-url: '/static';
   padding: 0px;
   width: 72px;
 }
+
+
+.positive-args-img, .negative-args-img {
+  position: relative;
+  top: 10px;
+}
+
+.positive-args-img {
+  left: 10px;
+}
+
+.negative-args-img {
+  right: 24px;
+}
+
+.arguments-positive-header, .arguments-negative-header {
+  font-size: 20px;
+  line-height: 42px;
+  margin-bottom: 8px;
+}
+
+.arguments-positive-header {
+  color: #3C763D;
+}
+
+.arguments-negative-header {
+  color: #A94442;
+  text-align: right;
+}
+
+.argument-link {
+  font-size: 16px;
+}
+
+.positive-count, .negative-count {
+  color: white;
+  border-radius: 10px;
+  padding: 0 6px;
+  font-weight: bold;
+  font-size: 12px;
+  position: relative;
+  top: 2px;
+}
+.positive-count {
+  background-color: #3C763D;
+  left: 10px;
+}
+.negative-count {
+  background-color: #A94442;
+  right: 24px;
+}
