@@ -141,7 +141,13 @@ def quote_form(request, object_id, slug):
 
     if request.method == 'POST':
         source_form = forms.SourceForm(request.POST)
-        quote_form = forms.QuoteForm(request.POST)
+        source_form.full_clean()
+        quote_form = forms.QuoteForm(
+            topic,
+            source_form.cleaned_data['actor'],
+            source_form.cleaned_data['source_link'],
+            request.POST,
+        )
         arguments_formset = ArgumentFormSet(request.POST)
         if all([source_form.is_valid(), quote_form.is_valid(), arguments_formset.is_valid()]):
             services.create_quote(
@@ -153,7 +159,7 @@ def quote_form(request, object_id, slug):
             return redirect(topic)
     else:
         source_form = forms.SourceForm()
-        quote_form = forms.QuoteForm()
+        quote_form = forms.QuoteForm(topic, actor=None, source_link=None)
         arguments_formset = ArgumentFormSet()
 
     return render(request, 'manopozicija/quote_form.html', {

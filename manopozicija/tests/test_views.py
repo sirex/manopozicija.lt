@@ -55,6 +55,11 @@ def test_create_event(app):
 
 
 def test_create_quote(app):
+    # This snippet allows to run tests without running slow migrations
+    from django.db import connection
+    cursor = connection.cursor()
+    cursor.execute('CREATE EXTENSION IF NOT EXISTS pg_trgm')
+
     factories.UserFactory()
     actor = factories.PersonActorFactory()
     topic = factories.TopicFactory()
@@ -69,6 +74,7 @@ def test_create_quote(app):
     form['form-0-counterargument'] = True
     resp = form.submit()
 
+    assert resp.status == '302 Found'
     assert resp.headers['location'] == topic.get_absolute_url()
     assert services.dump_topic_posts(topic) == '\n'.join([
         '( ) (n) Mantas Adomėnas (seimo narys)                                          kauno.diena.lt 2016-03-22    ',
@@ -86,7 +92,32 @@ def test_create_quote(app):
     form['form-0-position'] = True
     resp = form.submit()
 
+    assert resp.status == '302 Found'
     assert resp.headers['location'] == topic.get_absolute_url()
+    assert services.dump_topic_posts(topic) == '\n'.join([
+        '( ) (n) Mantas Adomėnas (seimo narys)                                          kauno.diena.lt 2016-03-22    ',
+        ' |      Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.                                 (0)',
+        ' |      - (y) šiuolaikiška, modernu < (counterargument)                                                     ',
+        ' |      Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.                                      (0)',
+        ' |      - (n) balsų pirkimas                                                                                ',
+    ])
+
+    # Try to add similar quote from same author and from same source
+    resp = app.get(reverse('quote-create', args=[topic.pk, topic.slug]), user='vardenis')
+    form = resp.forms['quote-form']
+    form['actor'] = actor.pk
+    form['source_link'] = 'http://kauno.diena.lt/naujienos/lietuva/politika/skinasi-kelia-balsavimas-internetu-740017'
+    form['timestamp'] = '2016-03-22 16:34'
+    form['text'] = 'Atidaroma nauja galimybė prekiauti balsais ir likti nebaudžiamam.'
+    form['form-0-title'] = 'balsų pirkimas'
+    form['form-0-position'] = True
+    resp = form.submit()
+
+    assert resp.status == '200 OK'
+    assert resp.context['quote_form'].errors.as_text() == '\n'.join([
+        '* text',
+        '  * Toks komentaras jau yra įtrauktas į „Balsavimas internetu“ temą.',
+    ])
     assert services.dump_topic_posts(topic) == '\n'.join([
         '( ) (n) Mantas Adomėnas (seimo narys)                                          kauno.diena.lt 2016-03-22    ',
         ' |      Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.                                 (0)',

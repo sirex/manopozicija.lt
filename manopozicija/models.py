@@ -508,6 +508,7 @@ class Quote(models.Model):
     text = models.TextField(_("Citatos tekstas"), help_text=_(
         "Citatos tekste turėtų būti išreikšta viena mintis. Stenkitės citatos tekstą išlaikyti kiek galima trumpesnį."
     ))
+    post = GenericRelation(Post, related_query_name='quote')
     references = GenericRelation(Reference, related_query_name='quote')
 
 

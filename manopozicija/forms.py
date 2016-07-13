@@ -1,7 +1,9 @@
 from django import forms
+from django.db.models import Value
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 from manopozicija import models
+from manopozicija.db import Similarity
 
 
 class PersonForm(forms.ModelForm):
@@ -33,6 +35,28 @@ class QuoteForm(forms.ModelForm):
         widgets = {
             'text': forms.Textarea(attrs={'rows': 3})
         }
+
+    def __init__(self, topic, actor, source_link, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.topic = topic
+        self.actor = actor
+        self.source_link = source_link
+
+    def clean_text(self):
+        text = self.cleaned_data['text']
+        if text and self.actor and self.source_link:
+            quote = None
+            source = models.Source.objects.filter(actor=self.actor, source_link=self.source_link).first()
+            if source:
+                quote = (
+                    models.Quote.objects.
+                    annotate(similarity=Similarity('text', Value(text))).
+                    filter(source=source, similarity__gt=0.9).
+                    first()
+                )
+            if quote and models.Post.objects.filter(topic=self.topic, quote=quote).exists():
+                raise forms.ValidationError(ugettext("Toks komentaras jau yra įtrauktas į „%s“ temą.") % self.topic)
+        return text
 
 
 class ArgumentForm(forms.ModelForm):
