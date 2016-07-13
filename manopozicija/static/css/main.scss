@@ -35,8 +35,6 @@ $static-url: '/static';
   height: 74px;
   background-color: #ececec;
   background-position: 1px 2px;
-  position: relative;
-  left: 10px;
 }
 
 .actor-name {
@@ -91,11 +89,19 @@ $static-url: '/static';
 }
 
 .event-indicator {
-  text-align: right;
-  padding-top: 12px;
-  padding-right: 0;
+  text-align: left;
+  img {
+    margin-top: 15px;
+    margin-left: 33px;
+  }
 }
 
 .timeline {
-  background: url($static-url+'/img/timeline.png') repeat-y 46px 0px;
+  background: url($static-url+'/img/timeline.png') repeat-y 22px 0px;
+}
+
+.timeline-box {
+  margin: 0px;
+  padding: 0px;
+  width: 72px;
 }

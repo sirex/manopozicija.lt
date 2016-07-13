@@ -25,20 +25,23 @@
 {% endif %}
 
 <div class="row">
-  <div class="col-md-offset-1 col-md-11">
+  <div class="col-md-1 timeline-box"></div>
+  <div class="col-md-11">
     <h3>{% trans "Esminiai veiklos rodikliai" %}</h3>
   </div>
 </div>
 
 <div class="timeline">
   <div class="row">
-    <div class="col-md-offset-1 col-md-11">
+    <div class="col-md-1 timeline-box"></div>
+    <div class="col-md-11">
       <h3>{% trans "Pagrindiniai argumentai" %}</h3>
     </div>
   </div>
 
   <div class="row">
-    <div class="col-md-offset-1 col-md-11">
+    <div class="col-md-1 timeline-box"></div>
+    <div class="col-md-11">
       <h3>{% trans "Sprendimai ir nuomonės" %}</h3>
       <p class="text-muted">Spauskite <img src="{% static 'img/thumb-up.png' %}"/>, jei pritariate sprendimui ar nuomonei,
       spauskite <img src="{% static 'img/thumb-down.png' %}"/>, jei prieštaraujate.</p>
@@ -48,15 +51,14 @@
   {% for post in posts %}
   {% if post.type == 'event' %}
     <div class="row">
-      <div class="col-md-1 event-indicator">
+      <div class="col-md-1 timeline-box event-indicator">
         <img src="{% static post.event.position_image %}" />
       </div>
       <div class="col-md-11">
         <div class="row">
           <div class="col-md-11">
             <a href="{{ post.event.source.link }}" target="_blank" class="text-muted pull-right event-date">
-              {{ post.event.timestamp }}
-              <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+              {{ post.event.timestamp }} »
             </a>
             <p class="event-name"><a href="#">{{ post.event.name }}</a></p>
           </div>
@@ -71,7 +73,7 @@
     </div>
   {% else %}
     <div class="row">
-      <div class="col-md-1">
+      <div class="col-md-1 timeline-box">
         {% thumbnail post.source.actor.photo "70x70" crop="50% 0%" as photo %}
           <div class="actor-photo" style="background:url({{ photo.url }}) no-repeat 0px 2px;">
             <img src="{% static post.source.actor.position_image %}" />
@@ -86,8 +88,7 @@
         <div class="row">
           <div class="col-md-11">
             <a href="{{ post.source.link }}" target="_blank" class="text-muted pull-right">
-              {{ post.source.name }}
-              <span class="glyphicon glyphicon-menu-right" aria-hidden="true"></span>
+              {{ post.source.name }} »
             </a>
             <a href="#" class="actor-name">{{ post.source.actor.name }}</a>
             <a href="#" class="text-muted">{{ post.source.actor.title }}</a>
@@ -123,12 +124,14 @@
 
 {% if request.user.is_authenticated %}
 <div class="row">
-  <div class="col-md-offset-1 col-md-11">
+  <div class="col-md-1 timeline-box"></div>
+  <div class="col-md-11">
     <h3>{% trans "Prisijunk prie temos vystymo" %}</h3>
   </div>
 </div>
 <div class="row">
-  <div class="col-md-offset-1 col-md-11">
+  <div class="col-md-1 timeline-box"></div>
+  <div class="col-md-11">
     <a href="{% url "quote-create" topic.pk topic.slug %}" class="btn btn-lg btn-default">
       {% trans "Pridėk citatą" %}
     </a>
