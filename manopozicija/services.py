@@ -6,7 +6,26 @@ from django.db.models import F, Case, When, Count, Avg
 from manopozicija import models
 
 
-def add_new_quote(user, topic, source_data, quote_data, arguments_data):
+def create_event(user, topic, event_data):
+    source_link = event_data.pop('source_link')
+    event_data['user'] = user
+    event_data['type'] = models.Event.DOCUMENT
+    event_data['position'] = 0
+    event_data['source_title'] = get_title_from_link(source_link)
+    event, created = models.Event.objects.get_or_create(source_link=source_link, **event_data)
+    models.Post.objects.create(
+        body=topic.default_body,
+        topic=topic,
+        position=0,
+        approved=True,
+        timestamp=event.timestamp,
+        upvotes=0,
+        content_object=event,
+    )
+    return event
+
+
+def create_quote(user, topic, source_data, quote_data, arguments_data):
     source_data['actor_title'] = source_data['actor'].title
     source_data['source_title'] = get_title_from_link(source_data['source_link'])
     source, created = models.Source.objects.get_or_create(

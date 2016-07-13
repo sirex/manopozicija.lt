@@ -106,7 +106,12 @@
 </div>
 <div class="row">
   <div class="col-md-offset-1 col-md-11">
-    <a href="{% url "quote-create" topic.pk topic.slug %}" class="btn btn-lg btn-default">{% trans "Pridėk citatą" %}</a>
+    <a href="{% url "quote-create" topic.pk topic.slug %}" class="btn btn-lg btn-default">
+      {% trans "Pridėk citatą" %}
+    </a>
+    <a href="{% url "event-create" topic.pk topic.slug %}" class="btn btn-lg btn-default">
+      {% trans "Pridėk sprendimą" %}
+    </a>
   </div>
 </div>
 {% endif %}

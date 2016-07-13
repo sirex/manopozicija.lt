@@ -259,6 +259,9 @@ class Post(models.Model):
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
+    class Meta:
+        unique_together = ('topic', 'content_type', 'object_id')
+
 
 class UserPosition(models.Model):
     """User position on a topic position.
@@ -372,14 +375,20 @@ class Event(models.Model):
 
     user = models.ForeignKey(User)
     type = models.PositiveSmallIntegerField(choices=TYPE_CHOICES)
-    title = models.CharField(max_length=255)
-    source_link = models.URLField(_("Šaltinio nuoroda"), max_length=255, blank=True)
+    title = models.CharField(_("Pavadinimas"), max_length=255)
+    source_link = models.URLField(_("Šaltinio nuoroda"), max_length=255, blank=True, unique=True)
     source_title = models.CharField(_("Šaltinio antraštė"), max_length=255, blank=True)
-    timestamp = models.DateTimeField(_("Data, laikas"))
+    timestamp = models.DateTimeField(_("Kada buvo priimtas sprendimas?"))
     post = GenericRelation(Post, related_query_name='event')
     position = models.FloatField()
     references = GenericRelation(Reference, related_query_name='event')
     group = models.ForeignKey('self', null=True, blank=True)
+
+    def validate_unique(self, exclude=None):
+        # We want database level constraints, but don't want forms to validate source_link uniqueness.
+        exclude = exclude or []
+        exclude.extend(['source_link'])
+        super().validate_unique(exclude)
 
 
 class Role(models.Model):

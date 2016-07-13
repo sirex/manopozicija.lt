@@ -144,7 +144,7 @@ def quote_form(request, object_id, slug):
         quote_form = forms.QuoteForm(request.POST)
         arguments_formset = ArgumentFormSet(request.POST)
         if all([source_form.is_valid(), quote_form.is_valid(), arguments_formset.is_valid()]):
-            services.add_new_quote(
+            services.create_quote(
                 request.user, topic,
                 source_form.cleaned_data,
                 quote_form.cleaned_data,
@@ -161,6 +161,23 @@ def quote_form(request, object_id, slug):
         'source_form': source_form,
         'quote_form': quote_form,
         'arguments_formset': arguments_formset,
+    })
+
+
+@login_required
+def event_form(request, object_id, slug):
+    topic = get_object_or_404(models.Topic, pk=object_id)
+    if request.method == 'POST':
+        form = forms.EventForm(topic, request.POST)
+        if form.is_valid():
+            services.create_event(request.user, topic, form.cleaned_data)
+            return redirect(topic)
+    else:
+        form = forms.EventForm(topic)
+    return render(request, 'manopozicija/form.html', {
+        'form_name': 'event-form',
+        'form_title': ugettext('Naujas sprendimas'),
+        'form': form,
     })
 
 

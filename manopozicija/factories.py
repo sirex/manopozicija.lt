@@ -88,7 +88,7 @@ class PartyActorFactory(DjangoModelFactory):
 class PersonActorFactory(DjangoModelFactory):
     first_name = 'Mantas'
     last_name = 'Adomėnas'
-    title = ''
+    title = 'seimo narys'
     photo = ImageField()
     group = False
     body = None
