@@ -19,6 +19,19 @@ def test_create_person(app):
     assert models.Actor.objects.filter(first_name='Mantas', last_name='Adomėnas').exists()
 
 
+def test_create_group(app):
+    factories.UserFactory()
+
+    resp = app.get(reverse('group-create'), user='vardenis')
+    form = resp.forms['group-form']
+    form['first_name'] = 'Lietuvos Žaliųjų Partija'
+    form['title'] = 'politinė partija'
+    resp = form.submit()
+
+    assert resp.headers['location'] == '/'
+    assert models.Actor.objects.filter(first_name='Lietuvos Žaliųjų Partija').exists()
+
+
 def test_create_event(app):
     factories.UserFactory()
     topic = factories.TopicFactory()

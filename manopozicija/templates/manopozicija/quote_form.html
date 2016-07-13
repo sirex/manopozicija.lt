@@ -21,7 +21,7 @@
         <label>Jei sąraše neradote autoriaus, sukurkite naują</label>
         <div>
           <a href="{% url 'person-create' %}" class="btn btn-default" target="_blank">{% trans "Naujas asmuo" %}</a>
-          <a href="#" class="btn btn-default">{% trans "Nauja grupė" %}</a>
+          <a href="{% url 'group-create' %}" class="btn btn-default" target="_blank">{% trans "Nauja grupė" %}</a>
         </div>
       </div>
       {{ quote_form.text|bootstrap }}

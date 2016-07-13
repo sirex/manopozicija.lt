@@ -18,6 +18,10 @@ class GroupForm(forms.ModelForm):
     class Meta:
         model = models.Actor
         fields = ('first_name', 'title', 'photo')
+        labels = {
+            'first_name': _("Pavadinimas"),
+            'title': _("Grupės tipas"),
+        }
 
 
 class SourceForm(forms.ModelForm):

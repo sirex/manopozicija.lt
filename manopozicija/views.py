@@ -202,3 +202,19 @@ def person_form(request):
         'form_title': ugettext('Naujas asmuo'),
         'form': form,
     })
+
+
+@login_required
+def group_form(request):
+    if request.method == 'POST':
+        form = forms.GroupForm(request.POST, request.FILES)
+        if form.is_valid():
+            form.save()
+            return redirect('/')
+    else:
+        form = forms.GroupForm()
+    return render(request, 'manopozicija/form.html', {
+        'form_name': 'group-form',
+        'form_title': ugettext('Nauja grupė'),
+        'form': form,
+    })

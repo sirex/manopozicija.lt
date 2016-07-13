@@ -10,6 +10,7 @@ slug = r'(?P<object_id>\d+)/(?P<slug>[a-z0-9-]+)'
 urlpatterns = [
     url(r'^$', views.topic_list, name='topic-list'),
     url(r'^naujas-asmuo/$', views.person_form, name='person-create'),
+    url(r'^nauja-grupe/$', views.group_form, name='group-create'),
     url(r'^temos/%s/nauja-citata/$' % slug, views.quote_form, name='quote-create'),
     url(r'^temos/%s/naujas-sprendimas/$' % slug, views.event_form, name='event-create'),
     url(r'^temos/%s/$' % slug, views.topic_details, name='topic-details'),
