@@ -230,6 +230,8 @@ INSTALLED_APPS += (
     'sorl.thumbnail',
 )
 
+THUMBNAIL_ENGINE = 'manopozicija.thumbnails.Engine'
+
 CACHES = {
     'default': {
         'BACKEND': 'django.core.cache.backends.filebased.FileBasedCache',

@@ -103,7 +103,7 @@
   {% else %}
     <div class="row">
       <div class="col-md-1 timeline-box">
-        {% thumbnail post.source.actor.photo "70x70" crop="50% 0%" as photo %}
+        {% thumbnail post.source.actor.photo "70x70" crop="50% 0%" background="#FFF" as photo %}
           <div class="actor-photo" style="background:url({{ photo.url }}) no-repeat 0px 2px;">
             <img src="{% static post.source.actor.position_image %}" />
           </div>
