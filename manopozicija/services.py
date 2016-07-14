@@ -2,7 +2,7 @@ import urllib
 import itertools
 
 from django.utils import timezone
-from django.db.models import F, Case, When, Count, Avg
+from django.db.models import F, Case, When, Count, Sum, Avg
 from django.utils.translation import ugettext
 from django.contrib.contenttypes.models import ContentType
 
@@ -15,7 +15,7 @@ def create_event(user, topic, event_data):
     event_data['type'] = models.Event.DOCUMENT
     event_data['position'] = 0
     event_data['source_title'] = get_title_from_link(source_link)
-    event, created = models.Event.objects.get_or_create(source_link=source_link, **event_data)
+    event, created = models.Event.objects.get_or_create(source_link=source_link, defaults=event_data)
 
     is_curator = is_topic_curator(user, topic)
     approved = timezone.now() if is_curator else None
@@ -77,7 +77,7 @@ def create_quote(user, topic, source: dict, quote: dict, arguments: list):
 
 
 def create_curator(user, topic, user_data: dict, curator: dict):
-    curator, created = models.Curator.objects.get_or_create(user=user, **curator)
+    curator, created = models.Curator.objects.get_or_create(user=user, defaults=curator)
     if user_data:
         user.first_name = user_data['first_name']
         user.last_name = user_data['last_name']
@@ -151,7 +151,7 @@ def get_topic_posts(topic, queue=False):
         qs = (
             models.Post.objects.
             filter(topic=topic, approved__isnull=True).
-            order_by('-timestamp')
+            order_by('-created')
         )
     else:
         curator_type = ContentType.objects.get(app_label='manopozicija', model='curator')
@@ -263,3 +263,18 @@ def dump_topic_posts(topic, **kwargs):
                         counterargument=counterargument,
                     ), '', width))
     return '\n'.join(result)
+
+
+def get_post_votes(post):
+    agg = models.UserPosition.objects.filter(post=post).aggregate(
+        upvotes=Sum(Case(When(position__gt=0, then=F('position')), default=0)),
+        downvotes=Sum(Case(When(position__lt=0, then=F('position')), default=0)),
+    )
+    return agg['upvotes'] or 0, abs(agg['downvotes'] or 0)
+
+
+def update_user_position(user, post, vote: int):
+    models.UserPosition.objects.update_or_create(user=user, post=post, defaults={'position': vote})
+    post.upvotes, post.downvotes = get_post_votes(post)
+    post.save()
+    return post.upvotes, post.downvotes

@@ -164,6 +164,7 @@ class Post(models.Model):
         Number of users who upvoted this post.
 
     """
+    created = models.DateTimeField(auto_now_add=True)
     body = models.ForeignKey(Body)
     topic = models.ForeignKey('Topic')
     actor = models.ForeignKey(Actor, null=True, blank=True)
@@ -171,6 +172,7 @@ class Post(models.Model):
     approved = models.DateTimeField(null=True, blank=True)
     timestamp = models.DateTimeField()
     upvotes = models.PositiveIntegerField(default=0)
+    downvotes = models.PositiveIntegerField(default=0)
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()
@@ -254,7 +256,7 @@ class PostLog(models.Model):
 
 
 class UserPosition(models.Model):
-    """User position on a topic position.
+    """User position about a topic post.
 
     Each user can express their own position to a Quote or Event.
 

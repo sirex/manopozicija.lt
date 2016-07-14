@@ -1,3 +1,5 @@
+import itertools
+
 from manopozicija import services
 from manopozicija import factories
 
@@ -74,3 +76,22 @@ def test_create_quote(app):
         ' |      Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.                                      (0)',
         ' |      - (y) šiuolaikiška, modernu < (counterargument)                                                     ',
     ])
+
+
+def test_get_post_votes(app):
+    user = (factories.UserFactory(first_name='u%d' % i) for i in itertools.count())
+    event = factories.EventFactory()
+    post = factories.PostFactory(content_object=event)
+    assert services.get_post_votes(post) == (0, 0)
+    assert services.update_user_position(next(user), post, 1) == (1, 0)
+    assert services.update_user_position(next(user), post, 1) == (2, 0)
+    assert services.update_user_position(next(user), post, -1) == (2, 1)
+    assert services.get_post_votes(post) == (2, 1)
+
+    # Try to vote several times with the same user
+    user = factories.UserFactory()
+    assert services.update_user_position(user, post, 1) == (3, 1)
+    assert services.update_user_position(user, post, -1) == (2, 2)
+    assert services.update_user_position(user, post, -1) == (2, 2)
+    assert services.update_user_position(user, post, 1) == (3, 1)
+    assert services.get_post_votes(post) == (3, 1)
