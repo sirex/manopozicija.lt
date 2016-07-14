@@ -278,3 +278,9 @@ def update_user_position(user, post, vote: int):
     post.upvotes, post.downvotes = get_post_votes(post)
     post.save()
     return post.upvotes, post.downvotes
+
+
+def accept_topic_post(user, post):
+    models.PostLog.objects.create(user=user, post=post, action=models.PostLog.VOTE, vote=1)
+    post.approved = timezone.now()
+    post.save()
