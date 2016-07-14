@@ -1,6 +1,7 @@
 import urllib
 import itertools
 
+from django.utils import timezone
 from django.db.models import F, Case, When, Count, Avg
 
 from manopozicija import models
@@ -43,17 +44,35 @@ def create_quote(user, topic, source_data, quote_data, arguments_data):
     source.position = get_source_position(topic, source)
     source.save()
 
-    models.Post.objects.create(
+    is_curator = is_topic_curator(user, topic)
+
+    post = models.Post.objects.create(
         body=topic.default_body,
         topic=topic,
         actor=source.actor,
         position=get_quote_position(topic, quote),
-        approved=True,
+        approved=is_curator,
         timestamp=source.timestamp,
         upvotes=0,
         content_object=quote,
     )
+
+    approved = timezone.now() if is_curator else None
+    queue_item = models.CuratorQueueItem.objects.create(topic=topic, approved=approved, content_object=post)
+
+    if is_curator:
+        # Automatically approve posts created by topic curators.
+        models.CuratorApproval.objects.create(
+            user=user,
+            item=queue_item,
+            vote=1,
+        )
+
     return quote
+
+
+def is_topic_curator(user, topic):
+    return models.TopicCurator.objects.filter(user=user, topic=topic, approved__isnull=False).exists()
 
 
 def get_title_from_link(link):
@@ -97,13 +116,22 @@ def get_topic_arguments(topic):
     )
 
 
-def get_topic_posts(topic):
+def get_topic_posts(topic, queue=False):
     result = []
-    qs = (
-        models.Post.objects.
-        filter(topic=topic).
-        order_by('-timestamp')
-    )
+
+    if queue:
+        qs = (
+            models.Post.objects.
+            filter(topic=topic, approved=False).
+            order_by('-timestamp')
+        )
+    else:
+        qs = (
+            models.Post.objects.
+            filter(topic=topic, approved=True).
+            order_by('-timestamp')
+        )
+
     groups = itertools.groupby(qs, key=lambda x: (x.content_type.app_label, x.content_type.model))
     for content_type, posts in groups:
         if content_type == ('manopozicija', 'event'):
@@ -139,11 +167,11 @@ def _align_both_sides(left, rigth, width):
     return left + rigth.rjust(width - len(left))
 
 
-def dump_topic_posts(topic):
+def dump_topic_posts(topic, **kwargs):
     width = 108
     middle = width - 12
     result = []
-    for i, row in enumerate(get_topic_posts(topic)):
+    for i, row in enumerate(get_topic_posts(topic, **kwargs)):
         if i > 0:
             result.append(' | ' + ' ' * (width - 3))
         if row['type'] == 'event':

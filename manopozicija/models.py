@@ -143,7 +143,7 @@ class Curator(models.Model):
         Person's domain of interest of group type.
 
     """
-    user = models.ForeignKey(User)
+    user = models.OneToOneField(User)
     actor = models.ForeignKey(Actor, null=True, blank=True)
     title = models.CharField(max_length=255)
     photo = ImageField(upload_to='actors/%Y/%m/%d/')
@@ -179,7 +179,7 @@ class TopicCurator(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     approved = models.DateTimeField(null=True, blank=True)
     topic = models.ForeignKey(Topic)
-    curator = models.ForeignKey(Curator)
+    user = models.ForeignKey(User)
     queue = GenericRelation(CuratorQueueItem)
 
 
@@ -206,7 +206,7 @@ class CuratorApproval(models.Model):
 
     """
     created = models.DateTimeField(auto_now_add=True)
-    curator = models.ForeignKey(Curator)
+    user = models.ForeignKey(User)
     item = models.ForeignKey(CuratorQueueItem)
     vote = models.SmallIntegerField()
 

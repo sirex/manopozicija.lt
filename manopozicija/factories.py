@@ -168,6 +168,16 @@ class UserPositionFactory(DjangoModelFactory):
         model = mp.UserPosition
 
 
+class TopicCuratorFactory(DjangoModelFactory):
+    approved = datetime.datetime(2016, 3, 22, 16, 34, 0)
+    topic = factory.SubFactory(TopicFactory)
+    user = factory.SubFactory(UserFactory)
+
+    class Meta:
+        model = mp.TopicCurator
+        django_get_or_create = ('user', 'topic')
+
+
 def create_quote_agruments(topic, quote, arguments):
     result = []
     for position, argument, counterargument in arguments:
@@ -213,3 +223,24 @@ def create_topic_posts(topic, posts):
         else:
             result.extend(create_topic_quotes(topic, *args))
     return result
+
+
+def get_quote_form_data(**kwargs):
+    source = {
+        'actor': PersonActorFactory(),
+        'source_link': 'http://kauno.diena.lt/naujienos/lietuva/politika/skinasi-kelia-balsavimas-internetu-740017',
+        'timestamp': datetime.datetime(2016, 3, 22, 16, 34, 0),
+    }
+    quote = {
+        'reference_link': '',
+        'text': kwargs.get('text', 'Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.'),
+    }
+    arguments = [
+        {
+            'title': 'šiuolaikiška, modernu',
+            'position': 1,
+            'counterargument': True,
+            'counterargument_title': '',
+        }
+    ]
+    return source, quote, arguments

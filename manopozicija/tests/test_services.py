@@ -45,3 +45,32 @@ def test_get_topic_posts(app):
         ' |                                                                                                          ',
         ' o  (-) Balsavimo internetu koncepcijos patvirtinimas                                  lrs.lt 2006-11-26 (1)',
     ])
+
+
+def test_create_quote(app):
+    user = factories.UserFactory()
+    topic = factories.TopicFactory()
+
+    # First try to create a quote as no non-curator user
+    source, quote, arguments = factories.get_quote_form_data(
+        text='Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.'
+    )
+    services.create_quote(user, topic, source, quote, arguments)
+    assert services.dump_topic_posts(topic) == ''
+    assert services.dump_topic_posts(topic, queue=True) == '\n'.join([
+        '( ) (n) Mantas Adomėnas (seimo narys)                                          kauno.diena.lt 2016-03-22    ',
+        ' |      Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.                                 (0)',
+        ' |      - (y) šiuolaikiška, modernu < (counterargument)                                                     ',
+    ])
+
+    # Now create a post as a curator user
+    factories.TopicCuratorFactory(user=user, topic=topic)
+    source, quote, arguments = factories.get_quote_form_data(
+        text='Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.'
+    )
+    services.create_quote(user, topic, source, quote, arguments)
+    assert services.dump_topic_posts(topic) == '\n'.join([
+        '( ) (n) Mantas Adomėnas (seimo narys)                                          kauno.diena.lt 2016-03-22    ',
+        ' |      Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.                                      (0)',
+        ' |      - (y) šiuolaikiška, modernu < (counterargument)                                                     ',
+    ])
