@@ -133,84 +133,6 @@ class Member(models.Model):
     until = models.DateTimeField()
 
 
-class Curator(models.Model):
-    """User who is a curator of one or more topics
-
-    Attributes
-    ----------
-
-    title : str
-        Person's domain of interest of group type.
-
-    """
-    user = models.OneToOneField(User)
-    actor = models.ForeignKey(Actor, null=True, blank=True)
-    title = models.CharField(max_length=255)
-    photo = ImageField(upload_to='actors/%Y/%m/%d/')
-
-
-class CuratorQueueItem(models.Model):
-    """List of items in a topic shown for curators for approval"""
-    topic = models.ForeignKey('Topic')
-    approved = models.DateTimeField(null=True, blank=True)
-
-    content_type = models.ForeignKey(ContentType)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
-    class Meta:
-        unique_together = ('topic', 'content_type', 'object_id')
-
-
-class TopicCurator(models.Model):
-    """Topic curators
-
-    Attributes
-    ----------
-
-    approved : bool
-        Time when this topic curator was approved by others.
-
-    queue : CuratorQueueItem
-        First topic curators have to wait in queue while other curators
-        approves his request to become new topic curator.
-
-    """
-    created = models.DateTimeField(auto_now_add=True)
-    approved = models.DateTimeField(null=True, blank=True)
-    topic = models.ForeignKey(Topic)
-    user = models.ForeignKey(User)
-    queue = GenericRelation(CuratorQueueItem)
-
-
-class CuratorApproval(models.Model):
-    """Votes for new curators and topic timeline suggestions
-
-    Each curator can vote if new curator or suggested new post for the
-    timeline should be approved.
-
-    Attributes
-    ----------
-
-    created : datetime.datetime
-        When vote has been given.
-
-    curator : Curator
-        Who voted.
-
-    item : CuratorQueueItem
-        An item voted for.
-
-    vote : int
-        Positive or negative integer as vote value.
-
-    """
-    created = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User)
-    item = models.ForeignKey(CuratorQueueItem)
-    vote = models.SmallIntegerField()
-
-
 class Post(models.Model):
     """Topic's timeline posts.
 
@@ -226,14 +148,10 @@ class Post(models.Model):
     actor : Actor
         Actor of the content object if object has an actor.
 
-    queue : CuratorQueueItem
-        Before showing to the public, post have to wait in queue to be
-        approved by topic curators.
+    approved : datetime.datetime
+        Indicates when this post was approved by a topic curator.
 
-    approved : bool
-        Indicates if this post was approved by topic curators.
-
-    content_object : Event | Quote
+    content_object : Event | Quote | Curator
         An object associated with this post.
 
     timestamp : datetime.datetime
@@ -250,8 +168,7 @@ class Post(models.Model):
     topic = models.ForeignKey('Topic')
     actor = models.ForeignKey(Actor, null=True, blank=True)
     position = models.FloatField()
-    queue = GenericRelation(CuratorQueueItem)
-    approved = models.BooleanField(default=False)
+    approved = models.DateTimeField(null=True, blank=True)
     timestamp = models.DateTimeField()
     upvotes = models.PositiveIntegerField(default=0)
 
@@ -261,6 +178,79 @@ class Post(models.Model):
 
     class Meta:
         unique_together = ('topic', 'content_type', 'object_id')
+
+
+class Curator(models.Model):
+    """User who is a curator of one or more topics
+
+    Attributes
+    ----------
+
+    title : str
+        Person's domain of interest of group type.
+
+    post : Post
+        First topic curators have to wait in queue while other curators
+        approves his request to become new topic curator.
+
+        Each new curator request is created as a post.
+
+    """
+    user = models.OneToOneField(User)
+    actor = models.ForeignKey(Actor, null=True, blank=True)
+    title = models.CharField(max_length=255)
+    photo = ImageField(upload_to='actors/%Y/%m/%d/')
+    posts = GenericRelation(Post)
+
+
+class TopicCurator(models.Model):
+    """Topic curators
+
+    Attributes
+    ----------
+
+    approved : bool
+        Time when this topic curator was approved by others.
+
+    """
+    created = models.DateTimeField(auto_now_add=True)
+    approved = models.DateTimeField(null=True, blank=True)
+    topic = models.ForeignKey(Topic)
+    user = models.ForeignKey(User)
+
+
+class PostLog(models.Model):
+    """Log of all actions performed with a post.
+
+    Each curator can vote if new curator or suggested new post for the
+    timeline should be approved.
+
+    Attributes
+    ----------
+
+    created : datetime.datetime
+        When vote has been given.
+
+    curator : Curator
+        Who voted.
+
+    post : Post
+        A topic post voted for.
+
+    vote : int
+        Positive or negative integer as vote value.
+
+    """
+    VOTE = 1
+    ACTION_CHOICES = (
+        (VOTE, _("balsavo")),
+    )
+
+    created = models.DateTimeField(auto_now_add=True)
+    user = models.ForeignKey(User)
+    post = models.ForeignKey(Post)
+    action = models.PositiveSmallIntegerField(choices=ACTION_CHOICES)
+    vote = models.SmallIntegerField(null=True, blank=True)
 
 
 class UserPosition(models.Model):

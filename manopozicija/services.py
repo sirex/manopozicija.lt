@@ -3,6 +3,8 @@ import itertools
 
 from django.utils import timezone
 from django.db.models import F, Case, When, Count, Avg
+from django.utils.translation import ugettext
+from django.contrib.contenttypes.models import ContentType
 
 from manopozicija import models
 
@@ -14,61 +16,87 @@ def create_event(user, topic, event_data):
     event_data['position'] = 0
     event_data['source_title'] = get_title_from_link(source_link)
     event, created = models.Event.objects.get_or_create(source_link=source_link, **event_data)
-    models.Post.objects.create(
+
+    is_curator = is_topic_curator(user, topic)
+    approved = timezone.now() if is_curator else None
+
+    post = models.Post.objects.create(
         body=topic.default_body,
         topic=topic,
         position=0,
-        approved=True,
+        approved=approved,
         timestamp=event.timestamp,
         upvotes=0,
         content_object=event,
     )
+
+    if is_curator:
+        # Automatically approve posts created by topic curators.
+        models.PostLog.objects.create(user=user, post=post, action=models.PostLog.VOTE, vote=1)
+
     return event
 
 
-def create_quote(user, topic, source_data, quote_data, arguments_data):
-    source_data['actor_title'] = source_data['actor'].title
-    source_data['source_title'] = get_title_from_link(source_data['source_link'])
+def create_quote(user, topic, source: dict, quote: dict, arguments: list):
+    source['actor_title'] = source['actor'].title
+    source['source_title'] = get_title_from_link(source['source_link'])
     source, created = models.Source.objects.get_or_create(
-        actor=source_data['actor'],
-        source_link=source_data['source_link'],
-        defaults=source_data,
+        actor=source['actor'],
+        source_link=source['source_link'],
+        defaults=source,
     )
 
-    quote = models.Quote.objects.create(user=user, source=source, **quote_data)
+    quote = models.Quote.objects.create(user=user, source=source, **quote)
 
-    for argument_data in arguments_data:
-        if argument_data.get('title'):
-            models.Argument.objects.create(topic=topic, quote=quote, **argument_data)
+    for argument in arguments:
+        if argument.get('title'):
+            models.Argument.objects.create(topic=topic, quote=quote, **argument)
 
     source.position = get_source_position(topic, source)
     source.save()
 
     is_curator = is_topic_curator(user, topic)
+    approved = timezone.now() if is_curator else None
 
     post = models.Post.objects.create(
         body=topic.default_body,
         topic=topic,
         actor=source.actor,
         position=get_quote_position(topic, quote),
-        approved=is_curator,
+        approved=approved,
         timestamp=source.timestamp,
         upvotes=0,
         content_object=quote,
     )
 
-    approved = timezone.now() if is_curator else None
-    queue_item = models.CuratorQueueItem.objects.create(topic=topic, approved=approved, content_object=post)
-
     if is_curator:
         # Automatically approve posts created by topic curators.
-        models.CuratorApproval.objects.create(
-            user=user,
-            item=queue_item,
-            vote=1,
-        )
+        models.PostLog.objects.create(user=user, post=post, action=models.PostLog.VOTE, vote=1)
 
     return quote
+
+
+def create_curator(user, topic, user_data: dict, curator: dict):
+    curator, created = models.Curator.objects.get_or_create(user=user, **curator)
+    if user_data:
+        user.first_name = user_data['first_name']
+        user.last_name = user_data['last_name']
+        user.save()
+
+    # Add new curator as a topic post to be approved by other curators.
+    post = models.Post.objects.create(
+        body=topic.default_body,
+        topic=topic,
+        actor=None,
+        position=0,
+        approved=None,
+        timestamp=timezone.now(),
+        upvotes=0,
+        content_object=curator,
+    )
+    models.PostLog.objects.create(user=user, post=post, action=models.PostLog.VOTE, vote=1)
+
+    return curator
 
 
 def is_topic_curator(user, topic):
@@ -122,13 +150,15 @@ def get_topic_posts(topic, queue=False):
     if queue:
         qs = (
             models.Post.objects.
-            filter(topic=topic, approved=False).
+            filter(topic=topic, approved__isnull=True).
             order_by('-timestamp')
         )
     else:
+        curator_type = ContentType.objects.get(app_label='manopozicija', model='curator')
         qs = (
             models.Post.objects.
-            filter(topic=topic, approved=True).
+            exclude(content_type=curator_type).
+            filter(topic=topic, approved__isnull=False).
             order_by('-timestamp')
         )
 
@@ -149,8 +179,15 @@ def get_topic_posts(topic, queue=False):
                     'source': quotes[0].content_object.source,
                     'quotes': [(x, x.content_object) for x in quotes],
                 })
+        elif content_type == ('manopozicija', 'curator'):
+            for post in posts:
+                result.append({
+                    'type': post.content_type.model,
+                    'post': post,
+                    'curator': post.content_object,
+                })
         else:
-            raise ValueError('Unknown content type: %r' % content_type)
+            raise ValueError('Unknown content type: %r' % (content_type,))
     return result
 
 
@@ -180,6 +217,18 @@ def dump_topic_posts(topic, **kwargs):
                 middle=_align_both_sides(
                     row['event'].title,
                     '%s %s' % (row['event'].source_title, row['post'].timestamp.strftime('%Y-%m-%d')),
+                    middle,
+                ),
+                upvotes=row['post'].upvotes,
+            ))
+        elif row['type'] == 'curator':
+            result.append('( ) {middle} ({upvotes})'.format(
+                middle=_align_both_sides(
+                    '%s (%s)' % (
+                        row['curator'].user.get_full_name(),
+                        row['curator'].title,
+                    ),
+                    ugettext("naujas temos kuratorius"),
                     middle,
                 ),
                 upvotes=row['post'].upvotes,

@@ -1,9 +1,30 @@
 from django import forms
 from django.db.models import Value
+from django.contrib.auth.models import User
 from django.utils.translation import ugettext, ugettext_lazy as _
 
 from manopozicija import models
 from manopozicija.db import Similarity
+
+
+class CombinedForms(object):
+
+    def __init__(self, **forms_):
+        self._forms = forms_
+
+    def __getitem__(self, key):
+        return self._forms[key]
+
+    def is_valid(self):
+        return all([f.is_valid() for f in self.forms])
+
+    @property
+    def cleaned_data(self):
+        return {k: f.cleaned_data if f else None for k, f in self._forms.items()}
+
+    @property
+    def forms(self):
+        return [f for f in self._forms.values() if f]
 
 
 class PersonForm(forms.ModelForm):
@@ -92,3 +113,17 @@ class EventForm(forms.ModelForm):
             if event and models.Post.objects.filter(topic=self.topic, event=event).exists():
                 raise forms.ValidationError(ugettext("Toks sprendimas jau yra įtrauktas į „%s“ temą.") % self.topic)
         return source_link
+
+
+class CuratorUserForm(forms.ModelForm):
+
+    class Meta:
+        model = User
+        fields = ('first_name', 'last_name')
+
+
+class CuratorForm(forms.ModelForm):
+
+    class Meta:
+        model = models.Curator
+        fields = ('title', 'photo')

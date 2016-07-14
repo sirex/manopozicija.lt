@@ -5,13 +5,19 @@
 
 
 {% block content %}
+{% if page_title %}
+  <h1>{{ page_title }}</h1>
+{% endif %}
+
 <h2>{{ form_title }}</h2>
 
 <form id="{{ form_name }}" method="POST" enctype="multipart/form-data">
   {% csrf_token %}
   <div class="row">
     <div class="col-md-4">
-      {{ form|bootstrap }}
+      {% for form in forms %}
+        {{ form|bootstrap }}
+      {% endfor %}
     </div>
   </div>
   <hr/>

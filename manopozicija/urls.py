@@ -13,10 +13,9 @@ urlpatterns = [
     url(r'^nauja-grupe/$', views.group_form, name='group-create'),
     url(r'^temos/%s/nauja-citata/$' % slug, views.quote_form, name='quote-create'),
     url(r'^temos/%s/naujas-sprendimas/$' % slug, views.event_form, name='event-create'),
+    url(r'^temos/%s/naujas-kuratorius/$' % slug, views.curator_form, name='curator-apply'),
     url(r'^temos/%s/$' % slug, views.topic_details, name='topic-details'),
-    url(r'^temos/%s/add-voting/$' % slug, views.voting_form, name='add-voting'),
-    url(r'^temos/%s/add-news/$' % slug, views.news_form, name='add-news'),
-    url(r'^topic/%s/kpi/$' % slug, views.topic_kpi, name='topic-kpi'),
+    url(r'^temos/%s/kpi/$' % slug, views.topic_kpi, name='topic-kpi'),
 ]
 
 urlpatterns += [

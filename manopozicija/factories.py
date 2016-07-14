@@ -1,6 +1,8 @@
+import io
 import factory
 import datetime
 
+from PIL import Image
 from django.conf import settings
 from factory.django import DjangoModelFactory, ImageField
 
@@ -22,6 +24,7 @@ class EmailAddressFactory(DjangoModelFactory):
 class UserFactory(DjangoModelFactory):
     first_name = 'Vardenis'
     last_name = 'Pavardenis'
+    username = factory.LazyAttribute(lambda x: x.first_name.lower())
     email = factory.LazyAttribute(lambda x: '%s.%s@example.com' % (x.first_name.lower(), x.last_name.lower()))
     is_active = True
     emailaddress = factory.RelatedFactory(EmailAddressFactory, 'user')
@@ -152,7 +155,7 @@ class PostFactory(DjangoModelFactory):
     topic = factory.SubFactory(TopicFactory)
     actor = factory.SubFactory(PersonActorFactory)
     position = 1
-    approved = True
+    approved = datetime.datetime(2016, 3, 22, 16, 34, 0)
     timestamp = datetime.datetime(2016, 3, 22, 16, 34, 0)
 
     class Meta:
@@ -244,3 +247,10 @@ def get_quote_form_data(**kwargs):
         }
     ]
     return source, quote, arguments
+
+
+def get_image_bytes(width=100, height=100, format='JPEG', color='black'):
+    image = Image.new('RGB', (width, height), color)
+    output = io.BytesIO()
+    image.save(output, format=format)
+    return output.getvalue()

@@ -65,4 +65,6 @@ admin.site.register(models.Indicator, IndicatorAdmin)
 admin.site.register(models.Topic, TopicAdmin)
 admin.site.register(models.Body)
 admin.site.register(models.Actor, ActorAdmin)
+admin.site.register(models.Post)
+admin.site.register(models.TopicCurator)
 # admin.site.register(Post

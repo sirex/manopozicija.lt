@@ -20,136 +20,66 @@
 
 <h1>{{ topic.title }}</h1>
 
-{% if has_indicators %}
-<div id="chart" data-kpi-url="{% url 'topic-kpi' topic.slug %}"></div>
-{% endif %}
-
-<div class="row">
-  <div class="col-md-1 timeline-box"></div>
-  <div class="col-md-11">
-    <h3>{% trans "Esminiai veiklos rodikliai" %}</h3>
-  </div>
-</div>
-
-<div class="timeline">
-  <div class="row">
-    <div class="col-md-1 timeline-box"></div>
-    <div class="col-md-11">
-      <h3>{% trans "Pagrindiniai argumentai" %}</h3>
-    </div>
-  </div>
-  <div class="row">
-    <div class="col-md-1 timeline-box text-right"><img src="{% static 'img/thumb-up-big.png' %}" class="positive-args-img" /></div>
-    <div class="col-md-5 arguments-positive-header">{% trans "pliusai" %}</div>
-    <div class="col-md-5 arguments-negative-header">{% trans "minusai" %}</div>
-    <div class="col-md-1"><img src="{% static 'img/thumb-down-big.png' %}" class="negative-args-img" /></div>
-  </div>
-  {% for positive, negative in arguments %}
-  <div class="row">
-    {% if positive %}
-    <div class="col-md-1 timeline-box text-right"><span class="positive-count">{{ positive.count }}</span></div>
-      <div class="col-md-5">
-        <a href="#" class="text-success argument-link">{{ positive.title }}</a>
-      </div>
-    {% else %}
-      <div class="col-md-1 timeline-box"></div>
-      <div class="col-md-5"></div>
-    {% endif %}
-
-    {% if negative %}
-      <div class="col-md-5 text-right">
-        <a href="#" class="text-danger argument-link">{{ negative.title }}</a>
-      </div>
-      <div class="col-md-1"><span class="negative-count">{{ negative.count }}</span></div>
-    {% else %}
-      <div class="col-md-5"></div>
-      <div class="col-md-1"></div>
-    {% endif %}
-  </div>
-  {% endfor %}
-
-  <div class="row">
-    <div class="col-md-1 timeline-box"></div>
-    <div class="col-md-11">
-      <h3>{% trans "Sprendimai ir nuomonės" %}</h3>
-      <p class="text-muted">Spauskite <img src="{% static 'img/thumb-up.png' %}"/>, jei pritariate sprendimui ar nuomonei,
-      spauskite <img src="{% static 'img/thumb-down.png' %}"/>, jei prieštaraujate.</p>
-    </div>
-  </div>
-
-  {% for post in posts %}
-  {% if post.type == 'event' %}
-    <div class="row">
-      <div class="col-md-1 timeline-box event-indicator">
-        <img src="{% static post.event.position_image %}" />
-      </div>
-      <div class="col-md-11">
-        <div class="row">
-          <div class="col-md-11">
-            <a href="{{ post.event.source.link }}" target="_blank" class="text-muted pull-right event-date">
-              {{ post.event.timestamp }} »
-            </a>
-            <p class="event-name"><a href="#">{{ post.event.name }}</a></p>
-          </div>
-          <div class="col-md-1 post-vote">
-            <div class="thumb top">&nbsp;</div>
-            <div>{{ post.event.upvotes }}</div>
-            <div class="thumb bottom">&nbsp;</div>
-          </div>
-        </div>
-        <hr class="post-separator"/>
-      </div>
-    </div>
-  {% else %}
-    <div class="row">
-      <div class="col-md-1 timeline-box">
-        {% thumbnail post.source.actor.photo "70x70" crop="50% 0%" background="#FFF" as photo %}
-          <div class="actor-photo" style="background:url({{ photo.url }}) no-repeat 0px 2px;">
-            <img src="{% static post.source.actor.position_image %}" />
-          </div>
-        {% empty %}
-          <div class="actor-photo">
-            <img src="{% static post.source.actor.position_image %}" />
-          </div>
-        {% endthumbnail %}
-      </div>
-      <div class="col-md-11">
-        <div class="row">
-          <div class="col-md-11">
-            <a href="{{ post.source.link }}" target="_blank" class="text-muted pull-right">
-              {{ post.source.name }} »
-            </a>
-            <a href="#" class="actor-name">{{ post.source.actor.name }}</a>
-            <a href="#" class="text-muted">{{ post.source.actor.title }}</a>
-          </div>
-        </div>
-        {% for quote in post.quotes %}
-          <div class="row">
-            <div class="col-md-11">
-              <p class="quote-text">{{ quote.text }}</p>
-              <p>
-                {% for argument in quote.arguments %}
-                  <a href="#" class="{{ argument.classes }}">
-                    <span class="{{ argument.counterargument.classes }}" aria-hidden="true"></span>
-                    {{ argument.name }}
-                  </a>
-                {% endfor %}
-              </p>
-            </div>
-            <div class="col-md-1 post-vote">
-              <div class="thumb top">&nbsp;</div>
-              <div>{{ quote.upvotes }}</div>
-              <div class="thumb bottom">&nbsp;</div>
-            </div>
-          </div>
-          <hr class="post-separator"/>
-        {% endfor %}
-      </div>
-    </div>
-
+{% if posts %}
+  {% if has_indicators %}
+  <div id="chart" data-kpi-url="{% url 'topic-kpi' topic.slug %}"></div>
   {% endif %}
-  {% endfor %}
-</div>
+
+  <div class="row">
+    <div class="col-md-1 timeline-box"></div>
+    <div class="col-md-11">
+      <h3>{% trans "Esminiai veiklos rodikliai" %}</h3>
+    </div>
+  </div>
+
+  <div class="timeline">
+    <div class="row">
+      <div class="col-md-1 timeline-box"></div>
+      <div class="col-md-11">
+        <h3>{% trans "Pagrindiniai argumentai" %}</h3>
+      </div>
+    </div>
+    <div class="row">
+      <div class="col-md-1 timeline-box text-right"><img src="{% static 'img/thumb-up-big.png' %}" class="positive-args-img" /></div>
+      <div class="col-md-5 arguments-positive-header">{% trans "pliusai" %}</div>
+      <div class="col-md-5 arguments-negative-header">{% trans "minusai" %}</div>
+      <div class="col-md-1"><img src="{% static 'img/thumb-down-big.png' %}" class="negative-args-img" /></div>
+    </div>
+    {% for positive, negative in arguments %}
+    <div class="row">
+      {% if positive %}
+      <div class="col-md-1 timeline-box text-right"><span class="positive-count">{{ positive.count }}</span></div>
+        <div class="col-md-5">
+          <a href="#" class="text-success argument-link">{{ positive.title }}</a>
+        </div>
+      {% else %}
+        <div class="col-md-1 timeline-box"></div>
+        <div class="col-md-5"></div>
+      {% endif %}
+
+      {% if negative %}
+        <div class="col-md-5 text-right">
+          <a href="#" class="text-danger argument-link">{{ negative.title }}</a>
+        </div>
+        <div class="col-md-1"><span class="negative-count">{{ negative.count }}</span></div>
+      {% else %}
+        <div class="col-md-5"></div>
+        <div class="col-md-1"></div>
+      {% endif %}
+    </div>
+    {% endfor %}
+
+    <div class="row">
+      <div class="col-md-1 timeline-box"></div>
+      <div class="col-md-11">
+        <h3>{% trans "Sprendimai ir nuomonės" %}</h3>
+        <p class="text-muted">Spauskite <img src="{% static 'img/thumb-up.png' %}"/>, jei pritariate sprendimui ar nuomonei,
+        spauskite <img src="{% static 'img/thumb-down.png' %}"/>, jei prieštaraujate.</p>
+      </div>
+    </div>
+    {% include "manopozicija/_topic_posts.html" with posts=posts %}
+  </div>
+{% endif %}
 
 {% if request.user.is_authenticated %}
 <div class="row">
@@ -167,8 +97,26 @@
     <a href="{% url "event-create" topic.pk topic.slug %}" class="btn btn-lg btn-default">
       {% trans "Pridėk sprendimą" %}
     </a>
+    {% if not is_topic_curator %}
+      <a href="{% url "curator-apply" topic.pk topic.slug %}" class="btn btn-lg btn-default">
+        {% trans "Tapk temos kuratoriumi" %}
+      </a>
+    {% endif %}
   </div>
 </div>
+{% endif %}
+
+{% if queue %}
+  <div class="row">
+    <div class="col-md-1 timeline-box"></div>
+    <div class="col-md-11">
+      <h3>{% trans "Pasiūlymų moderavimas" %}</h3>
+    </div>
+  </div>
+
+  <div class="timeline">
+    {% include "manopozicija/_topic_posts.html" with posts=queue %}
+  </div>
 {% endif %}
 
 {% endblock %}

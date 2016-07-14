@@ -1,3 +1,5 @@
+from webtest import Upload
+
 from django.core.urlresolvers import reverse
 
 from manopozicija import models
@@ -33,10 +35,11 @@ def test_create_group(app):
 
 
 def test_create_event(app):
-    factories.UserFactory()
+    user = factories.UserFactory()
     topic = factories.TopicFactory()
+    factories.TopicCuratorFactory(user=user, topic=topic)
 
-    resp = app.get(reverse('event-create', args=[topic.pk, topic.slug]), user='vardenis')
+    resp = app.get(reverse('event-create', args=[topic.pk, topic.slug]), user=user)
     form = resp.forms['event-form']
     form['title'] = 'Balsavimo internetu koncepcijos patvirtinimas'
     form['source_link'] = 'https://e-seimas.lrs.lt/portal/legalAct/lt/TAD/TAIS.287235?positionInSearchResults=0&searchModelUUID=eaee1625-cf9f-46c0-931c-482a218029e8'
@@ -50,7 +53,7 @@ def test_create_event(app):
     ])
 
     # Try to add same event second time
-    resp = app.get(reverse('event-create', args=[topic.pk, topic.slug]), user='vardenis')
+    resp = app.get(reverse('event-create', args=[topic.pk, topic.slug]), user=user)
     form = resp.forms['event-form']
     form['title'] = 'Balsavimo internetu koncepcijos patvirtinimas'
     form['source_link'] = 'https://e-seimas.lrs.lt/portal/legalAct/lt/TAD/TAIS.287235?positionInSearchResults=0&searchModelUUID=eaee1625-cf9f-46c0-931c-482a218029e8'
@@ -73,9 +76,10 @@ def test_create_quote(app):
     cursor = connection.cursor()
     cursor.execute('CREATE EXTENSION IF NOT EXISTS pg_trgm')
 
-    factories.UserFactory()
+    user = factories.UserFactory()
     actor = factories.PersonActorFactory()
     topic = factories.TopicFactory()
+    factories.TopicCuratorFactory(user=user, topic=topic)
 
     resp = app.get(reverse('quote-create', args=[topic.pk, topic.slug]), user='vardenis')
     form = resp.forms['quote-form']
@@ -137,4 +141,30 @@ def test_create_quote(app):
         ' |      - (y) šiuolaikiška, modernu < (counterargument)                                                     ',
         ' |      Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.                                      (0)',
         ' |      - (n) balsų pirkimas                                                                                ',
+    ])
+
+
+def test_curator_apply(app):
+    user = factories.UserFactory(
+        username='vardenis',
+        email='vardenis.pavardenis@example.com',
+        first_name='',
+        last_name='',
+    )
+    topic = factories.TopicFactory()
+
+    resp = app.get(reverse('curator-apply', args=[topic.pk, topic.slug]), user=user)
+    form = resp.forms['curator-form']
+    form['first_name'] = 'Vardenis'
+    form['last_name'] = 'Pavardenis'
+    form['title'] = 'visuomenės veikėjas'
+    form['photo'] = Upload('my.jpg', factories.get_image_bytes())
+    resp = form.submit()
+
+    assert resp.status == '302 Found'
+    assert resp.headers['location'] == topic.get_absolute_url()
+    assert models.Curator.objects.get(user=user).title == 'visuomenės veikėjas'
+    assert services.dump_topic_posts(topic) == ''
+    assert services.dump_topic_posts(topic, queue=True) == '\n'.join([
+        '( ) Vardenis Pavardenis (visuomenės veikėjas)                                naujas temos kuratorius (0)',
     ])

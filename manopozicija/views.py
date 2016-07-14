@@ -1,13 +1,11 @@
-import requests
-
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext
-from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.forms import formset_factory
+from django.contrib.contenttypes.models import ContentType
 
 from manopozicija.indicators import get_indicator_data
 from manopozicija import models
@@ -24,17 +22,20 @@ def topic_list(request):
 
 def topic_details(request, object_id, slug):
     topic = get_object_or_404(models.Topic, pk=object_id)
-
+    is_topic_curator = services.is_topic_curator(request.user, topic)
     return render(request, 'manopozicija/topic_details.html', {
         'topic': topic,
         'arguments': helpers.get_arguments(services.get_topic_arguments(topic)),
         'posts': helpers.get_posts(services.get_topic_posts(topic)),
+        'queue': helpers.get_posts(services.get_topic_posts(topic, queue=True)) if is_topic_curator else [],
         'has_indicators': topic.indicators.count() > 0,
+        'is_topic_curator': is_topic_curator,
     })
 
 
-def topic_kpi(request, slug):
-    topic = get_object_or_404(Topic, slug=slug)
+def topic_kpi(request, object_id, slug):
+    topic = get_object_or_404(models.Topic, pk=object_id)
+    event_type = ContentType.objects.get(app_label='manopozicija', model='event')
     return JsonResponse({
         'indicators': [
             {
@@ -47,88 +48,13 @@ def topic_kpi(request, slug):
         ],
         'events': [
             {
-                'title': x.title,
-                'date': x.datetime.strftime('%Y-%m-%d'),
-                'source': x.link,
-                'position': None,  # TODO: Currently position is stored for each voting by person and here we need
-                                   #       aggregated mean of all positions for this one voting.
+                'title': x.content_object.title,
+                'date': x.timestamp.strftime('%Y-%m-%d'),
+                'source': x.content_object.source_link,
+                'position': x.position,
             }
-            for x in Voting.objects.filter(position__topic=topic).order_by('datetime')
+            for x in models.Post.objects.filter(topic=topic, content_type=event_type).order_by('timestamp')
         ],
-    })
-
-
-@login_required
-def voting_form(request, slug):
-    topic = get_object_or_404(Topic, slug=slug)
-
-    if request.method == 'POST':
-        form = NewVotingForm(topic, request.POST)
-        if form.is_valid():
-            voting = form.save(commit=False)
-            voting.author = request.user
-
-            resp = requests.get(voting.link)
-            data = parse_votes(voting.link, resp.content)
-            update_voting(voting, data)
-
-            voting.save()
-
-            weight = form.cleaned_data['weight']
-
-            Position.objects.create(topic=topic, content_object=voting, weight=weight)
-
-            import_votes(voting, data['table'])
-            create_vote_positions(topic, voting, weight)
-
-            messages.success(request, ugettext("Voting „%s“ created." % voting))
-            return redirect(topic)
-    else:
-        form = NewVotingForm(topic)
-
-    return render(request, 'website/voting_form.html', {
-        'topic': topic,
-        'form': formrenderer.render(request, form, title=ugettext('Naujas balsavimas'), submit=ugettext('Pridėti')),
-    })
-
-
-@login_required
-def news_form(request, slug):
-    topic = get_object_or_404(Topic, slug=slug)
-
-    if request.method == 'POST':
-        form = QuoteForm(request.POST)
-        if form.is_valid():
-            news = form.save(commit=False)
-
-            weight = form.cleaned_data['weight']
-            Position.objects.create(topic=topic, content_object=news, weight=weight)
-
-            messages.success(request, ugettext("News „%s“ created." % news))
-            return redirect(topic)
-    else:
-        form = QuoteForm()
-
-    return render(request, 'website/news_form.html', {
-        'form': formrenderer.render(request, form, title=ugettext('Nauja naujiena'), submit=ugettext('Pridėti')),
-    })
-
-
-@login_required
-def topic_form(request):
-    if request.method == 'POST':
-        form = TopicForm(request.POST)
-        if form.is_valid():
-            topic = form.save(commit=False)
-            topic.author = request.user
-            topic.save()
-            messages.success(request, ugettext("Topic „%s“ created." % topic))
-            return redirect(topic)
-    else:
-        form = TopicForm()
-
-    return render(request, 'website/topic_form.html', {
-        'form': formrenderer.render(request, form, title=ugettext('Nauja tema'), submit=ugettext('Pridėti')),
     })
 
 
@@ -143,31 +69,27 @@ def quote_form(request, object_id, slug):
     if request.method == 'POST':
         source_form = forms.SourceForm(request.POST)
         source_form.full_clean()
-        quote_form = forms.QuoteForm(
-            topic,
-            source_form.cleaned_data['actor'],
-            source_form.cleaned_data['source_link'],
-            request.POST,
+        source = source_form.cleaned_data
+        form = forms.CombinedForms(
+            source=source_form,
+            quote=forms.QuoteForm(topic, source['actor'], source['source_link'], request.POST),
+            arguments=ArgumentFormSet(request.POST),
         )
-        arguments_formset = ArgumentFormSet(request.POST)
-        if all([source_form.is_valid(), quote_form.is_valid(), arguments_formset.is_valid()]):
-            services.create_quote(
-                request.user, topic,
-                source_form.cleaned_data,
-                quote_form.cleaned_data,
-                arguments_formset.cleaned_data,
-            )
+        if form.is_valid():
+            services.create_quote(request.user, topic, **form.cleaned_data)
             return redirect(topic)
     else:
-        source_form = forms.SourceForm()
-        quote_form = forms.QuoteForm(topic, actor=None, source_link=None)
-        arguments_formset = ArgumentFormSet()
+        form = forms.CombinedForms(
+            source=forms.SourceForm(),
+            quote=forms.QuoteForm(topic, actor=None, source_link=None),
+            arguments=ArgumentFormSet(),
+        )
 
     return render(request, 'manopozicija/quote_form.html', {
         'topic': topic,
-        'source_form': source_form,
-        'quote_form': quote_form,
-        'arguments_formset': arguments_formset,
+        'source_form': form['source'],
+        'quote_form': form['quote'],
+        'arguments_formset': form['arguments'],
     })
 
 
@@ -184,7 +106,7 @@ def event_form(request, object_id, slug):
     return render(request, 'manopozicija/form.html', {
         'form_name': 'event-form',
         'form_title': ugettext('Naujas sprendimas'),
-        'form': form,
+        'forms': [form],
     })
 
 
@@ -200,7 +122,7 @@ def person_form(request):
     return render(request, 'manopozicija/form.html', {
         'form_name': 'person-form',
         'form_title': ugettext('Naujas asmuo'),
-        'form': form,
+        'forms': [form],
     })
 
 
@@ -216,5 +138,31 @@ def group_form(request):
     return render(request, 'manopozicija/form.html', {
         'form_name': 'group-form',
         'form_title': ugettext('Nauja grupė'),
-        'form': form,
+        'forms': [form],
+    })
+
+
+@login_required
+def curator_form(request, object_id, slug):
+    user = request.user
+    full_name = ' '.join([user.first_name, user.last_name]).strip()
+    topic = get_object_or_404(models.Topic, pk=object_id)
+    if request.method == 'POST':
+        form = forms.CombinedForms(
+            user_data=None if full_name else forms.CuratorUserForm(request.POST),
+            curator=forms.CuratorForm(request.POST, request.FILES),
+        )
+        if form.is_valid():
+            services.create_curator(user, topic, **form.cleaned_data)
+            return redirect(topic)
+    else:
+        form = forms.CombinedForms(
+            user_data=None if full_name else forms.CuratorUserForm(),
+            curator=forms.CuratorForm(),
+        )
+    return render(request, 'manopozicija/form.html', {
+        'page_title': str(topic),
+        'form_name': 'curator-form',
+        'form_title': ugettext('Tapk temos kuratoriumi'),
+        'forms': form.forms,
     })
