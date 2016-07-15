@@ -96,6 +96,8 @@ def test_get_post_votes(app):
     assert services.update_user_position(user, post, 1) == (3, 1)
     assert services.get_post_votes(post) == (3, 1)
 
+    assert services.get_user_topic_votes(user, post.topic) == {post.pk: 1}
+
 
 def test_curator_votes(app):
     users = (factories.UserFactory(first_name='u%d' % i) for i in itertools.count())
@@ -114,6 +116,8 @@ def test_curator_votes(app):
     assert services.update_curator_position(user, post, -1) == (2, 2)
     assert services.update_curator_position(user, post, 1) == (3, 1)
     assert services.get_curator_votes(post) == (3, 1)
+
+    assert services.get_curator_topic_votes(user, post.topic) == {post.pk: 1}
 
     # Try to vote for new curator application
     curator = factories.CuratorFactory(user=user)

@@ -76,26 +76,16 @@ LOGGING = {
     'version': 1,
     'disable_existing_loggers': True,
     'formatters': {
-        'stdout': {
-            'format': (
-                '%(levelname)s %(asctime)s %(module)s '
-                '%(process)d %(thread)d %(message)s'
-            ),
-        },
-        'console': {
-            'format': '%(levelname)s %(module)s %(message)s',
-        },
+        'default': {
+            'format': '%(asctime)s %(levelname)-8s %(name)s:%(lineno)d in %(funcName)s [%(threadName)s]: %(message)s',
+            'datefmt': '%Y-%m-%d %H:%M:%S',
+        }
     },
     'handlers': {
         'stdout': {
             'level': 'DEBUG',
             'class': 'logging.StreamHandler',
-            'formatter': 'stdout',
-        },
-        'console': {
-            'level': 'DEBUG',
-            'class': 'logging.StreamHandler',
-            'formatter': 'console',
+            'formatter': 'default',
         },
     },
     'loggers': {
@@ -105,7 +95,7 @@ LOGGING = {
     },
     'root': {
         'level': 'INFO',
-        'handlers': ['console'],
+        'handlers': ['stdout'],
     }
 }
 
@@ -238,3 +228,15 @@ CACHES = {
         'LOCATION': str(PROJECT_DIR / 'var/cache'),
     }
 }
+
+# django-js-reverse
+# https://github.com/ierror/django-js-reverse
+
+INSTALLED_APPS += (
+    'django_js_reverse',
+)
+
+JS_REVERSE_JS_VAR_NAME = 'urls'
+JS_REVERSE_JS_GLOBAL_OBJECT_NAME = 'manopozicija'
+JS_REVERSE_INCLUDE_ONLY_NAMESPACES = ['js']
+JS_REVERSE_JS_MINIFY = False

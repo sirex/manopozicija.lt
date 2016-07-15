@@ -1,5 +1,7 @@
 import itertools
 
+from manopozicija import services
+
 
 def _get_position_image(position, positive, negative, neutral):
     if position > 0.5:
@@ -10,13 +12,29 @@ def _get_position_image(position, positive, negative, neutral):
         return neutral
 
 
-def get_posts(posts):
+def _get_post_context(post, user_votes, curator_votes):
+    votes = user_votes if post.approved else curator_votes
+    return {
+        'id': post.pk,
+        'votes': services.get_post_votes_display(post),
+        'user': {
+            'upvote': 'active' if votes.get(post.pk, 0) > 0 else '',
+            'downvote': 'active' if votes.get(post.pk, 0) < 0 else '',
+        },
+        'save_vote': 'manopozicija.save_user_vote' if post.approved else 'manopozicija.save_curator_vote',
+    }
+
+
+def get_posts(user, topic, posts):
     result = []
+    user_votes = services.get_user_topic_votes(user, topic)
+    curator_votes = services.get_curator_topic_votes(user, topic)
     for post in posts:
         if post['type'] == 'event':
             event = post['event']
             result.append({
                 'type': 'event',
+                'post': _get_post_context(post['post'], user_votes, curator_votes),
                 'event': {
                     'position_image': _get_position_image(
                         event.position,
@@ -30,7 +48,6 @@ def get_posts(posts):
                         'link': event.source_link,
                         'name': event.source_title,
                     },
-                    'upvotes': post['post'].upvotes,
                 },
             })
         else:
@@ -55,7 +72,7 @@ def get_posts(posts):
                 },
                 'quotes': [{
                     'text': quote.text,
-                    'upvotes': post.upvotes,
+                    'post': _get_post_context(post, user_votes, curator_votes),
                     'vote': {
                         'img': {
                             'top': 'img/thumb-up.png',

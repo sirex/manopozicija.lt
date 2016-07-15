@@ -8,6 +8,7 @@ django-webtest
 django-autoslug
 django-allauth
 django-bootstrap-form
+django-js-reverse
 sorl-thumbnail
 factory_boy
 fake-factory

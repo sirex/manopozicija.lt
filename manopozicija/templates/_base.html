@@ -2,6 +2,7 @@
 {% load trans from i18n %}
 {% load compress from compress %}
 {% load topmenu from websitetags %}
+{% load js_reverse %}
 
 <!DOCTYPE html>
 <html>
@@ -47,6 +48,10 @@
     <script src="{% static 'jquery.min.js' %}"></script>
     <script src="{% static 'js/bootstrap.min.js' %}"></script>
     <script src="{% static 'js/main.js' %}"></script>
+    <script>
+      var manopozicija = window.manopozicija || {};
+      {% js_reverse_inline %}
+    </script>
     {% block js %}{% endblock %}
   </body>
 </html>

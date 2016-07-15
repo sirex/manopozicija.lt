@@ -30,8 +30,11 @@ def topic_details(request, object_id, slug):
     return render(request, 'manopozicija/topic_details.html', {
         'topic': topic,
         'arguments': helpers.get_arguments(services.get_topic_arguments(topic)),
-        'posts': helpers.get_posts(services.get_topic_posts(topic)),
-        'queue': helpers.get_posts(services.get_topic_posts(topic, queue=True)) if is_topic_curator else [],
+        'posts': helpers.get_posts(request.user, topic, services.get_topic_posts(topic)),
+        'queue': (
+            helpers.get_posts(request.user, topic, services.get_topic_posts(topic, queue=True))
+            if is_topic_curator else []
+        ),
         'has_indicators': topic.indicators.count() > 0,
         'is_topic_curator': is_topic_curator,
     })
@@ -179,7 +182,8 @@ def curator_post_vote(request, post_id):
         form = forms.VoteForm(request.POST)
         if form.is_valid():
             if services.is_topic_curator(request.user, post.topic):
-                if request.user == post.content_object.user:
+                curator_type = ContentType.objects.get(app_label='manopozicija', model='curator')
+                if post.content_type == curator_type and request.user == post.content_object.user:
                     logger.debug((
                         '%r user voted for his own curator application on %r topic for %r post with vote: %r'
                     ), request.user, post.topic, post, form.cleaned_data['vote'])
@@ -192,7 +196,8 @@ def curator_post_vote(request, post_id):
                 ), request.user, post.topic, post, form.cleaned_data['vote'])
         else:
             logger.debug('form error: %s', form.errors.as_text())
-    logger.debug('only POST is allowed, got %s instead', request.method)
+    else:
+        logger.debug('only POST is allowed, got %s instead', request.method)
     return JsonResponse({'success': False})
 
 
@@ -206,5 +211,6 @@ def user_post_vote(request, post_id):
             return JsonResponse({'success': True, 'upvotes': upvotes, 'downvotes': downvotes})
         else:
             logger.debug('form error: %s', form.errors.as_text())
-    logger.debug('only POST is allowed, got %s instead', request.method)
+    else:
+        logger.debug('only POST is allowed, got %s instead', request.method)
     return JsonResponse({'success': False})

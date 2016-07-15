@@ -318,3 +318,19 @@ def update_curator_position(user, post, vote: int):
 
 def update_curator_application(user, topic, approved):
     models.TopicCurator.objects.update_or_create(user=user, topic=topic, defaults={'approved': approved})
+
+
+def get_user_topic_votes(user, topic):
+    return dict(
+        models.UserPosition.objects.
+        filter(user=user, post__topic=topic).
+        values_list('post_id', 'position')
+    )
+
+
+def get_curator_topic_votes(user, topic):
+    return dict(
+        models.PostLog.objects.
+        filter(user=user, post__topic=topic, action=models.PostLog.VOTE).
+        values_list('post_id', 'vote')
+    )

@@ -1,0 +1,3 @@
+<div class="thumb top js-post-thumb {{ post.user.upvote }}" onclick="{{ post.save_vote }}(this, {{ post.id }}, 1);" data-vote="0">&nbsp;</div>
+<div class="js-post-votes">{{ post.votes }}</div>
+<div class="thumb bottom js-post-thumb {{ post.user.downvote }}" onclick="{{ post.save_vote }}(this, {{ post.id }}, -1);" data-vote="0">&nbsp;</div>

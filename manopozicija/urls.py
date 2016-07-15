@@ -16,8 +16,10 @@ urlpatterns = [
     url(r'^temos/%s/naujas-kuratorius/$' % slug, views.curator_form, name='curator-apply'),
     url(r'^temos/%s/$' % slug, views.topic_details, name='topic-details'),
     url(r'^temos/%s/kpi/$' % slug, views.topic_kpi, name='topic-kpi'),
-    url(r'^kuratoriaus-balsas/(?P<post_id>\d+)/$', views.curator_post_vote, name='curator-post-vote'),
-    url(r'^naudotojo-balsas/(?P<post_id>\d+)/$', views.user_post_vote, name='user-post-vote'),
+    url(r'', include([
+        url(r'^naudotojo-balsas/(?P<post_id>\d+)/$', views.user_post_vote, name='user-post-vote'),
+        url(r'^kuratoriaus-balsas/(?P<post_id>\d+)/$', views.curator_post_vote, name='curator-post-vote'),
+    ], namespace='js')),
 ]
 
 urlpatterns += [
