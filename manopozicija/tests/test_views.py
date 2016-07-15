@@ -168,3 +168,60 @@ def test_curator_apply(app):
     assert services.dump_topic_posts(topic, queue=True) == '\n'.join([
         '( ) Vardenis Pavardenis (visuomenės veikėjas)                                naujas temos kuratorius (0)',
     ])
+
+    # A curator steps in and approves curator application
+    post = models.Post.objects.order_by('pk').last()
+    curator = factories.UserFactory(first_name='kuratorius')
+    factories.TopicCuratorFactory(user=curator, topic=topic)
+    resp = app.post(reverse('curator-post-vote', args=[post.pk]), {'vote': 1}, user=curator)
+    assert resp.json == {'success': True, 'upvotes': 1, 'downvotes': 0}
+    assert services.dump_topic_posts(topic, queue=True) == ''
+
+    # A new curator user tries to vote for his own curator application
+    resp = app.post(reverse('curator-post-vote', args=[post.pk]), {'vote': 1}, user=user)
+    assert resp.json == {'success': False}
+    assert services.dump_topic_posts(topic, queue=True) == ''
+
+    # Another curator steps in and dissagrees with approval
+    curator = factories.UserFactory(first_name='kuratorius 2')
+    factories.TopicCuratorFactory(user=curator, topic=topic)
+    resp = app.post(reverse('curator-post-vote', args=[post.pk]), {'vote': -1}, user=curator)
+    assert resp.json == {'success': True, 'upvotes': 1, 'downvotes': 1}
+    assert services.dump_topic_posts(topic, queue=True) == '\n'.join([
+        '( ) Vardenis Pavardenis (visuomenės veikėjas)                                naujas temos kuratorius (-1)',
+    ])
+
+    # A not curator user tries to vote for his curator application
+    resp = app.post(reverse('curator-post-vote', args=[post.pk]), {'vote': 1}, user=user)
+    assert resp.json == {'success': False}
+    assert services.dump_topic_posts(topic, queue=True) == '\n'.join([
+        '( ) Vardenis Pavardenis (visuomenės veikėjas)                                naujas temos kuratorius (-1)',
+    ])
+
+
+def test_user_post_vote(app):
+    user = factories.UserFactory()
+    topic = factories.TopicFactory()
+    event = factories.EventFactory()
+    post = factories.PostFactory(topic=topic, content_object=event)
+
+    # User upvotes a post
+    resp = app.post(reverse('user-post-vote', args=[post.pk]), {'vote': 1}, user=user)
+    assert resp.json == {'success': True, 'upvotes': 1, 'downvotes': 0}
+    assert services.dump_topic_posts(topic) == '\n'.join([
+        ' o  (-) Balsavimo internetu koncepcijos patvirtinimas                         e-seimas.lrs.lt 2016-03-22 (1)',
+    ])
+
+    # User downvotes same post
+    resp = app.post(reverse('user-post-vote', args=[post.pk]), {'vote': -1}, user=user)
+    assert resp.json == {'success': True, 'upvotes': 0, 'downvotes': 1}
+    assert services.dump_topic_posts(topic) == '\n'.join([
+        ' o  (-) Balsavimo internetu koncepcijos patvirtinimas                         e-seimas.lrs.lt 2016-03-22 (-1)',
+    ])
+
+    # User clears his vote
+    resp = app.post(reverse('user-post-vote', args=[post.pk]), {'vote': 0}, user=user)
+    assert resp.json == {'success': True, 'upvotes': 0, 'downvotes': 0}
+    assert services.dump_topic_posts(topic) == '\n'.join([
+        ' o  (-) Balsavimo internetu koncepcijos patvirtinimas                         e-seimas.lrs.lt 2016-03-22 (0)',
+    ])

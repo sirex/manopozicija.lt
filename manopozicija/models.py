@@ -165,6 +165,7 @@ class Post(models.Model):
 
     """
     created = models.DateTimeField(auto_now_add=True)
+    updated = models.DateTimeField(auto_now=True)
     body = models.ForeignKey(Body)
     topic = models.ForeignKey('Topic')
     actor = models.ForeignKey(Actor, null=True, blank=True)
@@ -173,6 +174,8 @@ class Post(models.Model):
     timestamp = models.DateTimeField()
     upvotes = models.PositiveIntegerField(default=0)
     downvotes = models.PositiveIntegerField(default=0)
+    curator_upvotes = models.PositiveIntegerField(default=0)
+    curator_downvotes = models.PositiveIntegerField(default=0)
 
     content_type = models.ForeignKey(ContentType)
     object_id = models.PositiveIntegerField()

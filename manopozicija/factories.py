@@ -8,7 +8,7 @@ from factory.django import DjangoModelFactory, ImageField
 
 from allauth.account.models import EmailAddress
 
-import manopozicija.models as mp
+from manopozicija import models
 
 
 class EmailAddressFactory(DjangoModelFactory):
@@ -41,7 +41,7 @@ class IndicatorFactory(DjangoModelFactory):
     source = 'http://ec.europa.eu/eurostat/tgm/table.do?tab=table&init=1&language=en&pcode=tsdgo310&plugin=1'
 
     class Meta:
-        model = mp.Indicator
+        model = models.Indicator
         django_get_or_create = ('slug',)
 
 
@@ -49,7 +49,7 @@ class BodyFactory(DjangoModelFactory):
     name = 'Seimas'
 
     class Meta:
-        model = mp.Body
+        model = models.Body
         django_get_or_create = ('name',)
 
 
@@ -66,7 +66,7 @@ class TopicFactory(DjangoModelFactory):
     default_body = factory.SubFactory(BodyFactory, name='Seimas')
 
     class Meta:
-        model = mp.Topic
+        model = models.Topic
         django_get_or_create = ('title',)
 
     @factory.post_generation
@@ -84,7 +84,7 @@ class PartyActorFactory(DjangoModelFactory):
     body = factory.SubFactory(BodyFactory, name='Seimas')
 
     class Meta:
-        model = mp.Actor
+        model = models.Actor
         django_get_or_create = ('first_name',)
 
 
@@ -97,7 +97,7 @@ class PersonActorFactory(DjangoModelFactory):
     body = None
 
     class Meta:
-        model = mp.Actor
+        model = models.Actor
         django_get_or_create = ('first_name', 'last_name')
 
 
@@ -110,7 +110,7 @@ class SourceFactory(DjangoModelFactory):
     position = -1
 
     class Meta:
-        model = mp.Source
+        model = models.Source
         django_get_or_create = ('source_link',)
 
 
@@ -120,7 +120,7 @@ class QuoteFactory(DjangoModelFactory):
     text = 'Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.'
 
     class Meta:
-        model = mp.Quote
+        model = models.Quote
 
 
 class ArgumentFactory(DjangoModelFactory):
@@ -132,12 +132,12 @@ class ArgumentFactory(DjangoModelFactory):
     position = 1
 
     class Meta:
-        model = mp.Argument
+        model = models.Argument
 
 
 class EventFactory(DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
-    type = mp.Event.DOCUMENT
+    type = models.Event.DOCUMENT
     title = 'Balsavimo internetu koncepcijos patvirtinimas'
     source_title = 'e-seimas.lrs.lt'
     source_link = 'https://e-seimas.lrs.lt/portal/legalAct/lt/TAD/TAIS.287235?positionInSearchResults=0&searchModelUUID=eaee1625-cf9f-46c0-931c-482a218029e8'
@@ -146,7 +146,7 @@ class EventFactory(DjangoModelFactory):
     group = None
 
     class Meta:
-        model = mp.Event
+        model = models.Event
         django_get_or_create = ('title',)
 
 
@@ -159,7 +159,7 @@ class PostFactory(DjangoModelFactory):
     timestamp = datetime.datetime(2016, 3, 22, 16, 34, 0)
 
     class Meta:
-        model = mp.Post
+        model = models.Post
 
 
 class UserPositionFactory(DjangoModelFactory):
@@ -168,7 +168,18 @@ class UserPositionFactory(DjangoModelFactory):
     position = 1
 
     class Meta:
-        model = mp.UserPosition
+        model = models.UserPosition
+
+
+class CuratorFactory(DjangoModelFactory):
+    user = factory.SubFactory(UserFactory)
+    actor = None
+    title = 'visuomenės veikėjas'
+    photo = ImageField()
+
+    class Meta:
+        model = models.Curator
+        django_get_or_create = ('user',)
 
 
 class TopicCuratorFactory(DjangoModelFactory):
@@ -177,7 +188,7 @@ class TopicCuratorFactory(DjangoModelFactory):
     user = factory.SubFactory(UserFactory)
 
     class Meta:
-        model = mp.TopicCurator
+        model = models.TopicCurator
         django_get_or_create = ('user', 'topic')
 
 
@@ -214,7 +225,7 @@ def create_topic_quotes(topic, actor, title, source, date, quotes):
 
 def create_topic_event(topic, upvotes, downvotes, title, source, date):
     timestamp = datetime.datetime.strptime(date, '%Y-%m-%d')
-    event = EventFactory(type=mp.Event.DOCUMENT, title=title, source_title=source, timestamp=timestamp)
+    event = EventFactory(type=models.Event.DOCUMENT, title=title, source_title=source, timestamp=timestamp)
     return PostFactory(topic=topic, content_object=event, upvotes=upvotes, timestamp=timestamp)
 
 

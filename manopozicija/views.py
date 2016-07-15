@@ -1,3 +1,5 @@
+import logging
+
 from django.http import JsonResponse
 from django.shortcuts import render
 from django.shortcuts import redirect
@@ -12,6 +14,8 @@ from manopozicija import models
 from manopozicija import services
 from manopozicija import forms
 from manopozicija import helpers
+
+logger = logging.getLogger(__name__)
 
 
 def topic_list(request):
@@ -166,3 +170,41 @@ def curator_form(request, object_id, slug):
         'form_title': ugettext('Tapk temos kuratoriumi'),
         'forms': form.forms,
     })
+
+
+@login_required
+def curator_post_vote(request, post_id):
+    if request.method == 'POST':
+        post = get_object_or_404(models.Post, pk=post_id)
+        form = forms.VoteForm(request.POST)
+        if form.is_valid():
+            if services.is_topic_curator(request.user, post.topic):
+                if request.user == post.content_object.user:
+                    logger.debug((
+                        '%r user voted for his own curator application on %r topic for %r post with vote: %r'
+                    ), request.user, post.topic, post, form.cleaned_data['vote'])
+                else:
+                    upvotes, downvotes = services.update_curator_position(request.user, post, form.cleaned_data['vote'])
+                    return JsonResponse({'success': True, 'upvotes': upvotes, 'downvotes': downvotes})
+            else:
+                logger.debug((
+                    '%r user who is not a %r topic curator attempted to vote for %r post with vote: %r'
+                ), request.user, post.topic, post, form.cleaned_data['vote'])
+        else:
+            logger.debug('form error: %s', form.errors.as_text())
+    logger.debug('only POST is allowed, got %s instead', request.method)
+    return JsonResponse({'success': False})
+
+
+@login_required
+def user_post_vote(request, post_id):
+    if request.method == 'POST':
+        post = get_object_or_404(models.Post, pk=post_id)
+        form = forms.VoteForm(request.POST)
+        if form.is_valid():
+            upvotes, downvotes = services.update_user_position(request.user, post, form.cleaned_data['vote'])
+            return JsonResponse({'success': True, 'upvotes': upvotes, 'downvotes': downvotes})
+        else:
+            logger.debug('form error: %s', form.errors.as_text())
+    logger.debug('only POST is allowed, got %s instead', request.method)
+    return JsonResponse({'success': False})

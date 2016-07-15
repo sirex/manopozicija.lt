@@ -95,3 +95,46 @@ def test_get_post_votes(app):
     assert services.update_user_position(user, post, -1) == (2, 2)
     assert services.update_user_position(user, post, 1) == (3, 1)
     assert services.get_post_votes(post) == (3, 1)
+
+
+def test_curator_votes(app):
+    users = (factories.UserFactory(first_name='u%d' % i) for i in itertools.count())
+    event = factories.EventFactory()
+    post = factories.PostFactory(content_object=event)
+    assert services.get_curator_votes(post) == (0, 0)
+    assert services.update_curator_position(next(users), post, 1) == (1, 0)
+    assert services.update_curator_position(next(users), post, 1) == (2, 0)
+    assert services.update_curator_position(next(users), post, -1) == (2, 1)
+    assert services.get_curator_votes(post) == (2, 1)
+
+    # Try to vote several times with the same user
+    user = factories.UserFactory()
+    assert services.update_curator_position(user, post, 1) == (3, 1)
+    assert services.update_curator_position(user, post, -1) == (2, 2)
+    assert services.update_curator_position(user, post, -1) == (2, 2)
+    assert services.update_curator_position(user, post, 1) == (3, 1)
+    assert services.get_curator_votes(post) == (3, 1)
+
+    # Try to vote for new curator application
+    curator = factories.CuratorFactory(user=user)
+    post = factories.PostFactory(content_object=curator)
+    user_1, user_2, user_3 = next(users), next(users), next(users)
+
+    # Initially user should not be a curator
+    assert services.is_topic_curator(user, post.topic) is False
+
+    # After first positive vote user shuould become a curator
+    assert services.update_curator_position(user_1, post, 1) == (1, 0)
+    assert services.is_topic_curator(user, post.topic) is True
+
+    # When number of curator upvotes and downvotes becomes equal, user should be removed from curators
+    assert services.update_curator_position(user_1, post, -1) == (0, 1)
+    assert services.is_topic_curator(user, post.topic) is False
+
+    # Same thing, but with two users voting differently
+    assert services.update_curator_position(user_2, post, 1) == (1, 1)
+    assert services.is_topic_curator(user, post.topic) is False
+
+    # If third users agrees to accept new curator it will be accepted
+    assert services.update_curator_position(user_3, post, 1) == (2, 1)
+    assert services.is_topic_curator(user, post.topic) is True

@@ -127,3 +127,18 @@ class CuratorForm(forms.ModelForm):
     class Meta:
         model = models.Curator
         fields = ('title', 'photo')
+
+
+class VoteForm(forms.Form):
+    vote = forms.IntegerField(min_value=-1, max_value=1)
+
+    def clean_vote(self):
+        vote = self.cleaned_data['vote']
+        if vote is None:
+            return vote
+        elif vote > 0:
+            return 1
+        elif vote < 0:
+            return -1
+        else:
+            return 0
