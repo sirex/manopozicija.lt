@@ -48,13 +48,6 @@ def create_quote(user, topic, source: dict, quote: dict, arguments: list):
 
     quote = models.Quote.objects.create(user=user, source=source, **quote)
 
-    for argument in arguments:
-        if argument.get('title'):
-            models.Argument.objects.create(topic=topic, quote=quote, **argument)
-
-    source.position = get_source_position(topic, source)
-    source.save()
-
     is_curator = is_topic_curator(user, topic)
     approved = timezone.now() if is_curator else None
 
@@ -72,6 +65,13 @@ def create_quote(user, topic, source: dict, quote: dict, arguments: list):
     if is_curator:
         # Automatically approve posts created by topic curators.
         models.PostLog.objects.create(user=user, post=post, action=models.PostLog.VOTE, vote=1)
+
+    for argument in arguments:
+        if argument.get('title'):
+            models.Argument.objects.create(topic=topic, post=post, quote=quote, **argument)
+
+    source.position = get_source_position(topic, source)
+    source.save()
 
     return quote
 
@@ -112,32 +112,32 @@ def get_title_from_link(link):
 def get_source_position(topic, source):
     agg = (
         models.Argument.objects.
-        filter(topic=topic, quote__source=source).
+        filter(topic=topic, quote__source=source, post__approved__isnull=False).
         aggregate(position=Avg(Case(
             When(counterargument=True, then=F('position') * -1),
             default=F('position')
         )))
     )
-    return agg['position']
+    return agg['position'] or 0
 
 
 def get_quote_position(topic, quote):
     agg = (
         models.Argument.objects.
-        filter(topic=topic, quote=quote).
+        filter(topic=topic, quote=quote, post__approved__isnull=False).
         aggregate(position=Avg(Case(
             When(counterargument=True, then=F('position') * -1),
             default=F('position')
         )))
     )
-    return agg['position']
+    return agg['position'] or 0
 
 
 def get_topic_arguments(topic):
     return (
         models.Argument.objects.
         values('position', 'title').
-        filter(topic=topic, counterargument=False).
+        filter(topic=topic, counterargument=False, post__approved__isnull=False).
         annotate(count=Count('title')).
         order_by('-position', '-count', 'title')
     )

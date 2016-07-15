@@ -2,9 +2,11 @@ import io
 import factory
 import datetime
 
+
 from PIL import Image
 from django.conf import settings
 from factory.django import DjangoModelFactory, ImageField
+from django.utils import timezone
 
 from allauth.account.models import EmailAddress
 
@@ -101,6 +103,18 @@ class PersonActorFactory(DjangoModelFactory):
         django_get_or_create = ('first_name', 'last_name')
 
 
+class PostFactory(DjangoModelFactory):
+    body = factory.SubFactory(BodyFactory, name='Seimas')
+    topic = factory.SubFactory(TopicFactory)
+    actor = factory.SubFactory(PersonActorFactory)
+    position = 1
+    approved = datetime.datetime(2016, 3, 22, 16, 34, 0)
+    timestamp = datetime.datetime(2016, 3, 22, 16, 34, 0)
+
+    class Meta:
+        model = models.Post
+
+
 class SourceFactory(DjangoModelFactory):
     actor = factory.SubFactory(PersonActorFactory)
     actor_title = 'seimo narys'
@@ -125,6 +139,7 @@ class QuoteFactory(DjangoModelFactory):
 
 class ArgumentFactory(DjangoModelFactory):
     topic = factory.SubFactory(TopicFactory)
+    post = factory.SubFactory(PostFactory)
     quote = factory.SubFactory(QuoteFactory)
     title = 'šiuolaikiška, modernu'
     counterargument = None
@@ -148,18 +163,6 @@ class EventFactory(DjangoModelFactory):
     class Meta:
         model = models.Event
         django_get_or_create = ('title',)
-
-
-class PostFactory(DjangoModelFactory):
-    body = factory.SubFactory(BodyFactory, name='Seimas')
-    topic = factory.SubFactory(TopicFactory)
-    actor = factory.SubFactory(PersonActorFactory)
-    position = 1
-    approved = datetime.datetime(2016, 3, 22, 16, 34, 0)
-    timestamp = datetime.datetime(2016, 3, 22, 16, 34, 0)
-
-    class Meta:
-        model = models.Post
 
 
 class UserPositionFactory(DjangoModelFactory):
@@ -192,7 +195,7 @@ class TopicCuratorFactory(DjangoModelFactory):
         django_get_or_create = ('user', 'topic')
 
 
-def create_quote_agruments(topic, quote, arguments):
+def create_quote_agruments(topic, quote, post, arguments):
     result = []
     for position, argument, counterargument in arguments:
         counterargument_title = ''
@@ -202,7 +205,7 @@ def create_quote_agruments(topic, quote, arguments):
             counterargument = True
             counterargument_title = counterargument
         argument = ArgumentFactory(
-            topic=topic, quote=quote, position=position, title=argument,
+            topic=topic, quote=quote, post=post, position=position, title=argument,
             counterargument=counterargument, counterargument_title=counterargument_title,
         )
         result.append(argument)
@@ -217,8 +220,8 @@ def create_topic_quotes(topic, actor, title, source, date, quotes):
     source = SourceFactory(actor=actor, actor_title=title, source_title=source, timestamp=timestamp)
     for upvotes, downvotes, text, arguments in quotes:
         quote = QuoteFactory(text=text, source=source)
-        create_quote_agruments(topic, quote, arguments)
         post = PostFactory(topic=topic, content_object=quote, upvotes=upvotes, timestamp=timestamp)
+        create_quote_agruments(topic, quote, post, arguments)
         result.append(post)
     return result
 
@@ -236,6 +239,20 @@ def create_topic_posts(topic, posts):
             result.append(create_topic_event(topic, *args))
         else:
             result.extend(create_topic_quotes(topic, *args))
+    return result
+
+
+def create_arguments(topic, arguments, approved=True):
+    result = []
+    approved = timezone.now() if approved else None
+    for position, counterargument, argument in arguments:
+        quote = QuoteFactory()
+        post = PostFactory(topic=topic, content_object=quote, approved=approved)
+        argument = ArgumentFactory(
+            topic=topic, post=post, quote=quote,
+            position=position, title=argument, counterargument=counterargument,
+        )
+        result.append(argument)
     return result
 
 

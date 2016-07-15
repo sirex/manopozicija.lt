@@ -4,7 +4,8 @@ from manopozicija import helpers
 
 
 def test_get_arguments(app):
-    arguments = [
+    topic = factories.TopicFactory()
+    factories.create_arguments(topic, [
         (+1, False, 'didesnis užsienio lietuvių aktyvumas rinkimuose'),
         (+1, True, 'šiuolaikiška, modernu'),
         (+1, False, 'šiuolaikiška, modernu'),
@@ -12,10 +13,7 @@ def test_get_arguments(app):
         (-1, True, 'balsų pirkimas'),
         (-1, False, 'balsų pirkimas'),
         (-1, False, 'balsų pirkimas'),
-    ]
-    topic = factories.TopicFactory()
-    for position, counterargument, argument in arguments:
-        factories.ArgumentFactory(topic=topic, position=position, title=argument, counterargument=counterargument)
+    ])
     assert helpers.get_arguments(services.get_topic_arguments(topic)) == [
         (
             {'count': 1, 'position': +1, 'title': 'didesnis užsienio lietuvių aktyvumas rinkimuose'},

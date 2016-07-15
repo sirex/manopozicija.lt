@@ -184,6 +184,9 @@ class Post(models.Model):
     class Meta:
         unique_together = ('topic', 'content_type', 'object_id')
 
+    def __str__(self):
+        return '%s: %s' % (self.content_type, self.object_id)
+
 
 class Curator(models.Model):
     """User who is a curator of one or more topics
@@ -506,6 +509,13 @@ class Quote(models.Model):
     post = GenericRelation(Post, related_query_name='quote')
     references = GenericRelation(Reference, related_query_name='quote')
 
+    def __str__(self):
+        limit = 72
+        if len(self.text) > limit:
+            return self.text[:limit]
+        else:
+            return self.text
+
 
 class Argument(models.Model):
     """Short tag uniquely identifying an argument.
@@ -537,8 +547,12 @@ class Argument(models.Model):
 
     """
     topic = models.ForeignKey(Topic)
+    post = models.ForeignKey(Post)
     quote = models.ForeignKey(Quote)
     title = models.CharField(max_length=255)
     counterargument = models.BooleanField(_("Kontrargumentas"), default=False, blank=True)
     counterargument_title = models.CharField(max_length=255, blank=True)
     position = models.SmallIntegerField(default=0)
+
+    def __str__(self):
+        return '%s: %s' % (self.quote_id, self.title)

@@ -5,7 +5,8 @@ from manopozicija import factories
 
 
 def test_get_topic_arguments(app):
-    arguments = [
+    topic = factories.TopicFactory()
+    factories.create_arguments(topic, [
         (+1, False, 'didesnis užsienio lietuvių aktyvumas rinkimuose'),
         (+1, True, 'šiuolaikiška, modernu'),
         (+1, False, 'šiuolaikiška, modernu'),
@@ -13,10 +14,7 @@ def test_get_topic_arguments(app):
         (-1, True, 'balsų pirkimas'),
         (-1, False, 'balsų pirkimas'),
         (-1, False, 'balsų pirkimas'),
-    ]
-    topic = factories.TopicFactory()
-    for position, counterargument, argument in arguments:
-        factories.ArgumentFactory(topic=topic, position=position, title=argument, counterargument=counterargument)
+    ])
     assert list(services.get_topic_arguments(topic).values_list('count', 'position', 'title')) == [
         (1, +1, 'didesnis užsienio lietuvių aktyvumas rinkimuose'),
         (1, +1, 'šiuolaikiška, modernu'),
@@ -60,7 +58,7 @@ def test_create_quote(app):
     services.create_quote(user, topic, source, quote, arguments)
     assert services.dump_topic_posts(topic) == ''
     assert services.dump_topic_posts(topic, queue=True) == '\n'.join([
-        '( ) (n) Mantas Adomėnas (seimo narys)                                          kauno.diena.lt 2016-03-22    ',
+        '( ) (-) Mantas Adomėnas (seimo narys)                                          kauno.diena.lt 2016-03-22    ',
         ' |      Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.                                 (0)',
         ' |      - (y) šiuolaikiška, modernu < (counterargument)                                                     ',
     ])
