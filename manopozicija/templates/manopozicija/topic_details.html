@@ -82,28 +82,39 @@
 {% endif %}
 
 {% if request.user.is_authenticated %}
-<div class="row">
-  <div class="col-md-1 timeline-box"></div>
-  <div class="col-md-11">
-    <h3>{% trans "Prisijunk prie temos vystymo" %}</h3>
+  <div class="row">
+    <div class="col-md-1 timeline-box"></div>
+    <div class="col-md-11">
+      <h3>{% trans "Temos kuratoriai" %}</h3>
+
+      {% for curator in curators %}
+        {{ curator.user }}
+      {% endfor %}
+    </div>
   </div>
-</div>
-<div class="row">
-  <div class="col-md-1 timeline-box"></div>
-  <div class="col-md-11">
-    <a href="{% url "quote-create" topic.pk topic.slug %}" class="btn btn-lg btn-default">
-      {% trans "Pridėk citatą" %}
-    </a>
-    <a href="{% url "event-create" topic.pk topic.slug %}" class="btn btn-lg btn-default">
-      {% trans "Pridėk sprendimą" %}
-    </a>
-    {% if not is_topic_curator %}
-      <a href="{% url "curator-apply" topic.pk topic.slug %}" class="btn btn-lg btn-default">
-        {% trans "Tapk temos kuratoriumi" %}
+
+  <div class="row">
+    <div class="col-md-1 timeline-box"></div>
+    <div class="col-md-11">
+      <h3>{% trans "Prisijunk prie temos vystymo" %}</h3>
+    </div>
+  </div>
+  <div class="row">
+    <div class="col-md-1 timeline-box"></div>
+    <div class="col-md-11">
+      <a href="{% url "quote-create" topic.pk topic.slug %}" class="btn btn-lg btn-default">
+        {% trans "Pridėk citatą" %}
       </a>
-    {% endif %}
+      <a href="{% url "event-create" topic.pk topic.slug %}" class="btn btn-lg btn-default">
+        {% trans "Pridėk sprendimą" %}
+      </a>
+      {% if not is_topic_curator %}
+        <a href="{% url "curator-apply" topic.pk topic.slug %}" class="btn btn-lg btn-default">
+          {% trans "Tapk temos kuratoriumi" %}
+        </a>
+      {% endif %}
+    </div>
   </div>
-</div>
 {% endif %}
 
 {% if queue %}

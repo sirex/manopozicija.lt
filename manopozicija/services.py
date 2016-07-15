@@ -334,3 +334,11 @@ def get_curator_topic_votes(user, topic):
         filter(user=user, post__topic=topic, action=models.PostLog.VOTE).
         values_list('post_id', 'vote')
     )
+
+
+def get_topic_curators(topic):
+    return (
+        models.Curator.objects.
+        filter(user__topiccurator__topic=topic, user__topiccurator__approved__isnull=False).
+        order_by('user__topiccurator__approved')
+    )

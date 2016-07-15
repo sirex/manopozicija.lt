@@ -37,6 +37,7 @@ def topic_details(request, object_id, slug):
         ),
         'has_indicators': topic.indicators.count() > 0,
         'is_topic_curator': is_topic_curator,
+        'curators': services.get_topic_curators(topic) if request.user.is_authenticated() else []
     })
 
 
