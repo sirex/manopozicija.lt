@@ -63,9 +63,9 @@
               </p>
             </div>
             <div class="col-md-1 post-vote">
-              <div class="thumb top">&nbsp;</div>
-              <div>{{ quote.upvotes }}</div>
-              <div class="thumb bottom">&nbsp;</div>
+              <div class="thumb top js-post-thumb" onclick="manopozicija.save_user_vote(this, 1);" data-vote="0">&nbsp;</div>
+              <div class="js-post-votes">{{ quote.upvotes }}</div>
+              <div class="thumb bottom js-post-thumb" onclick="manopozicija.save_user_vote(this, -1);" data-vote="0">&nbsp;</div>
             </div>
           </div>
           <hr class="post-separator"/>
