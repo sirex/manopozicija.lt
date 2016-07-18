@@ -1,5 +1,7 @@
 {% extends "_base.html" %}
 
+{% load i18n %}
+
 
 {% block content %}
 <div class="jumbotron">
@@ -9,11 +11,37 @@
 
 <hr/>
 
+<h2>{% trans "Kaip tai veikia?" %}</h2>
+
+<ol>
+  <li>{% trans "Išreikškite savo poziciją vienoje ar daugiau temų, žiūrėti: „Temų sąrašas“." %}</li>
+  <li>{% trans "Palyginkite savo ir kitų visuomenės veikėjų poziciją, žiūrėti: „Apsispręskite ką rinkti“." %}</li>
+</ol>
+<p class="text-muted"> {% blocktrans  %}
+  Kuo daugiau ir kuo įvairesnėmis temomis pateiksite savo poziciją, tuo tikslesnius rezultatus matysite pozicijų
+  palyginimo įrankyje.
+{% endblocktrans %}</p>
+
+<h2>{% trans "Apsispręskite ką rinkti" %}</h2>
+<p class="text-muted">{% blocktrans  %}
+  Apsispręskite ką rinkti lygindami savo ir kitų visuomenės veikėjų pozicijas įvairiais klausimais.
+{% endblocktrans %}</p>
+
+<p><a href="#" class="btn btn-primary">{% trans "Jūs ir kandidatai į 2016 metų seimą" %}</a></p>
+
+<h2>{% trans "Temų sąrašas" %}</h2>
+
+<p class="text-muted">{% blocktrans  %}
+  Išsirinkite jus dominančią temą, susipažinkite su visuomenės veikėjų nuomonėmis, išreikškite savo poziciją.
+{% endblocktrans %}</p>
+
 <div class="row">
   {% for topic in topics %}
   <div class="col-sm-6 col-md-3">
     <div class="thumbnail">
-      <img src="{{ topic.logo.url }}" alt="{{ topic.title }}">
+      <a href="{% url 'topic-details' topic.pk topic.slug %}">
+        <img src="{{ topic.logo.url }}" alt="{{ topic.title }}">
+      </a>
       <div class="caption">
         <h3 class="text-center"><a href="{% url 'topic-details' topic.pk topic.slug %}">{{ topic.title }}</a></h3>
         <p>{# topic description #}</p>
