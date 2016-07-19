@@ -25,7 +25,7 @@ def test_get_topic_arguments(app):
 
 def test_get_topic_posts(app):
     topic = factories.TopicFactory()
-    factories.create_topic_posts(topic, [
+    factories.create_topic_posts(topic, None, [
         ('event', 1, 0, 'Balsavimo internetu koncepcijos patvirtinimas', 'lrs.lt', '2006-11-26'),
         ('quote', 'Mantas Adomėnas', 'seimo narys', 'kauno.diena.lt', '2016-03-22', [
             (4, 0, 'Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.', [
@@ -74,6 +74,69 @@ def test_create_quote(app):
         ' |      Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.                                      (0)',
         ' |      - (y) šiuolaikiška, modernu < (counterargument)                                                     ',
     ])
+    assert services.dump_actor_positions(topic) == '\n'.join([
+        '- Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.',
+        '  -1.0 Mantas Adomėnas (aktorius)',
+    ])
+
+
+def test_actor_positions(app):
+    user = factories.UserFactory()
+    topic = factories.TopicFactory()
+    factories.create_topic_posts(topic, user, [
+        ('event', 0, 1, 'Balsavimo internetu koncepcijos patvirtinimas', 'lrs.lt', '2006-11-26'),
+        ('quote', 'Mantas Adomėnas', 'seimo narys', 'kauno.diena.lt', '2016-03-22', [
+            (1, 0, 'Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.', [
+                (1, 'šiuolaikiška, modernu', True),
+            ]),
+            (1, 0, 'Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.', [
+                (-1, 'balsų pirkimas', None),
+            ]),
+        ]),
+        ('quote', 'Eligijus Masiulis', 'seimo narys', 'delfi.lt', '2015-10-08', [
+            (0, 1, 'Mes palaikysim tokį įstatymą, nes turime žengti į priekį ir reaguoti į XXI a. iššūkius.', [
+                (1, 'šiuolaikiška, modernu', None),
+            ]),
+        ]),
+    ])
+    assert services.dump_topic_posts(topic) == '\n'.join([
+        '( ) (n) Mantas Adomėnas (seimo narys)                                          kauno.diena.lt 2016-03-22    ',
+        ' |      Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.                                 (1)',
+        ' |      - (y) šiuolaikiška, modernu < (counterargument)                                                     ',
+        ' |      Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.                                      (1)',
+        ' |      - (n) balsų pirkimas                                                                                ',
+        ' |                                                                                                          ',
+        '( ) (y) Eligijus Masiulis (seimo narys)                                              delfi.lt 2015-10-08    ',
+        ' |      Mes palaikysim tokį įstatymą, nes turime žengti į priekį ir reaguoti į XXI a. iššūkius.         (-1)',
+        ' |      - (y) šiuolaikiška, modernu                                                                         ',
+        ' |                                                                                                          ',
+        ' o  (-) Balsavimo internetu koncepcijos patvirtinimas                                  lrs.lt 2006-11-26 (-1)',
+    ])
+
+    from django.db.models import FloatField
+    from django.db.models import F, Case, When, Sum, ExpressionWrapper
+    from manopozicija.db import Sqrt, Power
+    from manopozicija import models
+
+    weight = Case(
+        When(post__actorposition__origin=models.ActorPosition.ACTOR, then=3),
+        When(post__actorposition__origin=models.ActorPosition.ARGUMENT, then=2),
+        When(post__actorposition__origin=models.ActorPosition.VOTING, then=1),
+        default=1,
+        output_field=FloatField(),
+    )
+    qs = (
+        models.UserPostPosition.objects.
+        filter(user=user).
+        annotate(actor=F('post__actorposition__actor')).
+        values('user', 'actor').
+        annotate(
+            # distance(user, actor) == sum(origin * sqrt((user.position - actor.position)**2) / 2) / sum(origin)
+            distance=ExpressionWrapper((
+                Sum(weight * Sqrt(Power(F('position') - F('post__actorposition__position'), 2)) / 2) / Sum(weight)
+            ), output_field=FloatField()),
+        )
+    )
 
 
 def test_get_post_votes(app):
@@ -140,3 +203,26 @@ def test_curator_votes(app):
     # If third users agrees to accept new curator it will be accepted
     assert services.update_curator_position(user_3, post, 1) == (2, 1)
     assert services.is_topic_curator(user, post.topic) is True
+
+
+def test_compare_positions(app):
+    user = factories.UserFactory()
+    actors = [factories.PersonActorFactory(first_name='U%d' % i) for i in range(3)]
+    factories.create_actor_positions([
+        (user, +1, [(actors[0], 'ACTOR', +1),
+                    (actors[1], 'ARGUMENT', -1),
+                    (actors[2], 'ARGUMENT', +1)]),
+        (user, -1, [(actors[0], 'ARGUMENT', +1),
+                    (actors[1], 'ACTOR', +1),
+                    (actors[2], 'ARGUMENT', +1)]),
+    ])
+    # distance(user, actor) == sum(origin * sqrt((user_position - actor_position)**2) / 2) / sum(origin)
+    # distance(user, actors[0]) == sum(
+    #       3 * sqrt(( 1 - 1)**2) / 2,
+    #       2 * sqrt((-1 - 1)**2) / 2,
+    #   ) / sum(3, 2) == 0.4
+    assert list(services.compare_positions(user).order_by('post__actorposition__actor_id')) == [
+        {'user': user.pk, 'actor': actors[0].pk, 'distance': 0.4},
+        {'user': user.pk, 'actor': actors[1].pk, 'distance': 1.0},
+        {'user': user.pk, 'actor': actors[2].pk, 'distance': 0.5},
+    ]

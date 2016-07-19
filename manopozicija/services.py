@@ -2,10 +2,12 @@ import urllib
 import itertools
 
 from django.utils import timezone
-from django.db.models import F, Case, When, Count, Sum, Avg
+from django.db.models import FloatField
+from django.db.models import F, Case, When, Count, Sum, Avg, ExpressionWrapper
 from django.utils.translation import ugettext
 from django.contrib.contenttypes.models import ContentType
 
+from manopozicija.db import Sqrt, Power
 from manopozicija import models
 
 
@@ -55,7 +57,7 @@ def create_quote(user, topic, source: dict, quote: dict, arguments: list):
         body=topic.default_body,
         topic=topic,
         actor=source.actor,
-        position=get_quote_position(topic, quote),
+        position=0,
         approved=approved,
         timestamp=source.timestamp,
         upvotes=0,
@@ -68,7 +70,10 @@ def create_quote(user, topic, source: dict, quote: dict, arguments: list):
 
     for argument in arguments:
         if argument.get('title'):
-            models.Argument.objects.create(topic=topic, post=post, quote=quote, **argument)
+            models.PostArgument.objects.create(topic=topic, post=post, quote=quote, **argument)
+
+    post.position = get_quote_position(topic, quote)
+    post.save()
 
     source.position = get_source_position(topic, source)
     source.save()
@@ -111,7 +116,7 @@ def get_title_from_link(link):
 
 def get_source_position(topic, source):
     agg = (
-        models.Argument.objects.
+        models.PostArgument.objects.
         filter(topic=topic, quote__source=source, post__approved__isnull=False).
         aggregate(position=Avg(Case(
             When(counterargument=True, then=F('position') * -1),
@@ -123,7 +128,7 @@ def get_source_position(topic, source):
 
 def get_quote_position(topic, quote):
     agg = (
-        models.Argument.objects.
+        models.PostArgument.objects.
         filter(topic=topic, quote=quote, post__approved__isnull=False).
         aggregate(position=Avg(Case(
             When(counterargument=True, then=F('position') * -1),
@@ -135,7 +140,7 @@ def get_quote_position(topic, quote):
 
 def get_topic_arguments(topic):
     return (
-        models.Argument.objects.
+        models.PostArgument.objects.
         values('position', 'title').
         filter(topic=topic, counterargument=False, post__approved__isnull=False).
         annotate(count=Count('title')).
@@ -276,8 +281,32 @@ def dump_topic_posts(topic, **kwargs):
     return '\n'.join(result)
 
 
+def dump_actor_positions(topic):
+    curator_type = ContentType.objects.get(app_label='manopozicija', model='curator')
+    posts = (
+        models.Post.objects.
+        exclude(content_type=curator_type).
+        filter(topic=topic, approved__isnull=False).
+        order_by('-timestamp')
+    )
+
+    result = []
+    for post in posts:
+        if post.content_type.model == 'event':
+            result.append('- %s' % post.content_object.title)
+        else:
+            result.append('- %s' % post.content_object.text)
+        for row in post.actorposition_set.order_by('actor_id'):
+            result.append('  {position} {actor} ({origin})'.format(
+                position=row.position,
+                actor=' '.join([row.actor.first_name, row.actor.last_name]),
+                origin=row.get_origin_display().lower(),
+            ))
+    return '\n'.join(result)
+
+
 def get_post_votes(post):
-    agg = models.UserPosition.objects.filter(post=post).aggregate(
+    agg = models.UserPostPosition.objects.filter(post=post).aggregate(
         upvotes=Sum(Case(When(position__gt=0, then=F('position')), default=0)),
         downvotes=Sum(Case(When(position__lt=0, then=F('position')), default=0)),
     )
@@ -285,7 +314,7 @@ def get_post_votes(post):
 
 
 def update_user_position(user, post, vote: int):
-    models.UserPosition.objects.update_or_create(user=user, post=post, defaults={'position': vote})
+    models.UserPostPosition.objects.update_or_create(user=user, post=post, defaults={'position': vote})
     post.upvotes, post.downvotes = get_post_votes(post)
     post.save()
     return post.upvotes, post.downvotes
@@ -322,7 +351,7 @@ def update_curator_application(user, topic, approved):
 
 def get_user_topic_votes(user, topic):
     return dict(
-        models.UserPosition.objects.
+        models.UserPostPosition.objects.
         filter(user=user, post__topic=topic).
         values_list('post_id', 'position')
     )
@@ -342,3 +371,53 @@ def get_topic_curators(topic):
         filter(user__topiccurator__topic=topic, user__topiccurator__approved__isnull=False).
         order_by('user__topiccurator__approved')
     )
+
+
+def compare_positions(user):
+    weight = Case(
+        When(post__actorpostposition__origin=models.ActorPosition.POST, then=3),
+        When(post__actorpostposition__origin=models.ActorPosition.VOTING, then=1),
+        default=1,
+        output_field=FloatField(),
+    )
+    post_positions = (
+        models.UserPostPosition.objects.
+        filter(user=user).
+        annotate(actor=F('post__actorpostposition__actor')).
+        values('user', 'actor').
+        annotate(
+            distance_value=ExpressionWrapper((
+                Sum(weight * Sqrt(Power(F('position') - F('post__actorpostposition__position'), 2)) / 2)
+            ), output_field=FloatField()),
+            distance_weight=Sum(weight),
+        )
+    )
+
+    argument_positions = (
+        models.UserArgumentPosition.objects.
+        filter(user=user).
+        annotate(actor=F('post__actorargumentposition__actor')).
+        values('user', 'actor').
+        annotate(
+            distance_value=ExpressionWrapper((
+                Sum(Sqrt(Power(F('position') - F('post__actorargumentposition__position'), 2)) / 2)
+            ), output_field=FloatField()),
+            distance_weight=Count('post__actorargumentposition'),
+        )
+    )
+
+    result = []
+
+    key = lambda x: (x['user'], x['actor'])
+    positions = sorted(itertools.chain(post_positions, argument_positions), key=key)
+    groups = itertools.groupby(positions, key=key)
+    for (user, actor), group in groups:
+        group = list(group)
+        value = sum(x['distance_value'] for x in group)
+        weight = sum(x['distance_weight'] for x in group)
+        distance = value / weight
+        result.append((actor, distance))
+
+    # TODO: calculate positions for groups of actors
+
+    return sorted(result, key=lambda x: x[1])

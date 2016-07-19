@@ -261,26 +261,6 @@ class PostLog(models.Model):
     vote = models.SmallIntegerField(null=True, blank=True)
 
 
-class UserPosition(models.Model):
-    """User position about a topic post.
-
-    Each user can express their own position to a Quote or Event.
-
-    Attributes
-    ----------
-
-    post : Post
-        A post.
-
-    position : int
-        Value usually is -1, 0 or 1.
-
-    """
-    user = models.ForeignKey(User)
-    post = models.ForeignKey(Post)
-    position = models.SmallIntegerField(default=0)
-
-
 class Reference(models.Model):
     """Topic positions referring to specific events.
 
@@ -518,6 +498,14 @@ class Quote(models.Model):
 
 
 class Argument(models.Model):
+    topic = models.ForeignKey(Topic)
+    argument = models.CharField(max_length=255)  # Same as PostArgument.title
+
+    class Meta:
+        unique_together = ('topic', 'argument')
+
+
+class PostArgument(models.Model):
     """Short tag uniquely identifying an argument.
 
     Multiple quotes can refer to the same argument, but in different
@@ -556,3 +544,61 @@ class Argument(models.Model):
 
     def __str__(self):
         return '%s: %s' % (self.quote_id, self.title)
+
+
+class ActorPostPosition(models.Model):
+    POST = 1  # Position comes directly from an actor.
+    VOTING = 2  # Position comes from voters of a voting event.
+    ORIGIN_CHOICES = (
+        (POST, _("Įrašas")),
+        (VOTING, _("Balsavimas")),
+    )
+
+    actor = models.ForeignKey(Actor)
+    post = models.ForeignKey(Post)
+    origin = models.PositiveSmallIntegerField(choices=ORIGIN_CHOICES)
+    position = models.FloatField(default=0)
+
+    class Meta:
+        unique_together = ('actor', 'post')
+
+
+class ActorArgumentPosition(models.Model):
+    actor = models.ForeignKey(Actor)
+    argument = models.ForeignKey(Argument)
+    position = models.FloatField(default=0)
+
+    class Meta:
+        unique_together = ('actor', 'argument')
+
+
+class UserPostPosition(models.Model):
+    """User position about a topic post.
+
+    Each user can express their own position to a Quote or Event.
+
+    Attributes
+    ----------
+
+    post : Post
+        A post.
+
+    position : int
+        Value usually is -1, 0 or 1.
+
+    """
+    user = models.ForeignKey(User)
+    post = models.ForeignKey(Post)
+    position = models.SmallIntegerField(default=0)
+
+    class Meta:
+        unique_together = ('user', 'post')
+
+
+class UserArgumentPosition(models.Model):
+    user = models.ForeignKey(User)
+    argument = models.ForeignKey(Argument)
+    position = models.FloatField(default=0)
+
+    class Meta:
+        unique_together = ('user', 'argument')

@@ -67,6 +67,6 @@ admin.site.register(models.Body)
 admin.site.register(models.Actor, ActorAdmin)
 admin.site.register(models.Post)
 admin.site.register(models.TopicCurator)
-admin.site.register(models.Argument)
+admin.site.register(models.PostArgument)
 admin.site.register(models.Quote)
 # admin.site.register(Post

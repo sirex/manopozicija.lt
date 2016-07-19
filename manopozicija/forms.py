@@ -88,7 +88,7 @@ class ArgumentForm(forms.ModelForm):
     position = forms.BooleanField(label=_("neigiamas"), required=False)
 
     class Meta:
-        model = models.Argument
+        model = models.PostArgument
         fields = ('title', 'position', 'counterargument', 'counterargument_title')
         labels = {'counterargument': _("kontrargumentas")}
 

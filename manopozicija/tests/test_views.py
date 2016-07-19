@@ -68,6 +68,9 @@ def test_create_event(app):
     assert services.dump_topic_posts(topic) == '\n'.join([
         ' o  (-) Balsavimo internetu koncepcijos patvirtinimas                         e-seimas.lrs.lt 2006-11-16 (0)',
     ])
+    assert services.dump_actor_positions(topic) == '\n'.join([
+        '- Balsavimo internetu koncepcijos patvirtinimas',
+    ])
 
 
 def test_create_quote(app):
@@ -141,6 +144,12 @@ def test_create_quote(app):
         ' |      - (y) šiuolaikiška, modernu < (counterargument)                                                     ',
         ' |      Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.                                      (0)',
         ' |      - (n) balsų pirkimas                                                                                ',
+    ])
+    assert services.dump_actor_positions(topic) == '\n'.join([
+        '- Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.',
+        '  -1.0 Mantas Adomėnas (aktorius)',
+        '- Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.',
+        '  -1.0 Mantas Adomėnas (aktorius)',
     ])
 
 

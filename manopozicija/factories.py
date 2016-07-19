@@ -11,6 +11,7 @@ from django.utils import timezone
 from allauth.account.models import EmailAddress
 
 from manopozicija import models
+from manopozicija import services
 
 
 class EmailAddressFactory(DjangoModelFactory):
@@ -147,7 +148,7 @@ class ArgumentFactory(DjangoModelFactory):
     position = 1
 
     class Meta:
-        model = models.Argument
+        model = models.PostArgument
 
 
 class EventFactory(DjangoModelFactory):
@@ -171,7 +172,7 @@ class UserPositionFactory(DjangoModelFactory):
     position = 1
 
     class Meta:
-        model = models.UserPosition
+        model = models.UserPostPosition
 
 
 class CuratorFactory(DjangoModelFactory):
@@ -212,33 +213,47 @@ def create_quote_agruments(topic, quote, post, arguments):
     return result
 
 
-def create_topic_quotes(topic, actor, title, source, date, quotes):
+def create_topic_quotes(topic, user, actor, title, source, date, quotes):
     result = []
     first_name, last_name = actor.split()
     timestamp = datetime.datetime.strptime(date, '%Y-%m-%d')
     actor = PersonActorFactory(first_name=first_name, last_name=last_name)
-    source = SourceFactory(actor=actor, actor_title=title, source_title=source, timestamp=timestamp)
+    source_link = 'http://example.com/%d' % actor.pk
+    source = SourceFactory(
+        actor=actor, actor_title=title, source_link=source_link, source_title=source, timestamp=timestamp,
+    )
     for upvotes, downvotes, text, arguments in quotes:
         quote = QuoteFactory(text=text, source=source)
-        post = PostFactory(topic=topic, content_object=quote, upvotes=upvotes, timestamp=timestamp)
+        post = PostFactory(
+            topic=topic, actor=actor, content_object=quote, upvotes=upvotes, downvotes=downvotes, timestamp=timestamp,
+        )
         create_quote_agruments(topic, quote, post, arguments)
+        post.position = services.get_quote_position(topic, quote)
+        post.save()
         result.append(post)
+        if user:
+            position = 1 if upvotes > downvotes else -1 if upvotes < downvotes else 0
+            models.UserPostPosition.objects.update_or_create(user=user, post=post, defaults={'position': position})
+
+    source.position = services.get_source_position(topic, source)
+    source.save()
+
     return result
 
 
 def create_topic_event(topic, upvotes, downvotes, title, source, date):
     timestamp = datetime.datetime.strptime(date, '%Y-%m-%d')
     event = EventFactory(type=models.Event.DOCUMENT, title=title, source_title=source, timestamp=timestamp)
-    return PostFactory(topic=topic, content_object=event, upvotes=upvotes, timestamp=timestamp)
+    return PostFactory(topic=topic, content_object=event, upvotes=upvotes, downvotes=downvotes, timestamp=timestamp)
 
 
-def create_topic_posts(topic, posts):
+def create_topic_posts(topic, user, posts):
     result = []
     for content_type, *args in posts:
         if content_type == 'event':
             result.append(create_topic_event(topic, *args))
         else:
-            result.extend(create_topic_quotes(topic, *args))
+            result.extend(create_topic_quotes(topic, user, *args))
     return result
 
 
@@ -282,3 +297,13 @@ def get_image_bytes(width=100, height=100, format='JPEG', color='black'):
     output = io.BytesIO()
     image.save(output, format=format)
     return output.getvalue()
+
+
+def create_actor_positions(positions):
+    for user, user_position, actor_positions in positions:
+        quote = QuoteFactory()
+        post = PostFactory(content_object=quote)
+        models.UserPostPosition.objects.create(user=user, post=post, position=user_position)
+        for actor, origin, actor_position in actor_positions:
+            origin = getattr(models.ActorPosition, origin)
+            models.ActorPosition.objects.create(post=post, actor=actor, origin=origin, position=actor_position)

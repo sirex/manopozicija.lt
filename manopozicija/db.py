@@ -8,3 +8,11 @@ class Similarity(Func):
     def __init__(self, *expressions, **extra):
         extra.setdefault('output_field', FloatField())
         super().__init__(*expressions, **extra)
+
+
+class Power(Func):
+    function = 'POWER'
+
+
+class Sqrt(Func):
+    function = 'SQRT'
