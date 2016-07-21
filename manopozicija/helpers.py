@@ -30,8 +30,8 @@ def _get_post_context(post, user_votes, curator_votes):
 
 def get_posts(user, topic, posts):
     result = []
-    user_votes = services.get_user_topic_votes(user, topic)
-    curator_votes = services.get_curator_topic_votes(user, topic)
+    user_votes = services.get_user_topic_votes(user, topic) if user.is_authenticated() else {}
+    curator_votes = services.get_curator_topic_votes(user, topic) if user.is_authenticated() else {}
     for post in posts:
         if post['type'] == 'event':
             event = post['event']
@@ -68,6 +68,7 @@ def get_posts(user, topic, posts):
                     ),
                     'name': str(curator.user),
                     'title': curator.title,
+                    'photo': curator.photo,
                 },
             })
         else:
@@ -153,4 +154,23 @@ def get_positions(group, user, limit=20):
             _actor_details(groups, actors, *left),
             _actor_details(groups, actors, *right),
         ))
+    return result
+
+
+def get_topic_curators(topic):
+    result = []
+    for curator in services.get_topic_curators(topic):
+        position = services.get_user_topic_position(curator.user, topic)
+        result.append({
+            'obj': curator,
+            'name': curator.user.get_full_name(),
+            'photo': curator.photo,
+            'title': curator.title,
+            'position_image': _get_position_image(
+                position,
+                'img/actor-positive.png',
+                'img/actor-negative.png',
+                'img/actor-neutral.png',
+            ),
+        })
     return result

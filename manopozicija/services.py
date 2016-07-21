@@ -109,7 +109,10 @@ def create_curator(user, topic, user_data: dict, curator: dict):
 
 
 def is_topic_curator(user, topic):
-    return models.TopicCurator.objects.filter(user=user, topic=topic, approved__isnull=False).exists()
+    if user.is_authenticated():
+        return models.TopicCurator.objects.filter(user=user, topic=topic, approved__isnull=False).exists()
+    else:
+        return False
 
 
 def get_title_from_link(link):

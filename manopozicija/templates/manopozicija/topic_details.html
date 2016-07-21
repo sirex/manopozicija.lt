@@ -81,18 +81,39 @@
   </div>
 {% endif %}
 
-{% if request.user.is_authenticated %}
+{% if is_topic_curator %}
   <div class="row">
     <div class="col-md-1 timeline-box"></div>
     <div class="col-md-11">
       <h3>{% trans "Temos kuratoriai" %}</h3>
-
-      {% for curator in curators %}
-        {{ curator.user }}
-      {% endfor %}
     </div>
   </div>
 
+  {% for curator in curators %}
+    <div class="row">
+      <div class="col-md-1 col-md-offset-1">
+        {% thumbnail curator.photo "70x70" crop="50% 0%" background="#FFF" as photo %}
+          <div class="actor-photo pull-right" style="background:url({{ photo.url }}) no-repeat 0px 2px;">
+            <img src="{% static curator.position_image %}" />
+          </div>
+        {% empty %}
+          <div class="actor-photo pull-right">
+            <img src="{% static curator.position_image %}" />
+          </div>
+        {% endthumbnail %}
+      </div>
+      <div class="col-md-4">
+        <p>
+          <br/>
+          <span class="event-name">{{ curator.name }}</span><br/>
+          <span class="text-muted">{{ curator.title }}</span>
+        </p>
+      </div>
+    </div>
+  {% endfor %}
+{% endif %}
+
+{% if request.user.is_authenticated %}
   <div class="row">
     <div class="col-md-1 timeline-box"></div>
     <div class="col-md-11">
@@ -117,7 +138,7 @@
   </div>
 {% endif %}
 
-{% if queue %}
+{% if is_topic_curator and queue %}
   <div class="row">
     <div class="col-md-1 timeline-box"></div>
     <div class="col-md-11">

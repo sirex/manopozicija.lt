@@ -30,20 +30,26 @@
         {% endthumbnail %}
       </div>
       <div class="col-md-4">
-        <p><a href="#">{{ compat.actor }}</a></p>
-        {% if compat.group %}
-          <p><a href="#">{{ compat.group }}</a></p>
-        {% endif %}
+        <p>
+          <br/>
+          <a href="#" class="event-name">{{ compat.actor }}</a>
+          {% if compat.group %}
+            <br/><a href="#">{{ compat.group }}</a>
+          {% endif %}
+        </p>
       </div>
     {% else %}
       <div class="col-md-6"></div>
     {% endif %}
     {% if incompat %}
       <div class="col-md-4 text-right">
-        <p><a href="#">{{ incompat.actor }}</a></p>
-        {% if incompat.group %}
-          <p><a href="#">{{ incompat.group }}</a></p>
-        {% endif %}
+        <p>
+          <br/>
+          <a href="#" class="event-name">{{ incompat.actor }}</a>
+          {% if incompat.group %}
+            <br/><a href="#">{{ incompat.group }}</a>
+          {% endif %}
+        </p>
       </div>
       <div class="col-md-2">
         {% thumbnail incompat.actor.photo "70x70" crop="50% 0%" background="#FFF" as photo %}

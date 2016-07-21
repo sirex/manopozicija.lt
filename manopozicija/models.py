@@ -206,9 +206,12 @@ class Curator(models.Model):
     """
     user = models.OneToOneField(User)
     actor = models.ForeignKey(Actor, null=True, blank=True)
-    title = models.CharField(max_length=255)
-    photo = ImageField(upload_to='actors/%Y/%m/%d/')
+    title = models.CharField(_("Domėjimosi sritis"), max_length=255)
+    photo = ImageField(_("Nuotrauka"), upload_to='actors/%Y/%m/%d/')
     posts = GenericRelation(Post)
+
+    def __str__(self):
+        return str(self.user)
 
 
 class TopicCurator(models.Model):

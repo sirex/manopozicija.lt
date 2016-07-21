@@ -249,6 +249,10 @@ def test_topic_details(app):
     ])
     factories.create_topic_posts(topic, None, [('curator', 'Vardenis Pavardenis', 'inžinierius')])
 
+    # Test topic details with anonymouse user
+    app.get(reverse('topic-details', args=[topic.pk, topic.slug]))
+
+    # Test with registered user
     app.get(reverse('topic-details', args=[topic.pk, topic.slug]), user=user)
 
 
