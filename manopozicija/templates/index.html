@@ -22,12 +22,16 @@
   palyginimo įrankyje.
 {% endblocktrans %}</p>
 
-<h2>{% trans "Apsispręskite ką rinkti" %}</h2>
-<p class="text-muted">{% blocktrans  %}
-  Apsispręskite ką rinkti lygindami savo ir kitų visuomenės veikėjų pozicijas įvairiais klausimais.
-{% endblocktrans %}</p>
+{% if group %}
+  <h2>{% trans "Apsispręskite ką rinkti" %}</h2>
+  <p class="text-muted">{% blocktrans  %}
+    Apsispręskite ką rinkti lygindami savo ir kitų visuomenės veikėjų pozicijas įvairiais klausimais.
+  {% endblocktrans %}</p>
 
-<p><a href="#" class="btn btn-primary">{% trans "Jūs ir kandidatai į 2016 metų seimą" %}</a></p>
+  <p><a href="{% url 'compare-positions' group.pk group.slug %}" class="btn btn-primary">
+    {% trans "Jūs ir " %}{{ group.title }}
+  </a></p>
+{% endif %}
 
 <h2>{% trans "Temų sąrašas" %}</h2>
 

@@ -20,6 +20,7 @@ logger = logging.getLogger(__name__)
 
 def topic_list(request):
     return render(request, 'index.html', {
+        'group': models.Group.objects.order_by('-timestamp').first(),
         'topics': models.Topic.objects.order_by('-created'),
     })
 
@@ -215,3 +216,12 @@ def user_post_vote(request, post_id):
     else:
         logger.debug('only POST is allowed, got %s instead', request.method)
     return JsonResponse({'success': False})
+
+
+@login_required
+def compare_positions(request, object_id, slug):
+    group = get_object_or_404(models.Group, pk=object_id)
+    return render(request, 'manopozicija/compare_positions.html', {
+        'group': group,
+        'positions': helpers.get_positions(group, request.user),
+    })

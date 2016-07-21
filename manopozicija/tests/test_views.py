@@ -249,3 +249,27 @@ def test_topic_details(app):
     ])
 
     app.get(reverse('topic-details', args=[topic.pk, topic.slug]), user=user)
+
+
+def test_compare(app):
+    user = factories.UserFactory()
+    topic = factories.TopicFactory()
+    factories.TopicCuratorFactory(user=user, topic=topic)
+    factories.create_topic_posts(topic, user, [
+        ('event', 0, 1, 'Balsavimo internetu koncepcijos patvirtinimas', 'lrs.lt', '2006-11-26'),
+        ('quote', 'Mantas Adomėnas', 'seimo narys', 'kauno.diena.lt', '2016-03-22', [
+            (1, 0, 'Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.', [
+                (1, 'šiuolaikiška, modernu', True),
+            ]),
+            (1, 0, 'Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.', [
+                (-1, 'balsų pirkimas', None),
+            ]),
+        ]),
+        ('quote', 'Eligijus Masiulis', 'seimo narys', 'delfi.lt', '2015-10-08', [
+            (0, 0, 'Mes palaikysim tokį įstatymą, nes turime žengti į priekį ir reaguoti į XXI a. iššūkius.', [
+                (1, 'šiuolaikiška, modernu', None),
+            ]),
+        ]),
+    ])
+    group = factories.GroupFactory(members=models.Actor.objects.all())
+    app.get(reverse('compare-positions', args=[group.pk, group.slug]), user=user)

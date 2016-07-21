@@ -166,10 +166,19 @@ def test_compare_positions(app):
                 (1, 'šiuolaikiška, modernu', None),
             ]),
         ]),
+        ('quote', 'Juozas Bernatonis', 'seimo narys', 'delfi.lt', '2016-03-26', [
+            (0, 1, 'Žemas užsienio lietuvių aktyvumas susijęs su dalyvavimo rinkimuose sunkumais.', [
+                (1, 'didės užsienio lietuvių aktyvumas rinkimuose', None),
+            ]),
+        ]),
     ])
 
     # Check topic was actually filled with correct data
     assert services.dump_topic_posts(topic) == '\n'.join([
+        '( ) (y) Juozas Bernatonis (seimo narys)                                              delfi.lt 2016-03-26    ',
+        ' |      Žemas užsienio lietuvių aktyvumas susijęs su dalyvavimo rinkimuose sunkumais.                   (-1)',
+        ' |      - (y) didės užsienio lietuvių aktyvumas rinkimuose                                                  ',
+        ' |                                                                                                          ',
         '( ) (n) Mantas Adomėnas (seimo narys)                                          kauno.diena.lt 2016-03-22    ',
         ' |      Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.                                 (1)',
         ' |      - (y) šiuolaikiška, modernu < (counterargument)                                                     ',
@@ -186,26 +195,28 @@ def test_compare_positions(app):
     mantas_adomenas = models.Actor.objects.get(first_name='Mantas', last_name='Adomėnas').pk
     eligijus_masiulis = models.Actor.objects.get(first_name='Eligijus', last_name='Masiulis').pk
 
+    group = factories.GroupFactory(members=[mantas_adomenas, eligijus_masiulis])
+
     # Check list of actor and user positions for quotes
-    assert list(services.get_user_quote_positions(user)) == [
+    assert list(services.get_user_quote_positions(group, user)) == [
         (mantas_adomenas, -1.0, 1),
         (mantas_adomenas, -1.0, 1),
         (eligijus_masiulis, 1.0, 0),
     ]
 
     # Check list of actor and user positions for arguments
-    assert list(services.get_user_argument_positions(user)) == [
+    assert list(services.get_user_argument_positions(group, user)) == [
         ('balsų pirkimas', mantas_adomenas, -1.0, -1.0),
         ('šiuolaikiška, modernu', mantas_adomenas, -1.0, -1.0),
         ('šiuolaikiška, modernu', eligijus_masiulis, 1.0, -1.0),
     ]
 
     # Check list of actor and user positions for events
-    assert list(services.get_user_event_positions(user)) == [
+    assert list(services.get_user_event_positions(group, user)) == [
     ]
 
     # Finally check if position comparison works
-    assert services.compare_positions(user) == [
+    assert services.compare_positions(group, user) == [
         (mantas_adomenas, 0.0),
         (eligijus_masiulis, 1.0),
     ]

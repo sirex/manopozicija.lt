@@ -160,7 +160,7 @@ def get_topic_posts(topic, queue=False):
         qs = (
             models.Post.objects.
             filter(topic=topic, approved__isnull=True).
-            order_by('-created')
+            order_by('-created', '-pk')
         )
     else:
         curator_type = ContentType.objects.get(app_label='manopozicija', model='curator')
@@ -168,7 +168,7 @@ def get_topic_posts(topic, queue=False):
             models.Post.objects.
             exclude(content_type=curator_type).
             filter(topic=topic, approved__isnull=False).
-            order_by('-timestamp')
+            order_by('-timestamp', 'pk')
         )
 
     groups = itertools.groupby(qs, key=lambda x: (x.content_type.app_label, x.content_type.model))
@@ -271,7 +271,7 @@ def dump_topic_posts(topic, **kwargs):
             for post, quote in row['quotes']:
                 votes = get_post_votes_display(post)
                 result.append(' |      %s' % _align_both_sides(quote.text, '(%s)' % votes, middle + 4))
-                for argument in quote.postargument_set.all():
+                for argument in quote.postargument_set.order_by('title'):
                     if argument.counterargument and argument.counterargument_title:
                         counterargument = ' < ' + argument.counterargument_title
                     elif argument.counterargument:
@@ -376,12 +376,12 @@ def get_topic_curators(topic):
     )
 
 
-def compare_positions(user):
+def compare_positions(group, user):
     post_positions = (
         models.UserPostPosition.objects.
-        filter(user=user, post__quote__source__actor__isnull=False).
+        filter(user=user, post__actor__ingroup=group).
         exclude(position=0).
-        annotate(actor=F('post__quote__source__actor')).
+        annotate(actor=F('post__actor')).
         values('user', 'actor').
         annotate(
             distance=ExpressionWrapper(Sum(Sqrt(Power(F('position') - 1, 2)) / 2), output_field=FloatField()),
@@ -391,7 +391,7 @@ def compare_positions(user):
 
     argument_positions = (
         models.UserArgumentPosition.objects.
-        filter(user=user, argument__actorargumentposition__actor__isnull=False).
+        filter(user=user, argument__actorargumentposition__actor__ingroup=group).
         exclude(position=0).
         annotate(actor=F('argument__actorargumentposition__actor')).
         values('user', 'actor').
@@ -421,10 +421,10 @@ def compare_positions(user):
     return sorted(result, key=lambda x: (x[1], x[0]))
 
 
-def get_user_quote_positions(user):
+def get_user_quote_positions(group, user):
     return (
         models.UserPostPosition.objects.
-        filter(user=user, post__quote__source__actor__isnull=False).
+        filter(user=user, post__actor__ingroup=group).
         values_list(
             'post__quote__source__actor',
             'post__position',
@@ -434,10 +434,10 @@ def get_user_quote_positions(user):
     )
 
 
-def get_user_argument_positions(user):
+def get_user_argument_positions(group, user):
     return (
         models.UserArgumentPosition.objects.
-        filter(user=user, argument__actorargumentposition__actor__isnull=False).
+        filter(user=user, argument__actorargumentposition__actor__ingroup=group).
         values_list(
             'argument__title',
             'argument__actorargumentposition__actor',
@@ -448,10 +448,10 @@ def get_user_argument_positions(user):
     )
 
 
-def get_user_event_positions(user):
+def get_user_event_positions(group, user):
     return (
         models.UserPostPosition.objects.
-        filter(user=user, post__actorpostposition__actor__isnull=False).
+        filter(user=user, post__actorpostposition__actor__group=group).
         values_list(
             'post__actorpostposition__actor',
             'post__actorpostposition__position',

@@ -504,6 +504,9 @@ class Argument(models.Model):
     class Meta:
         unique_together = ('topic', 'title')
 
+    def __str__(self):
+        return '%d: %s' % (self.topic_id, self.title)
+
 
 class PostArgument(models.Model):
     """Short tag uniquely identifying an argument.
@@ -563,6 +566,9 @@ class ActorArgumentPosition(models.Model):
     class Meta:
         unique_together = ('actor', 'argument')
 
+    def __str__(self):
+        return '%s » %s » %r' % (self.actor, self.argument, self.position)
+
 
 class UserPostPosition(models.Model):
     """User position about a topic post.
@@ -594,3 +600,17 @@ class UserArgumentPosition(models.Model):
 
     class Meta:
         unique_together = ('user', 'argument')
+
+
+class Group(models.Model):
+    """Mainly used for comparison page.
+
+    Only members of Group are compared in comparison page.
+    """
+    slug = autoslug.AutoSlugField(populate_from='title')
+    title = models.CharField(max_length=255)
+    timestamp = models.DateTimeField()
+    members = models.ManyToManyField(Actor, related_name='+', related_query_name='ingroup')
+
+    def __str__(self):
+        return self.title

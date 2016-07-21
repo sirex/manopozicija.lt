@@ -1,5 +1,8 @@
 import itertools
 
+from django.db.models import Q
+
+from manopozicija import models
 from manopozicija import services
 
 
@@ -96,3 +99,41 @@ def get_arguments(arguments):
     positive = list(next(groups, (+1, []))[1])
     negative = list(next(groups, (-1, []))[1])
     return list(itertools.zip_longest(positive, negative))
+
+
+def _actor_details(groups, actors, actor_id, distance):
+    if actor_id:
+        return {
+            'actor': actors[actor_id],
+            'group': groups.get(actor_id),
+            'distance': distance,
+        }
+    else:
+        return None
+
+
+def get_positions(group, user, limit=20):
+    threshold = 0.4
+    actors = {x.pk: x for x in group.members.all()}
+    groups = {
+        x.actor_id: x.group for x in (
+            models.Member.objects.filter(
+                Q(until__lte=group.timestamp) | Q(until__isnull=True),
+                since__gte=group.timestamp,
+                actor__ingroup=group,
+                group__title='politinė partija',
+            ).
+            select_related('group').
+            order_by('-since')
+        )
+    }
+    positions = services.compare_positions(group, user)
+    compat = ((x, d) for x, d in positions if d < threshold)
+    incompat = ((x, d) for x, d in reversed(positions) if d >= threshold)
+    result = []
+    for i, (left, right) in zip(range(limit), itertools.zip_longest(compat, incompat, fillvalue=(None, None))):
+        result.append((
+            _actor_details(groups, actors, *left),
+            _actor_details(groups, actors, *right),
+        ))
+    return result

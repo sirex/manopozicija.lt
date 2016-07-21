@@ -211,6 +211,21 @@ class TopicCuratorFactory(DjangoModelFactory):
         django_get_or_create = ('user', 'topic')
 
 
+class GroupFactory(DjangoModelFactory):
+    title = 'Kandidatai į 2016 metų Seimą'
+    timestamp = datetime.datetime(2006, 11, 26)
+
+    class Meta:
+        model = models.Group
+        django_get_or_create = ('title',)
+
+    @factory.post_generation
+    def members(self, create, extracted, **kwargs):
+        if create:
+            for member in extracted:
+                self.members.add(member)
+
+
 def _prep_quote_arguments(arguments):
     result = []
     for position, argument, counterargument in arguments:
