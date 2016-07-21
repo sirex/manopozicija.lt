@@ -13,7 +13,7 @@ install:
   - buildout
 
   # Install test dependencies
-  - npm install -g eslint
+  - npm install -g eslint@2.11.1
 script:
   - py.test -vvra --tb=native --flake8 --doctest-modules --cov manopozicija --cov-report term-missing manopozicija
 after_success:
