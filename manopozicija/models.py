@@ -499,10 +499,10 @@ class Quote(models.Model):
 
 class Argument(models.Model):
     topic = models.ForeignKey(Topic)
-    argument = models.CharField(max_length=255)  # Same as PostArgument.title
+    title = models.CharField(max_length=255)  # Same as PostArgument.title
 
     class Meta:
-        unique_together = ('topic', 'argument')
+        unique_together = ('topic', 'title')
 
 
 class PostArgument(models.Model):
@@ -547,16 +547,8 @@ class PostArgument(models.Model):
 
 
 class ActorPostPosition(models.Model):
-    POST = 1  # Position comes directly from an actor.
-    VOTING = 2  # Position comes from voters of a voting event.
-    ORIGIN_CHOICES = (
-        (POST, _("Įrašas")),
-        (VOTING, _("Balsavimas")),
-    )
-
     actor = models.ForeignKey(Actor)
     post = models.ForeignKey(Post)
-    origin = models.PositiveSmallIntegerField(choices=ORIGIN_CHOICES)
     position = models.FloatField(default=0)
 
     class Meta:

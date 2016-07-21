@@ -22,7 +22,7 @@
 
 {% if posts %}
   {% if has_indicators %}
-  <div id="chart" data-kpi-url="{% url 'topic-kpi' topic.slug %}"></div>
+  <div id="chart" data-kpi-url="{% url 'topic-kpi' topic.pk topic.slug %}"></div>
   {% endif %}
 
   <div class="row">

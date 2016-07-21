@@ -1,6 +1,7 @@
 import io
 import factory
 import datetime
+import random
 
 
 from PIL import Image
@@ -140,6 +141,15 @@ class QuoteFactory(DjangoModelFactory):
 
 class ArgumentFactory(DjangoModelFactory):
     topic = factory.SubFactory(TopicFactory)
+    title = 'šiuolaikiška, modernu'
+
+    class Meta:
+        model = models.Argument
+        django_get_or_create = ('topic', 'title')
+
+
+class PostArgumentFactory(DjangoModelFactory):
+    topic = factory.SubFactory(TopicFactory)
     post = factory.SubFactory(PostFactory)
     quote = factory.SubFactory(QuoteFactory)
     title = 'šiuolaikiška, modernu'
@@ -149,6 +159,11 @@ class ArgumentFactory(DjangoModelFactory):
 
     class Meta:
         model = models.PostArgument
+
+    @factory.post_generation
+    def argument(self, create, extracted, **kwargs):
+        if create:
+            ArgumentFactory(topic=self.topic, title=self.title)
 
 
 class EventFactory(DjangoModelFactory):
@@ -196,7 +211,7 @@ class TopicCuratorFactory(DjangoModelFactory):
         django_get_or_create = ('user', 'topic')
 
 
-def create_quote_agruments(topic, quote, post, arguments):
+def _prep_quote_arguments(arguments):
     result = []
     for position, argument, counterargument in arguments:
         counterargument_title = ''
@@ -205,53 +220,71 @@ def create_quote_agruments(topic, quote, post, arguments):
         elif counterargument is not True:
             counterargument = True
             counterargument_title = counterargument
-        argument = ArgumentFactory(
-            topic=topic, quote=quote, post=post, position=position, title=argument,
-            counterargument=counterargument, counterargument_title=counterargument_title,
-        )
+        result.append({
+            'title': argument,
+            'position': position,
+            'counterargument': counterargument,
+            'counterargument_title': counterargument_title,
+        })
+    return result
+
+
+def create_quote_agruments(topic, quote, post, arguments):
+    result = []
+    for data in _prep_quote_arguments(arguments):
+        argument = PostArgumentFactory(topic=topic, quote=quote, post=post, **data)
         result.append(argument)
     return result
 
 
 def create_topic_quotes(topic, user, actor, title, source, date, quotes):
     result = []
+    user = user or UserFactory()
     first_name, last_name = actor.split()
-    timestamp = datetime.datetime.strptime(date, '%Y-%m-%d')
     actor = PersonActorFactory(first_name=first_name, last_name=last_name)
-    source_link = 'http://example.com/%d' % actor.pk
-    source = SourceFactory(
-        actor=actor, actor_title=title, source_link=source_link, source_title=source, timestamp=timestamp,
-    )
+    source = {
+        'actor': actor,
+        'source_link': 'http://%s/%d' % (source, actor.pk),
+        'timestamp': datetime.datetime.strptime(date, '%Y-%m-%d'),
+    }
     for upvotes, downvotes, text, arguments in quotes:
-        quote = QuoteFactory(text=text, source=source)
-        post = PostFactory(
-            topic=topic, actor=actor, content_object=quote, upvotes=upvotes, downvotes=downvotes, timestamp=timestamp,
-        )
-        create_quote_agruments(topic, quote, post, arguments)
-        post.position = services.get_quote_position(topic, quote)
-        post.save()
-        result.append(post)
-        if user:
-            position = 1 if upvotes > downvotes else -1 if upvotes < downvotes else 0
-            models.UserPostPosition.objects.update_or_create(user=user, post=post, defaults={'position': position})
+        quote = {
+            'text': text,
+            'reference_link': '',
+        }
+        quote = services.create_quote(user, topic, source, quote, _prep_quote_arguments(arguments))
+        post = quote.post.first()
 
-    source.position = services.get_source_position(topic, source)
-    source.save()
+        position = 1 if upvotes > downvotes else -1 if upvotes < downvotes else 0
+        services.update_user_position(user, post, position)
+
+        result.append(post)
 
     return result
 
 
-def create_topic_event(topic, upvotes, downvotes, title, source, date):
+def create_topic_event(topic, user, upvotes, downvotes, title, source, date):
+    user = user or UserFactory()
     timestamp = datetime.datetime.strptime(date, '%Y-%m-%d')
-    event = EventFactory(type=models.Event.DOCUMENT, title=title, source_title=source, timestamp=timestamp)
-    return PostFactory(topic=topic, content_object=event, upvotes=upvotes, downvotes=downvotes, timestamp=timestamp)
+    event = services.create_event(user, topic, {
+        'type': models.Event.DOCUMENT,
+        'title': title,
+        'source_link': 'http://%s/%d' % (source, random.randint(1, 10000)),
+        'source_title': source,
+        'timestamp': timestamp,
+    })
+    post = event.post.first()
+    position = 1 if upvotes > downvotes else -1 if upvotes < downvotes else 0
+    services.update_user_position(user, post, position)
+    return post
 
 
 def create_topic_posts(topic, user, posts):
     result = []
+    user = user or UserFactory()
     for content_type, *args in posts:
         if content_type == 'event':
-            result.append(create_topic_event(topic, *args))
+            result.append(create_topic_event(topic, user, *args))
         else:
             result.extend(create_topic_quotes(topic, user, *args))
     return result
@@ -263,7 +296,7 @@ def create_arguments(topic, arguments, approved=True):
     for position, counterargument, argument in arguments:
         quote = QuoteFactory()
         post = PostFactory(topic=topic, content_object=quote, approved=approved)
-        argument = ArgumentFactory(
+        argument = PostArgumentFactory(
             topic=topic, post=post, quote=quote,
             position=position, title=argument, counterargument=counterargument,
         )
@@ -297,13 +330,3 @@ def get_image_bytes(width=100, height=100, format='JPEG', color='black'):
     output = io.BytesIO()
     image.save(output, format=format)
     return output.getvalue()
-
-
-def create_actor_positions(positions):
-    for user, user_position, actor_positions in positions:
-        quote = QuoteFactory()
-        post = PostFactory(content_object=quote)
-        models.UserPostPosition.objects.create(user=user, post=post, position=user_position)
-        for actor, origin, actor_position in actor_positions:
-            origin = getattr(models.ActorPosition, origin)
-            models.ActorPosition.objects.create(post=post, actor=actor, origin=origin, position=actor_position)

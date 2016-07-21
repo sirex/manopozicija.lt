@@ -85,7 +85,7 @@ def get_posts(user, topic, posts):
                         'counterargument': {
                             'classes': 'glyphicon glyphicon-%s' % ('remove' if argument.counterargument else 'tag'),
                         }
-                    } for argument in quote.argument_set.order_by('pk')],
+                    } for argument in quote.postargument_set.order_by('pk')],
                 } for post, quote in post['quotes']],
             })
     return result

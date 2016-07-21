@@ -11,13 +11,13 @@ from manopozicija.db import Sqrt, Power
 from manopozicija import models
 
 
-def create_event(user, topic, event_data):
-    source_link = event_data.pop('source_link')
-    event_data['user'] = user
-    event_data['type'] = models.Event.DOCUMENT
-    event_data['position'] = 0
-    event_data['source_title'] = get_title_from_link(source_link)
-    event, created = models.Event.objects.get_or_create(source_link=source_link, defaults=event_data)
+def create_event(user, topic, event: dict):
+    source_link = event.pop('source_link')
+    event['user'] = user
+    event['type'] = models.Event.DOCUMENT
+    event['position'] = 0
+    event['source_title'] = get_title_from_link(source_link)
+    event, created = models.Event.objects.get_or_create(source_link=source_link, defaults=event)
 
     is_curator = is_topic_curator(user, topic)
     approved = timezone.now() if is_curator else None
@@ -71,6 +71,11 @@ def create_quote(user, topic, source: dict, quote: dict, arguments: list):
     for argument in arguments:
         if argument.get('title'):
             models.PostArgument.objects.create(topic=topic, post=post, quote=quote, **argument)
+            argument_, created = models.Argument.objects.get_or_create(topic=topic, title=argument['title'])
+            position = argument['position'] * (-1 if argument['counterargument'] else 1)
+            models.ActorArgumentPosition.objects.update_or_create(actor=source.actor, argument=argument_, defaults={
+                'position': position,
+            })
 
     post.position = get_quote_position(topic, quote)
     post.save()
@@ -266,7 +271,7 @@ def dump_topic_posts(topic, **kwargs):
             for post, quote in row['quotes']:
                 votes = get_post_votes_display(post)
                 result.append(' |      %s' % _align_both_sides(quote.text, '(%s)' % votes, middle + 4))
-                for argument in quote.argument_set.all():
+                for argument in quote.postargument_set.all():
                     if argument.counterargument and argument.counterargument_title:
                         counterargument = ' < ' + argument.counterargument_title
                     elif argument.counterargument:
@@ -281,30 +286,6 @@ def dump_topic_posts(topic, **kwargs):
     return '\n'.join(result)
 
 
-def dump_actor_positions(topic):
-    curator_type = ContentType.objects.get(app_label='manopozicija', model='curator')
-    posts = (
-        models.Post.objects.
-        exclude(content_type=curator_type).
-        filter(topic=topic, approved__isnull=False).
-        order_by('-timestamp')
-    )
-
-    result = []
-    for post in posts:
-        if post.content_type.model == 'event':
-            result.append('- %s' % post.content_object.title)
-        else:
-            result.append('- %s' % post.content_object.text)
-        for row in post.actorposition_set.order_by('actor_id'):
-            result.append('  {position} {actor} ({origin})'.format(
-                position=row.position,
-                actor=' '.join([row.actor.first_name, row.actor.last_name]),
-                origin=row.get_origin_display().lower(),
-            ))
-    return '\n'.join(result)
-
-
 def get_post_votes(post):
     agg = models.UserPostPosition.objects.filter(post=post).aggregate(
         upvotes=Sum(Case(When(position__gt=0, then=F('position')), default=0)),
@@ -313,10 +294,32 @@ def get_post_votes(post):
     return agg['upvotes'] or 0, abs(agg['downvotes'] or 0)
 
 
+def update_user_post_argument_positions(user, post):
+    post_arguments = list(post.postargument_set.distinct().values_list('title', flat=True))
+    rows = (
+        models.UserPostPosition.objects.
+        filter(post__topic=post.topic).
+        exclude(position=0).
+        annotate(argument=F('post__postargument__title')).
+        values('argument').
+        annotate(position=Avg(Case(
+            When(post__postargument__counterargument=True, then=F('post__postargument__position') * -1),
+            default=F('post__postargument__position'),
+        ) * F('position'))).
+        filter(argument__in=post_arguments)
+    )
+    for row in rows:
+        argument, created = models.Argument.objects.get_or_create(topic=post.topic, title=row['argument'])
+        models.UserArgumentPosition.objects.update_or_create(user=user, argument=argument, defaults={
+            'position': row['position'],
+        })
+
+
 def update_user_position(user, post, vote: int):
     models.UserPostPosition.objects.update_or_create(user=user, post=post, defaults={'position': vote})
     post.upvotes, post.downvotes = get_post_votes(post)
     post.save()
+    update_user_post_argument_positions(user, post)
     return post.upvotes, post.downvotes
 
 
@@ -374,35 +377,29 @@ def get_topic_curators(topic):
 
 
 def compare_positions(user):
-    weight = Case(
-        When(post__actorpostposition__origin=models.ActorPosition.POST, then=3),
-        When(post__actorpostposition__origin=models.ActorPosition.VOTING, then=1),
-        default=1,
-        output_field=FloatField(),
-    )
     post_positions = (
         models.UserPostPosition.objects.
-        filter(user=user).
-        annotate(actor=F('post__actorpostposition__actor')).
+        filter(user=user, post__quote__source__actor__isnull=False).
+        exclude(position=0).
+        annotate(actor=F('post__quote__source__actor')).
         values('user', 'actor').
         annotate(
-            distance_value=ExpressionWrapper((
-                Sum(weight * Sqrt(Power(F('position') - F('post__actorpostposition__position'), 2)) / 2)
-            ), output_field=FloatField()),
-            distance_weight=Sum(weight),
+            distance=ExpressionWrapper(Sum(Sqrt(Power(F('position') - 1, 2)) / 2), output_field=FloatField()),
+            weight=Count('pk'),
         )
     )
 
     argument_positions = (
         models.UserArgumentPosition.objects.
-        filter(user=user).
-        annotate(actor=F('post__actorargumentposition__actor')).
+        filter(user=user, argument__actorargumentposition__actor__isnull=False).
+        exclude(position=0).
+        annotate(actor=F('argument__actorargumentposition__actor')).
         values('user', 'actor').
         annotate(
-            distance_value=ExpressionWrapper((
-                Sum(Sqrt(Power(F('position') - F('post__actorargumentposition__position'), 2)) / 2)
+            distance=ExpressionWrapper((
+                Sum(Sqrt(Power(F('position') - F('argument__actorargumentposition__position'), 2)) / 2)
             ), output_field=FloatField()),
-            distance_weight=Count('post__actorargumentposition'),
+            weight=Count('argument__actorargumentposition'),
         )
     )
 
@@ -413,11 +410,52 @@ def compare_positions(user):
     groups = itertools.groupby(positions, key=key)
     for (user, actor), group in groups:
         group = list(group)
-        value = sum(x['distance_value'] for x in group)
-        weight = sum(x['distance_weight'] for x in group)
+        value = sum(x['distance'] or 0 for x in group)
+        weight = sum(x['weight'] or 1 for x in group)
         distance = value / weight
         result.append((actor, distance))
 
+    # TODO: calculate post role positions (reuse ActorPostPosition model)
     # TODO: calculate positions for groups of actors
 
-    return sorted(result, key=lambda x: x[1])
+    return sorted(result, key=lambda x: (x[1], x[0]))
+
+
+def get_user_quote_positions(user):
+    return (
+        models.UserPostPosition.objects.
+        filter(user=user, post__quote__source__actor__isnull=False).
+        values_list(
+            'post__quote__source__actor',
+            'post__position',
+            'position',
+        ).
+        order_by('pk')
+    )
+
+
+def get_user_argument_positions(user):
+    return (
+        models.UserArgumentPosition.objects.
+        filter(user=user, argument__actorargumentposition__actor__isnull=False).
+        values_list(
+            'argument__title',
+            'argument__actorargumentposition__actor',
+            'argument__actorargumentposition__position',
+            'position',
+        ).
+        order_by('argument__title', 'argument__actorargumentposition__actor')
+    )
+
+
+def get_user_event_positions(user):
+    return (
+        models.UserPostPosition.objects.
+        filter(user=user, post__actorpostposition__actor__isnull=False).
+        values_list(
+            'post__actorpostposition__actor',
+            'post__actorpostposition__position',
+            'position',
+        ).
+        order_by('pk')
+    )
