@@ -15,7 +15,7 @@ install:
   # Install test dependencies
   - npm install -g eslint
 script:
-  - py.test -vvra --tb=native --flake8 --doctest-modules --cov seimas --cov-report term-missing seimas
+  - py.test -vvra --tb=native --flake8 --doctest-modules --cov manopozicija --cov-report term-missing manopozicija
 after_success:
   - coveralls
 cache:
