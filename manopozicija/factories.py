@@ -294,12 +294,25 @@ def create_topic_event(topic, user, upvotes, downvotes, title, source, date):
     return post
 
 
+def create_topic_curator(topic, user, name, title):
+    user_data = {}
+    user_data['first_name'], user_data['last_name'] = name.split()
+    curator = services.create_curator(user, topic, user_data, {
+        'title': title,
+        'photo': None,
+    })
+    post = curator.posts.first()
+    return post
+
+
 def create_topic_posts(topic, user, posts):
     result = []
     user = user or UserFactory()
     for content_type, *args in posts:
         if content_type == 'event':
             result.append(create_topic_event(topic, user, *args))
+        elif content_type == 'curator':
+            result.append(create_topic_curator(topic, user, *args))
         else:
             result.extend(create_topic_quotes(topic, user, *args))
     return result

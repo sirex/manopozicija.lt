@@ -24,6 +24,35 @@
         <hr class="post-separator"/>
       </div>
     </div>
+  {% elif post.type == 'curator' %}
+    <div class="row">
+      <div class="col-md-1 timeline-box">
+        {% thumbnail post.curator.photo "70x70" crop="50% 0%" background="#FFF" as photo %}
+          <div class="actor-photo" style="background:url({{ photo.url }}) no-repeat 0px 2px;">
+            <img src="{% static post.curator.position_image %}" />
+          </div>
+        {% empty %}
+          <div class="actor-photo">
+            <img src="{% static post.curator.position_image %}" />
+          </div>
+        {% endthumbnail %}
+      </div>
+      <div class="col-md-11">
+        <div class="row">
+          <div class="col-md-11">
+            <span class="text-muted pull-right"><br/>{% trans "naujas temos kuratorius" %}</span>
+            <p class="event-name">
+              <a href="#">{{ post.curator.name }}</a><br/>
+              <span class="text-muted">{{ post.curator.title }}</span>
+            </p>
+          </div>
+          <div class="col-md-1 post-vote">
+            {% include 'manopozicija/_post_vote.html' with post=post.post %}
+          </div>
+        </div>
+        <hr class="post-separator"/>
+      </div>
+    </div>
   {% else %}
     <div class="row">
       <div class="col-md-1 timeline-box">

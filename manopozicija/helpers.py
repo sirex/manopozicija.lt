@@ -53,6 +53,23 @@ def get_posts(user, topic, posts):
                     },
                 },
             })
+        elif post['type'] == 'curator':
+            curator = post['curator']
+            position = services.get_user_topic_position(curator.user, topic)
+            result.append({
+                'type': 'curator',
+                'post': _get_post_context(post['post'], user_votes, curator_votes),
+                'curator': {
+                    'position_image': _get_position_image(
+                        position,
+                        'img/actor-positive.png',
+                        'img/actor-negative.png',
+                        'img/actor-neutral.png',
+                    ),
+                    'name': str(curator.user),
+                    'title': curator.title,
+                },
+            })
         else:
             source = post['source']
             actor = source.actor

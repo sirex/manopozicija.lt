@@ -459,3 +459,12 @@ def get_user_event_positions(group, user):
         ).
         order_by('pk')
     )
+
+
+def get_user_topic_position(user, topic):
+    agg = (
+        models.UserPostPosition.objects.
+        filter(user=user, post__topic=topic).
+        aggregate(position=Avg('position'))
+    )
+    return agg['position'] or 0

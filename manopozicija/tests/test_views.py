@@ -247,6 +247,7 @@ def test_topic_details(app):
             ]),
         ]),
     ])
+    factories.create_topic_posts(topic, None, [('curator', 'Vardenis Pavardenis', 'inžinierius')])
 
     app.get(reverse('topic-details', args=[topic.pk, topic.slug]), user=user)
 
