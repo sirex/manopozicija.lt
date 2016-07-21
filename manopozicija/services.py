@@ -405,7 +405,9 @@ def compare_positions(group, user):
 
     result = []
 
-    key = lambda x: (x['user'], x['actor'])
+    def key(x):
+        return x['user'], x['actor']
+
     positions = sorted(itertools.chain(post_positions, argument_positions), key=key)
     groups = itertools.groupby(positions, key=key)
     for (user, actor), group in groups:

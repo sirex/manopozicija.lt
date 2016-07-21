@@ -1,7 +1,6 @@
 {% load static %}
 {% load trans from i18n %}
 {% load compress from compress %}
-{% load topmenu from websitetags %}
 {% load js_reverse %}
 
 <!DOCTYPE html>
@@ -36,7 +35,6 @@
             <li><a href="{% url 'account_login' %}">{% trans "Prisijungti" %}</a></li>
             {% endif %}
           </ul>
-          {% topmenu %}
         </div>
       </div>
     </nav>

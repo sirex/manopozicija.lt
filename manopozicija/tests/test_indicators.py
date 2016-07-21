@@ -5,6 +5,9 @@ import pytest
 import pkg_resources as pres
 import pandas as pd
 
+from django.core.urlresolvers import reverse
+
+from manopozicija import factories
 from manopozicija import indicators
 from manopozicija.models import Indicator
 
@@ -120,7 +123,7 @@ def test_update_indicators_error(settings, tmpdir):
 
 
 def test_voter_turnout():
-    path = pres.resource_filename('manopozicija.website.tests', 'fixtures/indicators/voter_turnout.tsv.gz')
+    path = pres.resource_filename('manopozicija.tests', 'fixtures/indicators/voter_turnout.tsv.gz')
     frame = indicators.voter_turnout({'source': path})
 
     assert tuples(frame) == [
@@ -144,3 +147,33 @@ def test_voter_turnout():
         '2012-01-01,52.9',
         '',
     ])
+
+
+def test_topic_kpi(app, settings, tmpdir):
+    settings.MEDIA_ROOT = tmpdir.strpath
+
+    topic = factories.TopicFactory()
+    indicators = list(topic.indicators.all())
+
+    tmpdir.mkdir('indicators').join('%s.csv' % indicators[0].slug).write('\n'.join([
+        'datetime,Seimo',
+        '1992-01-01,75.2',
+        '1996-01-01,52.9',
+        '',
+    ]))
+
+    resp = app.get(reverse('topic-kpi', args=[topic.pk, topic.slug]))
+    assert resp.json == {
+        'events': [],
+        'indicators': [
+            {
+                'title': 'Rinkimuose dalyvavusių rinkėjų skaičius, palyginti su visų rinkėjų skaičiumi',
+                'ylabel': 'Aktyvumas procentais',
+                'source': 'http://ec.europa.eu/eurostat/tgm/table.do?tab=table&init=1&language=en&pcode=tsdgo310&plugin=1',
+                'data': [
+                    ['1992-01-01', 75.2],
+                    ['1996-01-01', 52.9],
+                ],
+            },
+        ],
+    }
