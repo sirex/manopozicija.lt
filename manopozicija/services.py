@@ -488,3 +488,10 @@ def get_user_topic_position(user, topic):
         aggregate(position=Avg('position'))
     )
     return agg['position'] or 0
+
+
+def get_bot_user(username):
+    user, created = models.User.objects.get_or_create(username='importbot')
+    if created:
+        user.set_unusable_password()
+    return user

@@ -107,7 +107,6 @@ STATICFILES_DIRS = (
     str(PROJECT_DIR / 'parts/jquery'),
     str(PROJECT_DIR / 'parts/bootstrap'),
     str(PROJECT_DIR / 'parts/requirejs'),
-    str(PROJECT_DIR / 'parts/c3'),
     str(PROJECT_DIR / 'parts/d3'),
 )
 

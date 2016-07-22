@@ -1,0 +1,55 @@
+- type: event
+  event:
+    title: Seimas atmetė balsavimo internetu sistemos sukūrimo ir įgyvendinimo įstatymą
+    source_link: http://www.lrs.lt/sip/portal.show?p_r=15275&p_k=1&p_a=sale_bals&p_bals_id=-22217
+    timestamp: 2016-03-22
+- type: event
+  event:
+    title: Seimas pritarė svarstyti įstatymų pataisas įteisinančias balsavimą internetu
+    source_link: http://www3.lrs.lt/pls/inter/w5_sale.bals?p_bals_id=-19203
+    timestamp: 2014-11-06
+- type: event
+  event:
+    title: Seimas nepritarė įstatymų pataisoms įteisinančioms balsavimą internetu
+    source_link: http://www3.lrs.lt/pls/inter/w5_sale.bals?p_bals_id=-14616
+    timestamp: 2012-09-25
+- type: event
+  event:
+    title: Seimas nepritarė įstatymų pataisoms įteisinančioms balsavimą internetu
+    source_link: http://www3.lrs.lt/pls/inter/w5_sale.bals?p_bals_id=-9466
+    timestamp: 2010-09-28
+- type: event
+  event:
+    title: Seimas nepritarė įstatymų pataisoms įteisinančioms balsavimą internetu
+    source_link: http://www3.lrs.lt/pls/inter/w5_sale.bals?p_bals_id=-7109
+    timestamp: 2009-12-03
+- type: event
+  event:
+    title: Nutrauktas balsavimo internetu sistemos kūrimas
+    source_link:
+    timestamp: 2008-10-24
+- type: event
+  event:
+    title: Seimas atmetė įstatymų projektus, kuriais norėta įteisinti balsavimą internetu
+    source_link: http://www.lrs.lt/sip/portal.show?p_r=15275&p_k=1&p_a=sale_bals&p_bals_id=-1132
+    timestamp: 2008-01-17
+- type: event
+  event:
+    title: Balsavimo internetu sistemos viešasis konkursas
+    source_link: http://ivpk.lrv.lt/lt/naujienos/atviram-konkursui-balsavimo-internetu-sistemos-sukurimas-pateikti-du-pasiulymai
+    timestamp: 2007-08-23
+- type: event
+  event:
+    title: Balsavimo internetu programos patvirtinimas
+    source_link: https://e-seimas.lrs.lt/portal/legalAct/lt/TAD/TAIS.302125?positionInSearchResults=0&searchModelUUID=35dfe168-3d5e-46d9-a4af-8eead37694f6
+    timestamp: 2007-07-11
+- type: event
+  event:
+    title: Patvirtinta darbo grupė balsavimo internetu sistemos diegimui koordinuoti
+    source_link: http://www3.lrs.lt/pls/inter3/dokpaieska.showdoc_l?p_id=295063&p_query=&p_tr2=
+    timestamp: 2007-04-04
+- type: event
+  event:
+    title: Balsavimo internetu koncepcijos patvirtinimas
+    source_link: https://e-seimas.lrs.lt/portal/legalAct/lt/TAD/TAIS.287235?positionInSearchResults=0&searchModelUUID=eaee1625-cf9f-46c0-931c-482a218029e8
+    timestamp: 2006-11-16
