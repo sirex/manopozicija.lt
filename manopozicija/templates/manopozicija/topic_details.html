@@ -10,8 +10,9 @@
 
 
 {% block js %}
-<script src="{% static 'd3.min.js' %}" charset="utf-8"></script>
-<script src="{% static 'c3.min.js' %}"></script>
+<!--script src="{% static 'd3.min.js' %}" charset="utf-8"></script-->
+<!--script src="{% static 'c3.min.js' %}"></script-->
+<script src="//d3js.org/d3.v4.min.js"></script>
 <script src="{% static 'js/kpi.js' %}"></script>
 {% endblock %}
 
@@ -23,12 +24,19 @@
 {% if posts %}
   {% if has_indicators %}
   <div id="chart" data-kpi-url="{% url 'topic-kpi' topic.pk topic.slug %}"></div>
+  <div id="new-chart" data-kpi-url="{% url 'topic-kpi' topic.pk topic.slug %}"></div>
   {% endif %}
 
   <div class="row">
     <div class="col-md-1 timeline-box"></div>
     <div class="col-md-11">
       <h3>{% trans "Esminiai veiklos rodikliai" %}</h3>
+      {% for indicator in indicators %}
+        <p>{{ indicator.title }}</p>
+      {% endfor %}
+      <p>{% trans "Jūsų pozicija" %}</p>
+      <p>{% trans "Seimo pozicija" %}</p>
+      <p>{% trans "Priimti sprendimai" %}</p>
     </div>
   </div>
 

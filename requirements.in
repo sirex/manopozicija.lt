@@ -23,6 +23,7 @@ beautifulsoup4
 pyyaml
 panavatar
 pillow
+livereload
 
 # key performance indicators
 pandas

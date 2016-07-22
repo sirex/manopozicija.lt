@@ -1,119 +1,113 @@
-(function (d3, c3) {
-    function draw(url) {
-        d3.json(url, function(jsonData) {
-            var i = 1;
-            var DATA_NAME = "data", SCATTER_CHART = "scatter";
-            var yLabel, eventsLevel, eventsLevelSameDay, tempDate, tempLevel, eventDate;
-            var dataMin = Number.MAX_VALUE, dataMax = Number.MIN_VALUE;
-            var yearMin = Number.MAX_VALUE, yearMax = Number.MIN_VALUE;
-            var dataToChart = [], dataNames = [], dataAndX = [], chartType = [], dataHide = [], webSource = [];
+(function (d3) {
+    var margin = {top: 10, bottom: 100, left: 100, right: 100};
+    var inner = {width: 800, height: 100};
+    var bottom = {width: inner.width, height: 100, margin: {top: 10}};
+    var outer = {
+        width: margin.left + inner.width + margin.right,
+        height: margin.top + inner.height + bottom.height + margin.bottom
+    };
+    var svg = d3.select('#new-chart').append('svg')
+        .attr('width', outer.width)
+        .attr('height', outer.height);
 
-            jsonData.indicators.forEach(function(jsonEachData) {
-                var itemName = DATA_NAME + i;
-                var date = ["x" + i];
-                var mark = [itemName]; 
-                dataAndX[itemName] = date[0];
-                dataNames[itemName] = jsonEachData.title;
-                webSource[itemName] = jsonEachData.source;
-                chartType[itemName] = "line";
-                yLabel = jsonEachData.ylabel;
-                jsonEachData.data.forEach(function(dateAndMark) {
-                    dateAndMark.forEach(function(dateOrMark, j) {
-                        if (j % 2 == 0) {
-                            date.push(dateOrMark);
-                            var year = new Date(dateOrMark);
-                            yearMin = Math.min(yearMin, year.getFullYear());
-                            yearMax = Math.max(yearMax, year.getFullYear());
-                        } else {
-                            mark.push(dateOrMark);
-                            dataMin = Math.min(dataMin, dateOrMark);
-                            dataMax = Math.max(dataMax, dateOrMark);
-                        }   
-                    });
-                });
-                dataToChart.push(date);
-                dataToChart.push(mark);
-                i++;
-            });
+    var timeline = {min: new Date(1990, 0, 1), max: Date.now()};
 
-            eventsLevel = dataMin - (dataMax - dataMin) * 0.1;
-            eventsLevelSameDay = (dataMax - dataMin) * 0.07;
-            yearMax = yearMax - yearMin;
+    var x = d3.scaleTime()
+        .domain([timeline.min, timeline.max])
+        .range([margin.left, margin.left + inner.width]);
 
-            jsonData.events.forEach(function(jsonEachData) {
-                var itemName = DATA_NAME + i;
-                var date = ["x"+i];
-                var mark = [itemName];
-                dataAndX[itemName] = date[0];
-                dataNames[itemName] = jsonEachData.title;
-                webSource[itemName] = jsonEachData.source;
-                chartType[itemName] = SCATTER_CHART;
-                date.push(jsonEachData.date);
-                eventDate = new  Date(jsonEachData.date);
-                if (tempDate > eventDate){
-                    tempLevel += eventsLevelSameDay;
-                } else {
-                    tempLevel = eventsLevel;
-                }
-                tempDate = eventDate; 
-                tempDate.setDate(tempDate.getDate() + 100);
-                mark.push(tempLevel);
-                dataToChart.push(date);
-                dataToChart.push(mark);
-                dataHide.push(itemName);
-                i++;
-            });
+    var xvalue = function (d) { return x(new Date(d[0])); };
 
-            function changePointSize(typeOfChart){
-                if (typeOfChart == SCATTER_CHART){
-                    return 6;
-                } else return 2.5; 
+    var color = d3.scaleOrdinal(d3.schemeCategory10);
+
+    var identity = function (d) { return d; };
+
+    d3.json($('#new-chart').data('kpi-url'), function (json) {
+        for (var i=0; i<json.indicators.length; i++) {
+            var data = json.indicators[i].data;
+
+            var y = d3.scaleLinear()
+                .domain([
+                    d3.min(data, function (d) { return d[1]; }),
+                    d3.max(data, function (d) { return d[1]; })
+                ])
+                .range([margin.top + inner.height, margin.top]);
+
+            var yvalue = function (d) { return y(d[1]); };
+
+            svg.append('g')
+                .attr('transform', 'translate(' + margin.left + ', 0)')
+                .call(d3.axisLeft(y).ticks(5));
+
+            svg.append('g').selectAll('path')
+                .data([data])
+                .enter().append('path')
+                    .attr('fill', 'none')
+                    .attr('stroke-width', '1')
+                    .attr('stroke', color(i))
+                    .attr('d', d3.line()
+                        .x(xvalue)
+                        .y(yvalue)
+                    );
+
+            svg.append('g').selectAll('circle')
+                .data(data)
+                .enter().append('circle')
+                    .attr('cx', xvalue)
+                    .attr('cy', yvalue)
+                    .attr('r', 2)
+                    .attr('fill', color(i));
+
+        }
+
+        svg.append('rect')
+            .attr('x', 0)
+            .attr('y', margin.top + inner.height + bottom.margin.top)
+            .attr('width', outer.width)
+            .attr('height', bottom.height)
+            .attr('fill', '#fff6f0');
+
+        svg.append('g').selectAll('path')
+            .data([[0, outer.width]])
+            .enter().append('path')
+                .attr('fill', 'none')
+                .attr('stroke-width', 1)
+                .attr('stroke', '#ffccaa')
+                .attr('d', d3.line()
+                    .x(identity)
+                    .y(margin.top + inner.height + bottom.margin.top)
+                );
+
+        svg.append('g')
+            .attr('transform', 'translate(0, ' + (margin.top + inner.height + bottom.margin.top + bottom.height) + ')')
+            .call(d3.axisBottom(x));
+
+        //var eventScale = d3.histogram()
+        //    .domain([x(timeline.min), x(timeline.max)])
+        //    .range([margin.top + inner.height, margin.top]);
+
+        console.log(json.events[0]);
+        console.log(x(new Date(json.events[0].date)));
+        console.log(x.range());
+
+        var histogram = d3.histogram()
+            .domain(x.range())
+            .thresholds(10)
+            .value(function (d) { return x(new Date(d.date)) });
+        var bins = histogram(json.events);
+        console.log(bins);
+
+        for (var i=0; i<bins.length; i++) {
+            var bin = bins[i];
+            for (var j=0; j<bin.length; j++) {
+                svg.append('circle')
+                    .attr('fill', '#ff6600')
+                    .attr('cx', bin.x0)
+                    .attr('cy', margin.top + inner.height + bottom.margin.top + 8 + (j * 10))
+                    .attr('r', 4);
             }
+        }
 
-            c3.generate( {
-                data: {
-                    xs: dataAndX,
-                    columns: dataToChart,
-                    names: dataNames,
-                    types: chartType,
-                    onclick: function (d){
-                        window.open(webSource[d.id]);
-                    }
-                },
-                zoom: {
-                    enabled: true
-                },
-                legend: {
-                    hide: dataHide
-                },
-                axis: {
-                    x: {
-                        type: 'timeseries',
-                        tick: {
-                            count: yearMax,
-                            format: '%Y'
-                        }
-                    },
-                    y: {
-                        min: eventsLevel + 3,
-                        label:{
-                            text: yLabel,
-                            position: 'outer-middle'
-                        }
-                    }
-                },
-                point: {
-                    r: function(d) { 
-                        return  changePointSize(chartType[d.id]);
-                    }
-                }
-            });
-        });
-    }
 
-    var container = $('#chart');
-
-    if (container) {
-        draw(container.data('kpi-url'));
-    }
-}(d3, c3));  //eslint-disable-line no-undef
+    });
+}(d3));  //eslint-disable-line no-undef

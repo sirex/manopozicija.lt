@@ -37,6 +37,7 @@ def topic_details(request, object_id, slug):
             if is_topic_curator else []
         ),
         'has_indicators': topic.indicators.count() > 0,
+        'indicators': topic.indicators.all(),
         'is_topic_curator': is_topic_curator,
         'curators': helpers.get_topic_curators(topic) if is_topic_curator else []
     })
