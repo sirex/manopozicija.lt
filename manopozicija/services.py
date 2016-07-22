@@ -71,11 +71,7 @@ def create_quote(user, topic, source: dict, quote: dict, arguments: list):
     for argument in arguments:
         if argument.get('title'):
             models.PostArgument.objects.create(topic=topic, post=post, quote=quote, **argument)
-            argument_, created = models.Argument.objects.get_or_create(topic=topic, title=argument['title'])
-            position = argument['position'] * (-1 if argument['counterargument'] else 1)
-            models.ActorArgumentPosition.objects.update_or_create(actor=source.actor, argument=argument_, defaults={
-                'position': position,
-            })
+            update_actor_topic_argument_position(source.actor, topic, argument['title'])
 
     post.position = get_quote_position(topic, quote)
     post.save()
@@ -318,6 +314,21 @@ def update_user_post_argument_positions(user, post):
         })
 
 
+def update_actor_topic_argument_position(actor, topic, argument_title):
+    argument, created = models.Argument.objects.get_or_create(topic=topic, title=argument_title)
+    agg = (
+        models.PostArgument.objects.
+        filter(topic=topic, post__actor=actor, title=argument.title).
+        aggregate(position=Avg(Case(
+            When(counterargument=True, then=F('position') * -1),
+            default=F('position'),
+        )))
+    )
+    models.ActorArgumentPosition.objects.update_or_create(actor=actor, argument=argument, defaults={
+        'position': agg['position'] or 0,
+    })
+
+
 def update_user_position(user, post, vote: int):
     models.UserPostPosition.objects.update_or_create(user=user, post=post, defaults={'position': vote})
     post.upvotes, post.downvotes = get_post_votes(post)
@@ -440,9 +451,12 @@ def get_user_quote_positions(group, user):
 
 
 def get_user_argument_positions(group, user):
-    return (
+    r = (
         models.UserArgumentPosition.objects.
-        filter(user=user, argument__actorargumentposition__actor__ingroup=group).
+        filter(
+            user=user,
+            argument__actorargumentposition__actor__ingroup=group,
+        ).
         values_list(
             'argument__title',
             'argument__actorargumentposition__actor',
@@ -451,6 +465,7 @@ def get_user_argument_positions(group, user):
         ).
         order_by('argument__title', 'argument__actorargumentposition__actor')
     )
+    return r
 
 
 def get_user_event_positions(group, user):

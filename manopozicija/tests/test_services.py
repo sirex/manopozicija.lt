@@ -171,6 +171,11 @@ def test_compare_positions(app):
                 (1, 'didės užsienio lietuvių aktyvumas rinkimuose', None),
             ]),
         ]),
+        ('quote', 'Mantas Adomėnas', 'seimo narys', '15min.lt', '2006-03-22', [
+            (0, 0, 'Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.', [
+                (1, 'šiuolaikiška, modernu', None),
+            ]),
+        ]),
     ])
 
     # Check topic was actually filled with correct data
@@ -190,6 +195,10 @@ def test_compare_positions(app):
         ' |      - (y) šiuolaikiška, modernu                                                                         ',
         ' |                                                                                                          ',
         ' o  (-) Balsavimo internetu koncepcijos patvirtinimas                                  lrs.lt 2006-11-26 (-1)',
+        ' |                                                                                                          ',
+        '( ) (y) Mantas Adomėnas (seimo narys)                                                15min.lt 2006-03-22    ',
+        ' |      Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.                                 (0)',
+        ' |      - (y) šiuolaikiška, modernu                                                                         ',
     ])
 
     mantas_adomenas = models.Actor.objects.get(first_name='Mantas', last_name='Adomėnas').pk
@@ -202,12 +211,13 @@ def test_compare_positions(app):
         (mantas_adomenas, -1.0, 1),
         (mantas_adomenas, -1.0, 1),
         (eligijus_masiulis, 1.0, 0),
+        (mantas_adomenas, 1.0, 0),
     ]
 
     # Check list of actor and user positions for arguments
     assert list(services.get_user_argument_positions(group, user)) == [
         ('balsų pirkimas', mantas_adomenas, -1.0, -1.0),
-        ('šiuolaikiška, modernu', mantas_adomenas, -1.0, -1.0),
+        ('šiuolaikiška, modernu', mantas_adomenas, 0, -1.0),
         ('šiuolaikiška, modernu', eligijus_masiulis, 1.0, -1.0),
     ]
 
@@ -217,6 +227,6 @@ def test_compare_positions(app):
 
     # Finally check if position comparison works
     assert services.compare_positions(group, user) == [
-        (mantas_adomenas, 0.0),
+        (mantas_adomenas, 0.125),
         (eligijus_masiulis, 1.0),
     ]
