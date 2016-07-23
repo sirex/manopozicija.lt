@@ -30,8 +30,8 @@
         <p>{{ indicator.title }}</p>
       {% endfor %}
       <p>{% trans "Jūsų pozicija" %}</p>
-      <p>{% trans "Seimo pozicija" %}</p>
-      <p>{% trans "Priimti sprendimai" %}</p>
+      <p>{% trans "Visuomenės veikėjų pozicija" %}</p>
+      <p>{% trans "Įvykiai susiję su tema" %}</p>
     </div>
   </div>
 
@@ -75,7 +75,7 @@
     <div class="row">
       <div class="col-md-1 timeline-box"></div>
       <div class="col-md-11">
-        <h3>{% trans "Sprendimai ir nuomonės" %}</h3>
+        <h3>{% trans "Įvykiai ir nuomonės" %}</h3>
         <p class="text-muted">Spauskite <img src="{% static 'img/thumb-up.png' %}"/>, jei pritariate sprendimui ar nuomonei,
         spauskite <img src="{% static 'img/thumb-down.png' %}"/>, jei prieštaraujate.</p>
       </div>
@@ -130,7 +130,7 @@
         {% trans "Pridėk citatą" %}
       </a>
       <a href="{% url "event-create" topic.pk topic.slug %}" class="btn btn-lg btn-default">
-        {% trans "Pridėk sprendimą" %}
+        {% trans "Pridėk įvykį" %}
       </a>
       {% if not is_topic_curator %}
         <a href="{% url "curator-apply" topic.pk topic.slug %}" class="btn btn-lg btn-default">

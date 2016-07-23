@@ -355,9 +355,20 @@ def update_curator_position(user, post, vote: int):
         post.approved = None
     post.save()
 
-    curator_type = ContentType.objects.get(app_label='manopozicija', model='curator')
-    if post.content_type == curator_type:
+    content_type = (post.content_type.app_label, post.content_type.model)
+    if content_type == ('manopozicija', 'curator'):
         update_curator_application(post.content_object.user, post.topic, post.approved)
+
+    # Update quote and source positions, since it depends on post approval state
+    if content_type == ('manopozicija', 'quote'):
+        quote = post.content_object
+        source = quote.source
+
+        post.position = get_quote_position(post.topic, quote)
+        post.save()
+
+        source.position = get_source_position(post.topic, source)
+        source.save()
 
     return post.curator_upvotes, post.curator_downvotes
 

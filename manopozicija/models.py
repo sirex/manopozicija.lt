@@ -359,7 +359,7 @@ class Event(models.Model):
     title = models.CharField(_("Pavadinimas"), max_length=255)
     source_link = models.URLField(_("Šaltinio nuoroda"), max_length=255, blank=True, unique=True)
     source_title = models.CharField(_("Šaltinio antraštė"), max_length=255, blank=True)
-    timestamp = models.DateTimeField(_("Kada buvo priimtas sprendimas?"))
+    timestamp = models.DateTimeField(_("Įvykio data"))
     post = GenericRelation(Post, related_query_name='event')
     position = models.FloatField()
     references = GenericRelation(Reference, related_query_name='event')

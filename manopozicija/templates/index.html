@@ -1,6 +1,7 @@
 {% extends "_base.html" %}
 
 {% load i18n %}
+{% load thumbnail %}
 
 
 {% block content %}
@@ -11,27 +12,29 @@
 
 <hr/>
 
-<h2>{% trans "Kaip tai veikia?" %}</h2>
+<div class="row">
+  <div class="col-md-6">
+    <h2>{% trans "Kaip tai veikia?" %}</h2>
 
-<ol>
-  <li>{% trans "Išreikškite savo poziciją vienoje ar daugiau temų, žiūrėti: „Temų sąrašas“." %}</li>
-  <li>{% trans "Palyginkite savo ir kitų visuomenės veikėjų poziciją, žiūrėti: „Apsispręskite ką rinkti“." %}</li>
-</ol>
-<p class="text-muted"> {% blocktrans  %}
-  Kuo daugiau ir kuo įvairesnėmis temomis pateiksite savo poziciją, tuo tikslesnius rezultatus matysite pozicijų
-  palyginimo įrankyje.
-{% endblocktrans %}</p>
+    <ol>
+      <li>{% trans "Pirmiausia pateikite savo piziciją vienoje ar daugiau temų." %}</li>
+      <li>{% trans "Tada spauskite dešinėje esantį mėlyną mygtuką." %}</li>
+    </ol>
+    <p class="text-muted"> {% blocktrans  %}
+      Kuo daugiau ir kuo įvairesnėmis temomis pateiksite savo poziciją, tuo tikslesnius rezultatus matysite pozicijų
+      palyginimo įrankyje.
+    {% endblocktrans %}</p>
+  </div>
 
-{% if group %}
-  <h2>{% trans "Apsispręskite ką rinkti" %}</h2>
-  <p class="text-muted">{% blocktrans  %}
-    Apsispręskite ką rinkti lygindami savo ir kitų visuomenės veikėjų pozicijas įvairiais klausimais.
-  {% endblocktrans %}</p>
-
-  <p><a href="{% url 'compare-positions' group.pk group.slug %}" class="btn btn-primary">
-    {% trans "Jūs ir " %}{{ group.title }}
-  </a></p>
-{% endif %}
+  <div class="col-md-6">
+    {% if group %}
+      <h2>{% trans "Apsispręskite ką rinkti" %}</h2>
+      <p><a href="{% url 'compare-positions' group.pk group.slug %}" class="btn btn-primary btn-lg">
+        {% trans "Jūs ir " %}{{ group.title }}
+      </a></p>
+    {% endif %}
+  </div>
+</div>
 
 <h2>{% trans "Temų sąrašas" %}</h2>
 
@@ -43,11 +46,17 @@
   {% for topic in topics %}
   <div class="col-sm-6 col-md-3">
     <div class="thumbnail">
-      <a href="{% url 'topic-details' topic.pk topic.slug %}">
-        <img src="{{ topic.logo.url }}" alt="{{ topic.title }}">
+      <a href="{% url 'topic-details' topic.obj.pk topic.obj.slug %}">
+        {% if topic.is_svg %}
+            <img src="{{ topic.obj.logo.url }}" alt="{{ topic.obj.title }}" />
+        {% else %}
+          {% thumbnail topic.obj.logo "256x200" crop="center" background="#FFF" as photo %}
+            <img src="{{ photo.url }}" alt="{{ topic.obj.title }}" />
+          {% endthumbnail %}
+        {% endif %}
       </a>
       <div class="caption">
-        <h3 class="text-center"><a href="{% url 'topic-details' topic.pk topic.slug %}">{{ topic.title }}</a></h3>
+        <h3 class="text-center"><a href="{% url 'topic-details' topic.obj.pk topic.obj.slug %}">{{ topic.obj.title }}</a></h3>
         <p>{# topic description #}</p>
       </div>
     </div>

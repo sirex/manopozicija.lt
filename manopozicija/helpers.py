@@ -1,6 +1,6 @@
 import itertools
 
-from django.db.models import Q
+from django.db.models import Q, Max
 
 from manopozicija import models
 from manopozicija import services
@@ -113,9 +113,13 @@ def get_posts(user, topic, posts):
 
 
 def get_arguments(arguments):
-    groups = itertools.groupby(arguments, key=lambda x: x['position'])
-    positive = list(next(groups, (+1, []))[1])
-    negative = list(next(groups, (-1, []))[1])
+    positive = []
+    negative = []
+    for key, group in itertools.groupby(arguments, key=lambda x: x['position']):
+        if key > 0:
+            positive = list(group)
+        else:
+            negative = list(group)
     return list(itertools.zip_longest(positive, negative))
 
 
@@ -172,5 +176,21 @@ def get_topic_curators(topic):
                 'img/actor-negative.png',
                 'img/actor-neutral.png',
             ),
+        })
+    return result
+
+
+def get_topics():
+    result = []
+    topics = (
+        models.Topic.objects.
+        order_by('pk').
+        annotate(updated=Max('post__timestamp')).
+        order_by('-updated')
+    )
+    for topic in topics:
+        result.append({
+            'obj': topic,
+            'is_svg': topic.logo.name.endswith('.svg'),
         })
     return result

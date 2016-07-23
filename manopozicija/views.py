@@ -21,7 +21,7 @@ logger = logging.getLogger(__name__)
 def topic_list(request):
     return render(request, 'index.html', {
         'group': models.Group.objects.order_by('-timestamp').first(),
-        'topics': models.Topic.objects.order_by('-created'),
+        'topics': helpers.get_topics(),
     })
 
 
@@ -63,7 +63,11 @@ def topic_kpi(request, object_id, slug):
                 'source': x.content_object.source_link,
                 'position': x.position,
             }
-            for x in models.Post.objects.filter(topic=topic, content_type=event_type).order_by('timestamp')
+            for x in (
+                models.Post.objects.
+                filter(topic=topic, content_type=event_type, approved__isnull=False).
+                order_by('timestamp')
+            )
         ],
     })
 
@@ -82,7 +86,7 @@ def quote_form(request, object_id, slug):
         source = source_form.cleaned_data
         form = forms.CombinedForms(
             source=source_form,
-            quote=forms.QuoteForm(topic, source['actor'], source['source_link'], request.POST),
+            quote=forms.QuoteForm(topic, source.get('actor'), source.get('source_link'), request.POST),
             arguments=ArgumentFormSet(request.POST),
         )
         if form.is_valid():
@@ -115,7 +119,7 @@ def event_form(request, object_id, slug):
         form = forms.EventForm(topic)
     return render(request, 'manopozicija/form.html', {
         'form_name': 'event-form',
-        'form_title': ugettext('Naujas sprendimas'),
+        'form_title': ugettext('Naujas įvykis'),
         'forms': [form],
     })
 

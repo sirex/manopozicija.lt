@@ -63,7 +63,7 @@ def test_create_event(app):
     assert resp.status == '200 OK'
     assert resp.context['form'].errors.as_text() == '\n'.join([
         '* source_link',
-        '  * Toks sprendimas jau yra įtrauktas į „Balsavimas internetu“ temą.',
+        '  * Toks įvykis jau yra įtrauktas į „Balsavimas internetu“ temą.',
     ])
     assert services.dump_topic_posts(topic) == '\n'.join([
         ' o  (-) Balsavimo internetu koncepcijos patvirtinimas                         e-seimas.lrs.lt 2006-11-16 (0)',

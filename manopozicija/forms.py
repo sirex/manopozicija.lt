@@ -111,7 +111,7 @@ class EventForm(forms.ModelForm):
         if source_link:
             event = models.Event.objects.filter(source_link=source_link).first()
             if event and models.Post.objects.filter(topic=self.topic, event=event).exists():
-                raise forms.ValidationError(ugettext("Toks sprendimas jau yra įtrauktas į „%s“ temą.") % self.topic)
+                raise forms.ValidationError(ugettext("Toks įvykis jau yra įtrauktas į „%s“ temą.") % self.topic)
         return source_link
 
 

@@ -79,7 +79,7 @@ class Migration(migrations.Migration):
                 ('title', models.CharField(max_length=255, verbose_name='Pavadinimas')),
                 ('source_link', models.URLField(blank=True, max_length=255, unique=True, verbose_name='Šaltinio nuoroda')),
                 ('source_title', models.CharField(blank=True, max_length=255, verbose_name='Šaltinio antraštė')),
-                ('timestamp', models.DateTimeField(verbose_name='Kada buvo priimtas sprendimas?')),
+                ('timestamp', models.DateTimeField(verbose_name='Įvykio data')),
                 ('position', models.FloatField()),
                 ('group', models.ForeignKey(blank=True, null=True, on_delete=django.db.models.deletion.CASCADE, to='manopozicija.Event')),
                 ('user', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to=settings.AUTH_USER_MODEL)),
