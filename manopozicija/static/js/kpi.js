@@ -1,172 +1,280 @@
+"user strict";
+
 (function (d3) {
-    function box(box, copy) {
-        copy = copy || {};
-        copy.margin = copy.margin || {};
-        copy.padding = copy.padding || {};
 
-        box.width = box.width || copy.width || 0;
-        box.height = box.height || copy.height || 0;
+    function Box(w, h) {
+        var  box = {
+            margin: {t: 0, b: 0, l: 0, r: 0},
+            padding: {t: 0, b: 0, l: 0, r: 0},
+            inner: {w: w, h: h},
+            outer: {l: 0, t: 0},
+            min: {h: 0, w: 0}
+        };
 
-        box.margin = box.margin || {};
-        box.margin.top = box.margin.top || copy.margin.top || 0;
-        box.margin.bottom = box.margin.bottom || copy.margin.bottom || 0;
-        box.margin.left = box.margin.left || copy.margin.left || 0;
-        box.margin.right = box.margin.right || copy.margin.right || 0;
+        box.setSize = function (w, h) {
+            box.inner.w = d3.max([box.min.w, w]);
+            box.inner.h = d3.max([box.min.h, h]);
+            return box.update();
+        };
 
-        box.padding = box.padding || {};
-        box.padding.top = box.padding.top || copy.padding.top || 0;
-        box.padding.bottom = box.padding.bottom || copy.padding.bottom || 0;
-        box.padding.left = box.padding.left || copy.padding.left || 0;
-        box.padding.right = box.padding.right || copy.padding.right || 0;
+        box.setOuterSize = function (w, h) {
+            box.inner.w = d3.max([box.min.w, w - box.margin.r - box.margin.l - box.padding.r - box.padding.l]);
+            box.inner.h = d3.max([box.min.h, h - box.margin.t - box.margin.b - box.padding.t - box.padding.b]);
+            return box.update();
+        };
 
-        return box;
-    }
+        box.setPosition = function (l, t) {
+            box.outer.l = l;
+            box.outer.t = t;
+            return box.update();
+        };
 
-    function boxOuterWidth(boxes) {
-        var width = 0;
-        for (var i=0; i<boxes.length; i++) {
-            var box = boxes[i];
-            width += box.margin.top + box.width + box.margin.bottom;
-        }
-        return width;
-    }
+        box.setPositionInside = function (o) {
+            box.outer.l = o.inner.l;
+            box.outer.t = o.inner.t;
+            return box.update();
+        };
 
-    function boxOuterHeight(boxes) {
-        var height = 0;
-        for (var i=0; i<boxes.length; i++) {
-            var box = boxes[i];
-            height += box.margin.top + box.height + box.margin.bottom;
-        }
-        return height;
-    }
+        box.setPositionBelow = function (o) {
+            box.outer.t = o.outer.b;
+            return box.update();
+        };
 
-    function identity(d) {
-        return d;
+        box.setPositionNextTo = function (o) {
+            box.outer.l = o.outer.r;
+            return box.update();
+        };
+
+        box.setMargin = function (v, h) {
+            box.margin.t = v;
+            box.margin.b = v;
+            box.margin.l = h || v;
+            box.margin.r = h || v;
+            return box.update();
+        };
+
+        box.setMarginV = function (t, b) {
+            box.margin.t = t;
+            box.margin.b = b || t;
+            return box.update();
+        };
+
+        box.setMarginH = function (l, r) {
+            box.margin.l = l;
+            box.margin.r = r || l;
+            return box.update();
+        };
+
+        box.setPadding = function (v, h) {
+            box.padding.t = v;
+            box.padding.b = v;
+            box.padding.l = h || v;
+            box.padding.r = h || v;
+            return box.update();
+        };
+
+        box.setPaddingV = function (t, b) {
+            box.padding.t = t;
+            box.padding.b = b || t;
+            return box.update();
+        };
+
+        box.update = function () {
+            box.w = box.padding.l + box.inner.w + box.padding.r;
+            box.h = box.padding.t + box.inner.h + box.padding.b;
+            box.l = box.outer.l + box.margin.l;
+            box.r = box.l + box.w;
+            box.t = box.outer.t + box.margin.t;
+            box.b = box.t + box.h;
+
+            box.inner.l = box.l + box.padding.l;
+            box.inner.r = box.inner.l + box.inner.w;
+            box.inner.t = box.t + box.padding.t;
+            box.inner.b = box.inner.t + box.inner.h;
+
+            box.outer.w = box.margin.l + box.w + box.margin.r;
+            box.outer.h = box.margin.t + box.h + box.margin.b;
+            box.outer.r = box.outer.l + box.outer.w;
+            box.outer.b = box.outer.t + box.outer.h;
+
+            return box;
+        };
+
+        return box.update();
     }
 
     var selector = '#kpi-chart';
-    var margin = {top: 10, bottom: 10, left: 100, right: 100};
-    var inner = {width: 800, height: 100};
-    var bottom = {width: inner.width, height: 50, margin: {top: 10}};
-    var outer = {
-        width: margin.left + inner.width + margin.right,
-        height: margin.top + inner.height + bottom.height + margin.bottom
-    };
-
 
     d3.json($(selector).data('kpi-url'), function (json) {
 
         var timeline = {min: new Date(1990, 0, 1), max: d3.timeDay.floor(new Date)};
 
-        var x = d3.scaleTime()
+        var left = Box();
+        var charts = Box();
+        var events = Box();
+        var canvas = Box();
+
+        canvas.setSize($(selector).outerWidth(), 0);
+        canvas.setMargin(0, 0);
+
+        left.setSize(55, 0);
+        left.setPadding(10);
+        left.setPositionInside(canvas);
+
+        charts.setPadding(10, 0);
+        events.setPadding(20, 0);
+
+        charts.margin.t = 24;
+        charts.setOuterSize(canvas.inner.w - left.outer.w, 140);
+        if (json.indicators.length === 0) {
+            // todo: remove this if statement when position graphs will be in place
+            charts.inner.h = 1;
+            charts.setPadding(0);
+        }
+
+        events.setSize(charts.inner.w, 0);
+        events.setMarginV(0, 20);
+
+        charts.setPositionInside(canvas);
+        events.setPositionInside(canvas);
+        events.setPositionBelow(charts);
+        charts.setPositionNextTo(left);
+        events.setPositionNextTo(left);
+
+        var xScale = d3.scaleTime()
             .domain([timeline.min, timeline.max])
-            .range([margin.left, margin.left + inner.width]);
+            .range([events.inner.l, events.inner.r]);
+
+        var periods = d3.scaleQuantize()
+            .domain([0, 2000])
+            .range([24, 12, 6, 3]);
+
+        var eventsIntervals = d3.timeMonths(timeline.min, timeline.max, periods(canvas.outer.w))
+            .map(function (d) { return xScale(d); });
 
         var histogram = d3.histogram()
-            .domain(x.range())
-            .value(function (d) { return x(new Date(d.date)); })
-            .thresholds(d3.timeMonths(timeline.min, timeline.max, 6).map(function (d) { return x(d); }));
+            .domain(xScale.range())
+            .value(function (d) { return xScale(new Date(d.date)); })
+            .thresholds(eventsIntervals);
         var bins = histogram(json.events);
         var maxBinLength = d3.max(bins, function (d) { return d.length; });
 
-        var charts = box({
-            width: 800,
-            height: 100
-        });
-        var events = box({
-            height: 100
-        }, charts);
-        var canvas = box({  //eslint-disable-line no-unused-vars
-            width: boxOuterWidth([charts]),
-            height: boxOuterHeight([charts, events])
-        });
+        events.point = Box();
+        events.point.radius = 4;
+        events.point.setPaddingV(2);
+        events.point.setSize(events.point.radius * 2, events.point.radius * 2);
+
+        events.min.h = 24; // Minumum space for events label on the left side.
+        events.setPaddingV(1);
+        events.setSize(charts.inner.w, maxBinLength * events.point.outer.h);
+
+        canvas.setSize(canvas.inner.w, charts.outer.h + events.outer.h);
 
         var svg = d3.select(selector).append('svg')
-            .attr('width', outer.width)
-            .attr('height', outer.height);
+            .attr('width', canvas.outer.w)
+            .attr('height', canvas.outer.h);
 
-
-        var xvalue = function (d) { return x(new Date(d[0])); };
+        var xValue = function (d) { return xScale(new Date(d[0])); };
 
         var color = d3.scaleOrdinal(d3.schemeCategory10);
 
+        var yEventsScale = d3.scaleLinear()
+            .domain([0, maxBinLength - 1])
+            .range([
+                events.inner.b - events.point.margin.b - events.point.padding.b - events.point.radius,
+                events.inner.b - maxBinLength * events.point.outer.h + events.point.inner.t + events.point.radius
+            ]);
 
-        var point = {radius: 4, margin: {top: 1, bottom: 1, left: 10}};
+        function vLine(x, color) {
+            svg.append('line')
+                .attr('x1', x)
+                .attr('y1', canvas.outer.t)
+                .attr('x2', x)
+                .attr('y2', canvas.outer.b)
+                .attr('stroke', color || '#000')
+                .attr('stroke-width', 1);
+        }
 
-        bottom.top = margin.top + inner.height + bottom.margin.top;
-        bottom.bottom = bottom.top + maxBinLength * (point.radius * 2 + point.margin.top * 2);
+        function hLine(y, color) {
+            svg.append('line')
+                .attr('x1', canvas.outer.l)
+                .attr('y1', y)
+                .attr('x2', canvas.outer.w)
+                .attr('y2', y)
+                .attr('stroke', color || '#000')
+                .attr('stroke-width', 1);
+        }
 
-        var yBottomScale = d3.scaleLinear()
-            .domain([0, maxBinLength])
-            .range([bottom.bottom, bottom.top]);
-
+        // Events background rect
         svg.append('rect')
-            .attr('x', 0)
-            .attr('y', bottom.top + point.radius - point.margin.top)
-            .attr('width', outer.width)
-            .attr('height', bottom.bottom - bottom.top + point.radius + point.margin.bottom)
+            .attr('x', canvas.outer.l)
+            .attr('y', events.t)
+            .attr('width', canvas.outer.w)
+            .attr('height', events.h)
             .attr('fill', '#fff6f0');
 
-        svg.append('g').selectAll('path')
-            .data([[0, outer.width]])
-            .enter().append('path')
-                .attr('fill', 'none')
-                .attr('stroke-width', 1)
-                .attr('stroke', '#ffccaa')
-                .attr('d', d3.line()
-                    .x(identity)
-                    .y(bottom.top + point.radius - point.margin.top)
-                );
+        // Events background top line
+        hLine(events.t, '#ffccaa');
 
+        // Events timeline axis
+        var xTicks = d3.scaleQuantize()
+            .domain([0, 2000])
+            .range([3, 4, 10, 16, 24, 32]);
         svg.append('g')
-            .attr('transform', 'translate(0, ' + (bottom.bottom + point.radius + point.margin.bottom +
-                            point.margin.top) + ')')
-            .call(d3.axisBottom(x));
+            .attr('transform', 'translate(0, ' + events.b + ')')
+            .call(d3.axisBottom(xScale).tickSizeOuter(0).ticks(xTicks(canvas.outer.w)))
+            .select('path.domain').remove();
 
         var i, j, bin;
 
+        // Vertical event markers
         for (i=0; i<bins.length; i++) {
             bin = bins[i];
             for (j=0; j<bin.length; j++) {
                 svg.append('line')
                     .attr('x1', Math.round(bin.x0))
-                    .attr('y1', margin.top)
+                    .attr('y1', events.b)
                     .attr('x2', Math.round(bin.x0))
-                    .attr('y2', bottom.bottom + point.radius + point.margin.bottom + point.margin.top)
+                    .attr('y2', charts.t)
                     .attr('stroke', '#ffccaa')
                     .attr('stroke-width', 1)
                     .attr('stroke-dasharray', '3,4');
             }
         }
 
+        // Event points
         for (i=0; i<bins.length; i++) {
             bin = bins[i];
             for (j=0; j<bin.length; j++) {
                 svg.append('circle')
                     .attr('fill', '#ff6600')
                     .attr('cx', Math.round(bin.x0))
-                    .attr('cy', yBottomScale(j))
-                    .attr('r', point.radius);
+                    .attr('cy', yEventsScale(j))
+                    .attr('r', events.point.radius);
             }
         }
 
+        // Y axis scale for all indicator charts
+        var yValue = function (d) { return d[1]; };
+        var yScale = d3.scaleLinear()
+            .domain([
+                d3.min(json.indicators.map(function (d) { return d3.min(d.data, yValue); })),
+                d3.max(json.indicators.map(function (d) { return d3.max(d.data, yValue); }))
+            ])
+            .range([charts.inner.b, charts.inner.t]);
+
+        var yScaledValue = function (d) { return yScale(d[1]); };
+
+        // Vertical axis for indicators on the left side
+        svg.append('g')
+            .attr('transform', 'translate(' + charts.l + ', 0)')
+            .call(d3.axisLeft(yScale).tickSizeOuter(0).ticks(5))
+            .select('path.domain').remove();
 
         for (i=0; i<json.indicators.length; i++) {
             var data = json.indicators[i].data;
 
-            var y = d3.scaleLinear()
-                .domain([
-                    d3.min(data, function (d) { return d[1]; }),
-                    d3.max(data, function (d) { return d[1]; })
-                ])
-                .range([margin.top + inner.height, margin.top]);
-
-            var yvalue = function (d) { return y(d[1]); };
-
-            svg.append('g')
-                .attr('transform', 'translate(' + margin.left + ', 0)')
-                .call(d3.axisLeft(y).ticks(5));
-
+            // Line chart for indicator
             svg.append('g').selectAll('path')
                 .data([data])
                 .enter().append('path')
@@ -174,18 +282,47 @@
                     .attr('stroke-width', '1')
                     .attr('stroke', color(i))
                     .attr('d', d3.line()
-                        .x(xvalue)
-                        .y(yvalue)
+                        .x(xValue)
+                        .y(yScaledValue)
                     );
 
+            // Points on top of indicator's line chart
             svg.append('g').selectAll('circle')
                 .data(data)
                 .enter().append('circle')
-                    .attr('cx', xvalue)
-                    .attr('cy', yvalue)
+                    .attr('cx', xValue)
+                    .attr('cy', yScaledValue)
                     .attr('r', 2)
                     .attr('fill', color(i));
 
         }
+
+        // Drow chart lines
+        vLine(charts.l);
+        // vLine(charts.r);  // todo: add this line when position graphs will be implemented
+        hLine(charts.t);
+        hLine(events.b);
+
+        svg.append('text')
+            .attr('x', left.inner.r)
+            .attr('y', charts.t - 8)
+            .attr('text-anchor', 'end')
+            .attr('font-size', '14px')
+            .text('Kadencija');
+
+        svg.append('text')
+            .attr('x', left.inner.r)
+            .attr('y', events.b - 8)
+            .attr('text-anchor', 'end')
+            .attr('font-size', '14px')
+            .text('Įvykiai');
+
+        svg.append('text')
+            .attr('x', left.inner.r)
+            .attr('y', events.b + 16)
+            .attr('text-anchor', 'end')
+            .attr('font-size', '14px')
+            .text('Metai');
+
     });
 }(d3));  //eslint-disable-line no-undef
