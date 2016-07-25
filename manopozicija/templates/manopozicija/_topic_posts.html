@@ -6,18 +6,18 @@
 {% for post in posts %}
   {% if post.type == 'event' %}
     <div class="row">
-      <div class="col-md-1 timeline-box event-indicator">
+      <div class="col-sm-1 col-md-1 timeline-box event-indicator">
         <img src="{% static post.event.position_image %}" />
       </div>
-      <div class="col-md-11">
+      <div class="col-sm-10 col-md-11">
         <div class="row">
-          <div class="col-md-11">
+          <div class="col-sm-10 col-md-11">
             <a href="{{ post.event.source.link }}" target="_blank" class="text-muted pull-right event-date">
               {{ post.event.timestamp }} »
             </a>
             <p class="event-name"><a href="#">{{ post.event.name }}</a></p>
           </div>
-          <div class="col-md-1 post-vote">
+          <div class="col-sm-1 col-md-1 post-vote">
             {% include 'manopozicija/_post_vote.html' with post=post.post %}
           </div>
         </div>
@@ -26,7 +26,7 @@
     </div>
   {% elif post.type == 'curator' %}
     <div class="row">
-      <div class="col-md-1 timeline-box">
+      <div class="col-sm-1 col-md-1 timeline-box">
         {% thumbnail post.curator.photo "70x70" crop="50% 0%" background="#FFF" as photo %}
           <div class="actor-photo" style="background:url({{ photo.url }}) no-repeat 0px 2px;">
             <img src="{% static post.curator.position_image %}" />
@@ -37,16 +37,16 @@
           </div>
         {% endthumbnail %}
       </div>
-      <div class="col-md-11">
+      <div class="col-sm-10 col-md-11">
         <div class="row">
-          <div class="col-md-11">
+          <div class="col-sm-10 col-md-11">
             <span class="text-muted pull-right"><br/>{% trans "naujas temos kuratorius" %}</span>
             <p class="event-name">
               <a href="#">{{ post.curator.name }}</a><br/>
               <span class="text-muted">{{ post.curator.title }}</span>
             </p>
           </div>
-          <div class="col-md-1 post-vote">
+          <div class="col-sm-1 col-md-1 post-vote">
             {% include 'manopozicija/_post_vote.html' with post=post.post %}
           </div>
         </div>
@@ -55,7 +55,7 @@
     </div>
   {% else %}
     <div class="row">
-      <div class="col-md-1 timeline-box">
+      <div class="col-sm-1 col-md-1 timeline-box">
         {% thumbnail post.source.actor.photo "70x70" crop="50% 0%" background="#FFF" as photo %}
           <div class="actor-photo" style="background:url({{ photo.url }}) no-repeat 0px 2px;">
             <img src="{% static post.source.actor.position_image %}" />
@@ -66,9 +66,9 @@
           </div>
         {% endthumbnail %}
       </div>
-      <div class="col-md-11">
+      <div class="col-sm-10 col-md-11">
         <div class="row">
-          <div class="col-md-11">
+          <div class="col-sm-10 col-md-11">
             <a href="{{ post.source.link }}" target="_blank" class="text-muted pull-right">
               {{ post.source.name }} »
             </a>
@@ -78,7 +78,7 @@
         </div>
         {% for quote in post.quotes %}
           <div class="row">
-            <div class="col-md-11">
+            <div class="col-sm-10 col-md-11">
               <p class="quote-text">{{ quote.text }}</p>
               <p>
                 {% for argument in quote.arguments %}
@@ -89,7 +89,7 @@
                 {% endfor %}
               </p>
             </div>
-            <div class="col-md-1 post-vote">
+            <div class="col-sm-1 col-md-1 post-vote">
               {% include 'manopozicija/_post_vote.html' with post=quote.post %}
             </div>
           </div>

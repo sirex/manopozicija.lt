@@ -152,8 +152,13 @@ def test_voter_turnout():
 def test_topic_kpi(app, settings, tmpdir):
     settings.MEDIA_ROOT = tmpdir.strpath
 
+    user = factories.UserFactory()
     topic = factories.TopicFactory()
     indicators = list(topic.indicators.all())
+    factories.TopicCuratorFactory(user=user, topic=topic)
+    post, = factories.create_topic_posts(topic, user, [
+        ('event', 0, 1, 'Balsavimo internetu koncepcijos patvirtinimas', 'lrs.lt', '2006-11-26'),
+    ])
 
     tmpdir.mkdir('indicators').join('%s.csv' % indicators[0].slug).write('\n'.join([
         'datetime,Seimo',
@@ -164,9 +169,18 @@ def test_topic_kpi(app, settings, tmpdir):
 
     resp = app.get(reverse('topic-kpi', args=[topic.pk, topic.slug]))
     assert resp.json == {
-        'events': [],
+        'events': [
+            {
+                'id': post.pk,
+                'date': '2006-11-26',
+                'position': 0.0,
+                'source': 'http://lrs.lt/2006/11/26',
+                'title': 'Balsavimo internetu koncepcijos patvirtinimas',
+            },
+        ],
         'indicators': [
             {
+                'id': indicators[0].pk,
                 'title': 'Rinkimuose dalyvavusių rinkėjų skaičius, palyginti su visų rinkėjų skaičiumi',
                 'ylabel': 'Aktyvumas procentais',
                 'source': 'http://ec.europa.eu/eurostat/tgm/table.do?tab=table&init=1&language=en&pcode=tsdgo310&plugin=1',

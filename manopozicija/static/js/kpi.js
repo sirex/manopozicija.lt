@@ -104,6 +104,7 @@
     }
 
     var selector = '#kpi-chart';
+    var fontColor = '#666666';
 
     d3.json($(selector).data('kpi-url'), function (json) {
 
@@ -274,6 +275,25 @@
         for (i=0; i<json.indicators.length; i++) {
             var data = json.indicators[i].data;
 
+            // Indicator markers show together with indicator labels (outside of chart)
+            var container = d3.select('div.indicator-' + json.indicators[i].id + '-mark').append('svg')
+                .attr('width', 28)
+                .attr('height', 24);
+
+            container.append('line')
+                .attr('x1', 0)
+                .attr('y1', 12)
+                .attr('x2', 28)
+                .attr('y2', 12)
+                .attr('stroke', color(i))
+                .attr('stroke-width', 1);
+
+            container.append('circle')
+                .attr('cx', 14)
+                .attr('cy', 12)
+                .attr('r', 2)
+                .attr('fill', color(i));
+
             // Line chart for indicator
             svg.append('g').selectAll('path')
                 .data([data])
@@ -306,13 +326,28 @@
         svg.append('text')
             .attr('x', left.inner.r)
             .attr('y', charts.t - 8)
+            .attr('fill', fontColor)
             .attr('text-anchor', 'end')
             .attr('font-size', '14px')
             .text('Kadencija');
 
+        if (json.indicators.length > 0) {
+            var labelx = left.inner.r - 20;
+            var labely = charts.t + Math.round(charts.h / 2);
+            svg.append('text')
+                .attr('x', labelx)
+                .attr('y', labely)
+                .attr('fill', fontColor)
+                .attr('text-anchor', 'middle')
+                .attr('font-size', '12px')
+                .attr('transform', 'rotate(-90, ' + labelx + ', ' + labely + ')')
+                .text(json.indicators[0].ylabel);
+        }
+
         svg.append('text')
             .attr('x', left.inner.r)
             .attr('y', events.b - 8)
+            .attr('fill', fontColor)
             .attr('text-anchor', 'end')
             .attr('font-size', '14px')
             .text('Įvykiai');
@@ -320,6 +355,7 @@
         svg.append('text')
             .attr('x', left.inner.r)
             .attr('y', events.b + 16)
+            .attr('fill', fontColor)
             .attr('text-anchor', 'end')
             .attr('font-size', '14px')
             .text('Metai');

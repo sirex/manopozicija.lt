@@ -9,11 +9,11 @@ from django.contrib.auth.decorators import login_required
 from django.forms import formset_factory
 from django.contrib.contenttypes.models import ContentType
 
-from manopozicija.indicators import get_indicator_data
 from manopozicija import models
 from manopozicija import services
 from manopozicija import forms
 from manopozicija import helpers
+from manopozicija.indicators import get_indicator_data
 
 logger = logging.getLogger(__name__)
 
@@ -37,7 +37,7 @@ def topic_details(request, object_id, slug):
             if is_topic_curator else []
         ),
         'has_indicators': topic.indicators.count() > 0,
-        'indicators': topic.indicators.all(),
+        'indicators': helpers.get_indicators(topic),
         'is_topic_curator': is_topic_curator,
         'curators': helpers.get_topic_curators(topic) if is_topic_curator else []
     })
@@ -49,8 +49,7 @@ def topic_kpi(request, object_id, slug):
     return JsonResponse({
         'indicators': [
             {
-                'title': x.title,
-                'source': x.source,
+                'id': x.pk,
                 'ylabel': x.ylabel,
                 'data': get_indicator_data(x),
             }
@@ -58,6 +57,7 @@ def topic_kpi(request, object_id, slug):
         ],
         'events': [
             {
+                'id': x.pk,
                 'title': x.content_object.title,
                 'date': x.timestamp.strftime('%Y-%m-%d'),
                 'source': x.content_object.source_link,

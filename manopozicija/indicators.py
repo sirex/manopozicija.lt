@@ -50,7 +50,7 @@ INDICATORS = [
     ('voter-turnout', {
         'fetch': voter_turnout,
         'title': 'Rinkimuose dalyvavusių rinkėjų skaičius, palyginti su visų rinkėjų skaičiumi',
-        'ylabel': 'Aktyvumas procentais',
+        'ylabel': 'procentai',
         'source': 'http://ec.europa.eu/eurostat/tgm/table.do?tab=table&init=1&language=en&pcode=tsdgo310&plugin=1',
     }),
 ]

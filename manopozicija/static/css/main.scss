@@ -117,7 +117,7 @@ $static-url: '/static';
 }
 
 .negative-args-img {
-  right: 24px;
+  left: 24px;
 }
 
 .arguments-positive-header, .arguments-negative-header {
@@ -132,7 +132,6 @@ $static-url: '/static';
 
 .arguments-negative-header {
   color: #A94442;
-  text-align: right;
 }
 
 .argument-link {
@@ -154,5 +153,16 @@ $static-url: '/static';
 }
 .negative-count {
   background-color: #A94442;
-  right: 24px;
+  left: 24px;
+}
+
+.indicator-mark {
+  position: relative;
+  left: 9px;
+}
+
+.event-mark {
+  position: relative;
+  top: 7px;
+  right: 1px;
 }

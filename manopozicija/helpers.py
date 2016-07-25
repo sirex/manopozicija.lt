@@ -194,3 +194,16 @@ def get_topics():
             'is_svg': topic.logo.name.endswith('.svg'),
         })
     return result
+
+
+def get_indicators(topic):
+    return [
+        {
+            'id': x.pk,
+            'title': x.title,
+            'source_link': x.source,
+            'source_title': services.get_title_from_link(x.source),
+            'last_update': x.last_update,
+        }
+        for x in topic.indicators.all()
+    ]

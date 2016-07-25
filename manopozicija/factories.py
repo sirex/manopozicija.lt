@@ -1,7 +1,6 @@
 import io
 import factory
 import datetime
-import random
 
 
 from PIL import Image
@@ -252,6 +251,10 @@ def create_quote_agruments(topic, quote, post, arguments):
     return result
 
 
+def _get_source_link(source, date):
+    return 'http://%s/%s' % (source, date.replace('-', '/'))
+
+
 def create_topic_quotes(topic, user, actor, title, source, date, quotes):
     result = []
     user = user or UserFactory()
@@ -259,7 +262,7 @@ def create_topic_quotes(topic, user, actor, title, source, date, quotes):
     actor = PersonActorFactory(first_name=first_name, last_name=last_name)
     source = {
         'actor': actor,
-        'source_link': 'http://%s/%d' % (source, actor.pk),
+        'source_link': _get_source_link(source, date),
         'timestamp': datetime.datetime.strptime(date, '%Y-%m-%d'),
     }
     for upvotes, downvotes, text, arguments in quotes:
@@ -284,7 +287,7 @@ def create_topic_event(topic, user, upvotes, downvotes, title, source, date):
     event = services.create_event(user, topic, {
         'type': models.Event.DOCUMENT,
         'title': title,
-        'source_link': 'http://%s/%d' % (source, random.randint(1, 10000)),
+        'source_link': _get_source_link(source, date),
         'source_title': source,
         'timestamp': timestamp,
     })

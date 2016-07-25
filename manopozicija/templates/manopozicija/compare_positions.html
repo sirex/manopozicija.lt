@@ -10,15 +10,15 @@
 <h2>{% trans "Jūs ir" %} {{ group.title }}</h2>
 
 <div class="row">
-  <div class="col-md-1 timeline-box text-right"><img src="{% static 'img/thumb-up-big.png' %}" class="positive-args-img" /></div>
-  <div class="col-md-5 arguments-positive-header">{% trans "labiausiai sutampa" %}</div>
-  <div class="col-md-5 arguments-negative-header">{% trans "labiausiai skiriasi" %}</div>
-  <div class="col-md-1"><img src="{% static 'img/thumb-down-big.png' %}" class="negative-args-img" /></div>
+  <div class="col-sm-1 col-md-1 timeline-box text-right"><img src="{% static 'img/thumb-up-big.png' %}" class="positive-args-img" /></div>
+  <div class="col-sm-5 col-md-5 arguments-positive-header">{% trans "labiausiai sutampa" %}</div>
+  <div class="col-sm-1 col-md-1 text-right"><img src="{% static 'img/thumb-down-big.png' %}" class="negative-args-img" /></div>
+  <div class="col-sm-4 col-md-5 arguments-negative-header">{% trans "labiausiai skiriasi" %}</div>
 </div>
 {% for compat, incompat in positions %}
   <div class="row">
     {% if compat %}
-      <div class="col-md-2">
+      <div class="col-sm-2 col-md-2">
         {% thumbnail compat.actor.photo "70x70" crop="50% 0%" background="#FFF" as photo %}
           <div class="actor-photo pull-right" style="background:url({{ photo.url }}) no-repeat 0px 2px;">
             <img src="{% static 'img/actor-positive.png' %}" />
@@ -29,7 +29,7 @@
           </div>
         {% endthumbnail %}
       </div>
-      <div class="col-md-4">
+      <div class="col-sm-4 col-md-4">
         <p>
           <br/>
           <a href="#" class="event-name">{{ compat.actor }}</a>
@@ -39,10 +39,21 @@
         </p>
       </div>
     {% else %}
-      <div class="col-md-6"></div>
+      <div class="col-sm-6 col-md-6"></div>
     {% endif %}
     {% if incompat %}
-      <div class="col-md-4 text-right">
+      <div class="col-sm-2 col-md-2">
+        {% thumbnail incompat.actor.photo "70x70" crop="50% 0%" background="#FFF" as photo %}
+          <div class="actor-photo pull-right" style="background:url({{ photo.url }}) no-repeat 0px 2px;">
+            <img src="{% static 'img/actor-negative.png' %}" />
+          </div>
+        {% empty %}
+          <div class="actor-photo pull-right">
+            <img src="{% static 'img/actor-negative.png' %}" />
+          </div>
+        {% endthumbnail %}
+      </div>
+      <div class="col-sm-4 col-md-4">
         <p>
           <br/>
           <a href="#" class="event-name">{{ incompat.actor }}</a>
@@ -51,19 +62,8 @@
           {% endif %}
         </p>
       </div>
-      <div class="col-md-2">
-        {% thumbnail incompat.actor.photo "70x70" crop="50% 0%" background="#FFF" as photo %}
-          <div class="actor-photo" style="background:url({{ photo.url }}) no-repeat 0px 2px;">
-            <img src="{% static 'img/actor-negative.png' %}" />
-          </div>
-        {% empty %}
-          <div class="actor-photo">
-            <img src="{% static 'img/actor-negative.png' %}" />
-          </div>
-        {% endthumbnail %}
-      </div>
     {% else %}
-      <div class="col-md-6"></div>
+      <div class="col-sm-6 col-md-6"></div>
     {% endif %}
   </div>
 {% endfor %}
