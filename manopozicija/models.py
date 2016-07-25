@@ -37,9 +37,29 @@ class Term(models.Model):
     For example Lithuanian parliament as term of four years.
 
     """
+
+    VRK_KADENCIJOS_CSV = 1
+    SOURCE_CHOICES = (
+        (VRK_KADENCIJOS_CSV, 'vrk/kadencijos.csv'),
+    )
+
     body = models.ForeignKey(Body)
     since = models.DateTimeField()
-    until = models.DateTimeField()
+    until = models.DateTimeField(null=True, blank=True)
+    title = models.CharField(max_length=255, default='', blank=True)
+
+    source = models.PositiveSmallIntegerField(choices=SOURCE_CHOICES)
+    source_id = models.CharField(max_length=64)
+
+    class Meta:
+        unique_together = ('source', 'source_id')
+
+    def __str__(self):
+        return '%s: %s -- %s' % (
+            self.body,
+            self.since.strftime('%Y-%m-%d'),
+            self.until.strftime('%Y-%m-%d') if self.until else '',
+        )
 
 
 class Indicator(models.Model):
@@ -112,6 +132,7 @@ class Actor(models.Model):
         Person's domain of interest of group type.
 
     """
+    birth_date = models.DateField(null=True, blank=True)
     first_name = models.CharField(_("Vardas"), max_length=255)
     last_name = models.CharField(_("Pavardė"), max_length=255)
     title = models.CharField(_("Autoriaus sritis"), max_length=255, help_text=_(
@@ -120,6 +141,9 @@ class Actor(models.Model):
     photo = ImageField(_("Nuotrauka"), upload_to='actors/%Y/%m/%d/', blank=True)
     group = models.BooleanField(default=False)
     body = models.ForeignKey(Body, blank=True, null=True)  # required only for group
+
+    times_elected = models.PositiveSmallIntegerField(null=True)
+    times_candidate = models.PositiveSmallIntegerField(null=True)
 
     def __str__(self):
         return ' '.join([self.first_name, self.last_name])
@@ -130,7 +154,7 @@ class Member(models.Model):
     actor = models.ForeignKey(Actor, related_name='+')
     group = models.ForeignKey(Actor)
     since = models.DateTimeField()
-    until = models.DateTimeField()
+    until = models.DateTimeField(null=True, blank=True)
 
 
 class Post(models.Model):

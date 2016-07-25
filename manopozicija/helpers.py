@@ -207,3 +207,14 @@ def get_indicators(topic):
         }
         for x in topic.indicators.all()
     ]
+
+
+class Printer(object):
+
+    def __init__(self, stdout, verbosity):
+        self.stdout = stdout
+        self.verbosity = verbosity
+
+    def info(self, msg):
+        if self.verbosity > 0:
+            self.stdout.write(str(msg))

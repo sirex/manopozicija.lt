@@ -5,17 +5,7 @@ from django.core.management.base import BaseCommand
 from manopozicija import forms
 from manopozicija import models
 from manopozicija import services
-
-
-class Printer(object):
-
-    def __init__(self, stdout, verbosity):
-        self.stdout = stdout
-        self.verbosity = verbosity
-
-    def info(self, msg):
-        if self.verbosity > 0:
-            self.stdout.write(msg)
+from manopozicija import helpers
 
 
 class Command(BaseCommand):
@@ -26,7 +16,7 @@ class Command(BaseCommand):
         parser.add_argument('path', help="YAML file with topic posts")
 
     def handle(self, slug, path, **options):
-        printer = Printer(self.stdout, options['verbosity'])
+        printer = helpers.Printer(self.stdout, options['verbosity'])
         user = services.get_bot_user('importbot')
         topic = models.Topic.objects.get(slug=slug)
         with open(path) as f:

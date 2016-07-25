@@ -3,6 +3,7 @@ import os.path
 import pandas as pd
 import posixpath
 import panavatar
+import datetime
 
 from django.conf import settings
 from django.contrib import admin
@@ -57,8 +58,33 @@ class TopicAdmin(admin.ModelAdmin):
         obj.save()
 
 
+class MemberInline(admin.TabularInline):
+    fk_name = 'actor'
+    model = models.Member
+    raw_id_fields = ('group',)
+
+
+class DecadeBornListFilter(admin.SimpleListFilter):
+    title = _('decade born')
+    parameter_name = 'decade'
+
+    def lookups(self, request, model_admin):
+        return [(x, str(x)) for x in range(1910, datetime.date.today().year - 18, 10)]
+
+    def queryset(self, request, queryset):
+        decade = self.value()
+        if decade:
+            decade = int(decade)
+            return queryset.filter(
+                birth_date__gte=datetime.date(decade, 1, 1),
+                birth_date__lte=datetime.date(decade + 9, 12, 31),
+            )
+
+
 class ActorAdmin(AdminImageMixin, admin.ModelAdmin):
-    pass
+    inlines = [MemberInline]
+    list_display = ('__str__', 'times_elected', 'times_candidate')
+    list_filter = ('group', DecadeBornListFilter, 'times_elected', 'times_candidate')
 
 
 admin.site.register(models.Indicator, IndicatorAdmin)
@@ -73,4 +99,5 @@ admin.site.register(models.Group)
 admin.site.register(models.Argument)
 admin.site.register(models.ActorArgumentPosition)
 admin.site.register(models.Curator)
+admin.site.register(models.Term)
 # admin.site.register(Post
