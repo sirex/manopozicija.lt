@@ -1,6 +1,7 @@
+import datetime
 import itertools
 
-from django.db.models import Q, Max
+from django.db.models import F, Max, Case, When
 
 from manopozicija import models
 from manopozicija import services
@@ -139,14 +140,17 @@ def get_positions(group, user, limit=20):
     actors = {x.pk: x for x in group.members.all()}
     groups = {
         x.actor_id: x.group for x in (
-            models.Member.objects.filter(
-                Q(until__lte=group.timestamp) | Q(until__isnull=True),
-                since__gte=group.timestamp,
+            models.Member.objects.
+            annotate(untilnow=Case(
+                When(until__isnull=False, then=F('until')),
+                default=datetime.datetime.now(),
+            )).
+            filter(
                 actor__ingroup=group,
-                group__title='politinė partija',
+                group__title='plitinė partija',
             ).
             select_related('group').
-            order_by('-since')
+            order_by('untilnow', 'since')
         )
     }
     positions = services.compare_positions(group, user)

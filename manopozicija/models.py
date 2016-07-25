@@ -637,7 +637,7 @@ class Group(models.Model):
     slug = autoslug.AutoSlugField(populate_from='title')
     title = models.CharField(max_length=255)
     timestamp = models.DateTimeField()
-    members = models.ManyToManyField(Actor, related_name='+', related_query_name='ingroup')
+    members = models.ManyToManyField(Actor, related_name='ingroups', related_query_name='ingroup')
 
     def __str__(self):
         return self.title

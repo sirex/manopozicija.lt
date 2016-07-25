@@ -83,19 +83,33 @@ class DecadeBornListFilter(admin.SimpleListFilter):
 
 class ActorAdmin(AdminImageMixin, admin.ModelAdmin):
     inlines = [MemberInline]
-    list_display = ('__str__', 'times_elected', 'times_candidate')
+    list_display = ('__str__', 'birth_date', 'times_elected', 'times_candidate')
     list_filter = ('group', DecadeBornListFilter, 'times_elected', 'times_candidate')
+    search_fields = ('first_name', 'last_name')
+
+
+class PostAdmin(admin.ModelAdmin):
+    raw_id_fields = ('actor',)
+
+
+class SourceAdmin(admin.ModelAdmin):
+    raw_id_fields = ('actor',)
+
+
+class GroupAdmin(admin.ModelAdmin):
+    raw_id_fields = ('members',)
 
 
 admin.site.register(models.Indicator, IndicatorAdmin)
 admin.site.register(models.Topic, TopicAdmin)
 admin.site.register(models.Body)
 admin.site.register(models.Actor, ActorAdmin)
-admin.site.register(models.Post)
+admin.site.register(models.Post, PostAdmin)
 admin.site.register(models.TopicCurator)
 admin.site.register(models.PostArgument)
 admin.site.register(models.Quote)
-admin.site.register(models.Group)
+admin.site.register(models.Source, SourceAdmin)
+admin.site.register(models.Group, GroupAdmin)
 admin.site.register(models.Argument)
 admin.site.register(models.ActorArgumentPosition)
 admin.site.register(models.Curator)

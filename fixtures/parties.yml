@@ -1,0 +1,338 @@
+- id: 191362889
+  slug: lietuvos-socialdemokratu-partija
+  name: Lietuvos socialdemokratų partija
+  abbr: LSDP
+  logo: lietuvos-socialdemokratu-partija.jpg
+  address: B. Radvilaitės g. 1, Vilnius
+  leader: Algirdas Butkevičius
+  members:
+    2012: 17032
+    2013: 17972
+    2014: 21847
+    2015: 22012
+    2016: 21446
+
+- id: 191763259
+  slug: partija-jaunoji-lietuva
+  name: Partija „Jaunoji Lietuva“
+  abbr: PJL
+  logo: partija-jaunoji-lietuva.jpg
+  address: Kurtinių g. 1-1, Kaunas
+  leader: Stanislovas Buškevičius
+  members:
+    2012: 1016
+    2013: 1013
+    2014: 1007
+    2015: 1030
+    2016: 2012
+
+- id: 190771228
+  slug: kovotoju-uz-lietuva-sajunga
+  name: Kovotojų už Lietuvą sąjunga
+  abbr: KLS
+  logo: null
+  address: S.Žukausko g. 3-15, Kaunas
+  leader: Vytautas Šustauskas
+  members:
+    2012: 1388
+    2013: 1371
+    2014: 1615
+    2015: 1691
+    2016: 2165
+
+- id: 191783856
+  slug: lietuvos-lenku-rinkimu-akcija-krikscionisku-seimu-sajunga
+  name: Lietuvos lenkų rinkimų akcija - Krikščioniškų šeimų sąjunga
+  abbr: LLRA-KŠS
+  logo: lietuvos-lenku-rinkimu-akcija-krikscionisku-seimu-sajunga.jpg
+  address: Naugarduko g.76, Vilnius
+  leader: Valdemar Tomaševski
+  members:
+    2012: 1280
+    2013: 1284
+    2014: 1520
+    2015: 2173
+    2016: 2207
+  aliases:
+    - Lietuvos lenkų rinkimų akcija
+
+- id: 193025269
+  slug: lietuvos-rusu-sajunga
+  name: Lietuvos rusų sąjunga
+  abbr: LRS
+  logo: lietuvos-rusu-sajunga.jpg
+  address: Savanorių pr.  11-70, Vilnius
+  leader: Sergėjus Dmitrijevas
+  members:
+    2012: 1186
+    2013: 1082
+    2014: 1570
+    2015: 1534
+    2016: 2044
+
+- id: 195724474
+  slug: lietuvos-valstieciu-ir-zaliuju-sajunga
+  name: Lietuvos valstiečių ir žaliųjų sąjunga
+  abbr: LVŽS
+  logo: lietuvos-valstieciu-ir-zaliuju-sajunga.png
+  address: Pamėnkalnio g. 26, Vilnius
+  leader: Ramūnas Karbauskis
+  members:
+    2012: 2663
+    2013: 2805
+    2014: 3086
+    2015: 3423
+    2016: 3387
+  aliases:
+    - Lietuvos valstiečių liaudininkų sąjunga
+    - Lietuvos socialistų liaudininkų demokratų partija
+    - Lietuvos valstiečių sąjunga
+    - Lietuvos valstiečių partija
+
+- id: 195724517
+  slug: partija-tvarka-ir-teisingumas
+  name: Partija Tvarka ir teisingumas
+  abbr: TS
+  logo: partija-tvarka-ir-teisingumas.jpeg
+  address: Gedimino pr. 10, Vilnius
+  leader: Rolandas Paksas
+  members:
+    2012: 13094
+    2013: 15055
+    2014: 13425
+    2015: 13401
+    2016: 13039
+  aliases:
+    - Liberalų demokratų partija
+    - Lietuvos liberalų sąjunga
+
+- id: 195724855
+  slug: politine-partija-rusu-aljansas
+  name: Politinė partija Rusų aljansas
+  abbr: PPRA
+  logo: politine-partija-rusu-aljansas.jpg
+  address: Taikos g. 8-34, Klaipėda
+  leader: Tamara Lochankina
+  members:
+    2012: 1037
+    2013: 1007
+    2014: 1022
+    2015: 1107
+    2016: 2104
+
+- id: 195725042
+  slug: lietuvos-krikscioniskosios-demokratijos-partija
+  name: Lietuvos krikščioniškosios demokratijos partija
+  abbr: LKDP
+  logo: null
+  address: Goštauto g. 3-15, Vilnius
+  leader: Eligijus Dzežulskis-Duonys 
+  members:
+    2012: 1112
+    2013: 1048
+    2014: 1102
+    2015: 1058
+    2016: 2006
+
+- id: 195725238
+  slug: lietuvos-laisves-sajunga-liberalai
+  name: Lietuvos laisvės sąjunga (liberalai)
+  abbr: LLS
+  logo: lietuvos-laisves-sajunga-liberalai.jpg
+  address: Vilniaus g. 22, Vilnius
+  leader: Artūras Zuokas
+  members:
+    2012: 4777
+    2013: 4102
+    2014: 4249
+    2015: 4363
+    2016: 4435
+  aliases:
+    - Liberalu ir centro sąjunga
+    - Sąjunga TAIP
+    - Tautos Prisikelimo partija
+    - Lietuvos liberalų sąjunga
+    - Modernieji krikščionys demokratai
+    - Lietuvos centro sąjunga
+
+- id: 195725380
+  slug: lietuvos-centro-partija
+  name: Lietuvos centro partija
+  abbr: LCP
+  logo: lietuvos-centro-partija.jpg
+  address: Kaštonų g. 3, Vilnius
+  leader: Albinas Stankus
+  members:
+    2012: 1157
+    2013: 1090
+    2014: 1059
+    2015: 2083
+    2016: 2180
+  aliases:
+    - Nacionalinė centro partija
+
+- id: 300559448
+  slug: lietuvos-respublikos-liberalu-sajudis
+  name: Lietuvos Respublikos liberalų sąjūdis
+  abbr: LRLS
+  logo: lietuvos-respublikos-liberalu-sajudis.jpg
+  address: Vašingtono a. 1, Vilnius
+  leader: Remigijus Šimašius
+  members:
+    2012: 3645
+    2013: 5063
+    2014: 6038
+    2015: 7352
+    2016: 7674
+
+- id: 300872539
+  slug: lietuvos-pensininku-partija
+  name: Lietuvos pensininkų partija
+  abrr: LPP
+  logo: lietuvos-pensininku-partija.jpg
+  address: Sukilėlių g. 63-96, Kaunas
+  leader: Vytautas Jurgis Kadžys
+  members:
+    2012: 1304
+    2013: 1189
+    2014: 2119
+    2015: 3307
+    2016: 3372
+
+- id: 301753623
+  slug: tevynes-sajunga-lietuvos-krikscionys-demokratai
+  name: Tėvynės sąjunga – Lietuvos krikščionys demokratai
+  abbr: TS-LKD
+  logo: tevynes-sajunga-lietuvos-krikscionys-demokratai.jpg
+  address: L. Stuokos-Gucevičiaus g. 11, Vilnius
+  leader: Gabrielius Landsbergis
+  members:
+    2012: 12336
+    2013: 12383
+    2014: 14273
+    2015: 15039
+    2016: 14799
+
+- id: 302306408
+  slug: zemaiciu-partija
+  name: Žemaičių partija
+  abbr: ŽP
+  logo: zemaiciu-partija.jpeg
+  address: Zarasų g. 12, Klaipėda
+  leader: Stasys Gvažiauskas
+  members:
+    2012: 1186
+    2013: 1159
+    2014: 1198
+    2015: 1551
+    2016: 2027
+
+- id: 302411793
+  slug: politine-partija-profesiniu-sajungu-centras
+  name: Politinė partija „Profesinių sąjungų centras“
+  abbr: PPPSC
+  logo: null
+  address: Laisvės alėja 46, Kaunas
+  leader: Kęstutis Juknis
+  members:
+    2012: 1070
+    2013: 1032
+    2014: 1083
+    2015: null
+    2016: 2050
+
+- id: 302500733
+  slug: lietuvos-liaudies-partija
+  name: Lietuvos liaudies partija
+  abbr: LLP
+  logo: lietuvos-liaudies-partija.jpg
+  address: Vilniaus g. 45-15, Vilnius
+  leader: Aras Vyturys Sutkus 
+  members:
+    2012: 1624
+    2013: 1710
+    2014: 2499
+    2015: 2630
+    2016: 2737
+
+- id: 302626187
+  slug: lietuvos-zaliuju-partija
+  name: Lietuvos žaliųjų partija
+  abbr: LŽP
+  logo: lietuvos-zaliuju-partija.jpg
+  address: Šermukšnių g. 6A, Vilnius
+  leader: Linas Balsys
+  members:
+    2012: 2267
+    2013: 2269
+    2014: 2223
+    2015: 2194
+    2016: 2169
+
+- id: 302726860
+  slug: tautininku-sajunga
+  name: Tautininkų sąjunga
+  abbr: TS
+  logo: tautininku-sajunga.png
+  address: Subačiaus g.  43-7, Vilnius
+  leader: Audrius Rudys
+  members:
+    2012: 1453
+    2013: 1747
+    2014: 1649
+    2015: 2025
+    2016: 2143
+
+- id: 302747527
+  slug: drasos-kelias-politine-partija
+  name: „Drąsos kelias“ politinė partija
+  address: I.Kanto g. 21-3, Kaunas
+  leader: Jonas Varkala
+  members:
+    2012: 1019
+    2013: 1060
+    2014: 1550
+    2015: 2208
+    2016: 2382
+
+- id: 302813361
+  slug: emigrantu-partija
+  name: Emigrantų partija
+  abbr: EP
+  logo: null
+  address: Saulėlydžio g. 5, Kaunas
+  leader: Juozas Murauskas
+  members:
+    2012: 1136
+    2013: 1216
+    2014: 2147
+    2015: 2446
+    2016: 2749
+
+- id: 302831861
+  slug: politine-partija-lietuvos-sarasas
+  name: Politinė partija „Lietuvos sąrašas“
+  abbr: PPLS
+  logo: null
+  address: Literatų g. 5-12, Vilnius 
+  leader: Darius Kuolys 
+  members:
+    2012: 1033
+    2013: 1190
+    2014: 1144
+    2015: 1141
+    2016: 2021
+
+- id: 303189064
+  slug: darbo-partija 
+  name: Darbo partija 
+  abbr: DP
+  logo: darbo-partija.jpg
+  address: Ankštoji g. 3, Vilnius
+  leader: Valentinas Mazuronis
+  members:
+    2012: null
+    2013: 25326
+    2014: 23305
+    2015: 22681
+    2016: 21308

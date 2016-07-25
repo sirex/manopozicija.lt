@@ -52,15 +52,22 @@ class Command(BaseCommand):
             reader = csv.DictReader(f)
             import_terms(reader, typemap)
 
+        def todt(value):
+            return datetime.datetime.strptime(value, '%Y-%m-%d')
+
         printer.info('Importing candidates and parties...')
         with (path / 'kadencijos.csv').open() as f:
-            Term = collections.namedtuple('Term', 'id body since until')
+            Term = collections.namedtuple('Term', 'id body since until group')
             terms = {
                 row['KADENCIJOS_ID']: Term(
                     id=row['KADENCIJOS_ID'],
                     body=typemap[row['RUSIS']],
-                    since=datetime.datetime.strptime(row['PRADZIA'], '%Y-%m-%d'),
-                    until=datetime.datetime.strptime(row['PABAIGA'], '%Y-%m-%d') if row['PABAIGA'] else None,
+                    since=todt(row['PRADZIA']),
+                    until=todt(row['PABAIGA']) if row['PABAIGA'] else None,
+                    group=models.Group.objects.get_or_create(
+                        title='Kandidatai į %s metų Seimą' % todt(row['PRADZIA']).year,
+                        defaults={'timestamp': todt(row['PRADZIA'])},
+                    )[0]
                 )
                 for row in csv.DictReader(f) if row['RUSIS'] == 'SEI'
             }
@@ -70,7 +77,7 @@ class Command(BaseCommand):
             elections = {
                 row['VYKDOMU_RINKIMU_TURO_ID']: Election(
                     term=terms[row['KADENCIJOS_ID']],
-                    date=datetime.datetime.strptime(row['RINKIMU_TURO_DATA'], '%Y-%m-%d'),
+                    date=todt(row['RINKIMU_TURO_DATA']),
                 )
                 for row in csv.DictReader(f) if row['KADENCIJOS_ID'] in terms
             }
@@ -111,10 +118,12 @@ class Command(BaseCommand):
             times_elected = sum(1 for x in rounds if x.elected)
             times_candidate = 0
 
+            actor_terms = []
             for term_id, term_rounds in rounds_by_term:
                 times_candidate += 1
                 term_rounds = list(term_rounds)
                 term = terms[term_id]
+                actor_terms.append(term)
                 elected = sorted([x.election.date for x in term_rounds if x.elected])
                 result = ('elected: %s' % elected[0].strftime('%Y-%m-%d')) if elected else ''
                 printer.info('  %s-%s %s' % (
@@ -177,5 +186,11 @@ class Command(BaseCommand):
                     'since': since,
                     'until': until,
                 })
+
+            # Add this actor to all term groups
+            in_groups = actor.ingroups.values_list('pk', flat=True)
+            for term in actor_terms:
+                if term.group.pk not in in_groups:
+                    term.group.members.add(actor)
 
         printer.info('done.')
