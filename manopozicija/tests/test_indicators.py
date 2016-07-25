@@ -181,9 +181,7 @@ def test_topic_kpi(app, settings, tmpdir):
         'indicators': [
             {
                 'id': indicators[0].pk,
-                'title': 'Rinkimuose dalyvavusių rinkėjų skaičius, palyginti su visų rinkėjų skaičiumi',
                 'ylabel': 'Aktyvumas procentais',
-                'source': 'http://ec.europa.eu/eurostat/tgm/table.do?tab=table&init=1&language=en&pcode=tsdgo310&plugin=1',
                 'data': [
                     ['1992-01-01', 75.2],
                     ['1996-01-01', 52.9],
