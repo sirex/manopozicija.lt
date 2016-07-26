@@ -22,8 +22,6 @@ LOGGING['root'] = {
 INSTALLED_APPS += (
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
-    'allauth.socialaccount.providers.linkedin',
-    'allauth.socialaccount.providers.twitter',
     'allauth.socialaccount.providers.github',
 )
 
@@ -42,17 +40,8 @@ SOCIALACCOUNT_PROVIDERS = {
     'facebook': {
         'SCOPE': ['email', 'public_profile'],
         'METHOD': 'oauth2',
-        'VERIFIED_EMAIL': True,
-        'VERSION': 'v2.3',
-    },
-    'linkedin': {
-        'SCOPE': ['r_emailaddress'],
-        'PROFILE_FIELDS': [
-            'id',
-            'first-name',
-            'last-name',
-            'email-address',
-        ],
+        'VERIFIED_EMAIL': False,
+        'VERSION': 'v2.4',
     },
     'github': {
         'SCOPE': ['user:email'],
