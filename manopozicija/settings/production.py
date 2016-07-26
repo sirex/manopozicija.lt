@@ -4,7 +4,7 @@ from manopozicija.settings.base import *  # noqa
 
 DEBUG = False
 
-ALLOWED_HOSTS = ['manopozicija.lt', 'meras.lt', 'localhost']
+ALLOWED_HOSTS = ['manopozicija.lt', 'localhost']
 
 DATABASES = {
     'default': {
