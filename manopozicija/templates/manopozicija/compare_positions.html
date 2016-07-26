@@ -28,6 +28,13 @@
             <img src="{% static 'img/actor-positive.png' %}" />
           </div>
         {% endthumbnail %}
+        {% if compat.group %}
+          {% thumbnail compat.group.photo "70x70" crop="50% 0%" background="#FFF" as photo %}
+            <div class="party-photo pull-right">
+              <img src="{{ photo.url }}" />
+            </div>
+          {% endthumbnail %}
+        {% endif %}
       </div>
       <div class="col-sm-4 col-md-4">
         <p>
@@ -52,6 +59,13 @@
             <img src="{% static 'img/actor-negative.png' %}" />
           </div>
         {% endthumbnail %}
+        {% if incompat.group %}
+          {% thumbnail incompat.group.photo "70x70" crop="50% 0%" background="#FFF" as photo %}
+            <div class="party-photo pull-right">
+              <img src="{{ photo.url }}" />
+            </div>
+          {% endthumbnail %}
+        {% endif %}
       </div>
       <div class="col-sm-4 col-md-4">
         <p>

@@ -1,3 +1,5 @@
+from dal import autocomplete
+
 from django import forms
 from django.db.models import Value
 from django.contrib.auth.models import User
@@ -50,6 +52,9 @@ class SourceForm(forms.ModelForm):
     class Meta:
         model = models.Source
         fields = ('actor', 'source_link', 'timestamp')
+        widgets = {
+            'actor': autocomplete.ModelSelect2(url='autocomplete-actor', attrs={'data-html': 'true'})
+        }
 
 
 class QuoteForm(forms.ModelForm):

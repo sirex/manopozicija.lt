@@ -4,6 +4,7 @@ from django.conf.urls.static import static
 from django.contrib import admin
 
 from manopozicija import views
+from manopozicija import autocomplete
 
 slug = r'(?P<object_id>\d+)/(?P<slug>[a-z0-9-]+)'
 
@@ -17,6 +18,7 @@ urlpatterns = [
     url(r'^temos/%s/$' % slug, views.topic_details, name='topic-details'),
     url(r'^temos/%s/kpi/$' % slug, views.topic_kpi, name='topic-kpi'),
     url(r'^palyginimas/%s/$' % slug, views.compare_positions, name='compare-positions'),
+    url(r'^autocomplete/actor/$', autocomplete.Person.as_view(), name='autocomplete-actor',),
     url(r'', include([
         url(r'^naudotojo-balsas/(?P<post_id>\d+)/$', views.user_post_vote, name='user-post-vote'),
         url(r'^kuratoriaus-balsas/(?P<post_id>\d+)/$', views.curator_post_vote, name='curator-post-vote'),

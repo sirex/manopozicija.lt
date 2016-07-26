@@ -4,6 +4,11 @@
 {% load bootstrap %}
 
 
+{% block js %}
+{{ source_form.media }}
+{% endblock %}
+
+
 {% block content %}
 <h1>{{ topic }}</h1>
 

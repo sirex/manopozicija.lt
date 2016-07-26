@@ -8,6 +8,18 @@ PROJECT_DIR = pathlib.Path(__file__).parents[2]
 
 config = exportrecipe.load(str(PROJECT_DIR / 'settings.json'))
 
+INSTALLED_APPS = ()
+
+
+# Django autocomplete light
+# https://django-autocomplete-light.readthedocs.io/
+
+# django-autocomplete-light have be installed before django.contrib.admin
+INSTALLED_APPS += (
+    'dal',
+    'dal_select2',
+)
+
 
 # Django base settings
 # https://docs.djangoproject.com/en/stable/ref/settings/
@@ -22,7 +34,7 @@ STATIC_ROOT = str(PROJECT_DIR / 'var/www/static')
 LANGUAGE_CODE = 'lt'
 USE_L10N = True
 
-INSTALLED_APPS = (
+INSTALLED_APPS += (
     'django.contrib.staticfiles',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
