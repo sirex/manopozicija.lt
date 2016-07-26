@@ -25,6 +25,9 @@ pyyaml
 panavatar
 pillow
 livereload
+requests
+requests-cache
+lxml
 
 # key performance indicators
 pandas

@@ -28,6 +28,7 @@ fake-factory==0.5.7
 flake8==2.5.4             # via pytest-flake8
 libsass==0.11.1           # via django-libsass
 livereload==2.4.1
+lxml==3.6.1
 markdown==2.6.6
 mccabe==0.4.0             # via flake8
 mock==2.0.0
@@ -51,8 +52,9 @@ python-dateutil==2.5.3    # via fake-factory, pandas
 python3-openid==3.0.10    # via django-allauth
 pytz==2016.4              # via pandas
 pyyaml==3.11
+requests-cache==0.4.12
 requests-oauthlib==0.6.1  # via django-allauth
-requests==2.10.0          # via django-allauth, requests-oauthlib
+requests==2.10.0
 six==1.10.0               # via django-extensions, fake-factory, libsass, livereload, mock, python-dateutil, webtest
 sorl-thumbnail==12.3
 sqlparse==0.1.19          # via django-debug-toolbar
