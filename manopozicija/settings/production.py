@@ -30,7 +30,6 @@ INSTALLED_APPS += (
 SOCIALACCOUNT_PROVIDERS = {
     'openid': {
         'SERVERS': [
-            dict(id='google', name='Google', openid_url='https://www.google.com/accounts/o8/id'),
             dict(id='yahoo', name='Yahoo', openid_url='http://me.yahoo.com'),
         ],
     },
@@ -54,5 +53,8 @@ SOCIALACCOUNT_PROVIDERS = {
             'last-name',
             'email-address',
         ],
+    },
+    'github': {
+        'SCOPE': ['user:email'],
     },
 }
