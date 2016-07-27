@@ -7,7 +7,7 @@
 {% block content %}
 <div class="jumbotron">
   <h1>ManoPozicija.lt</h1>
-  <p>Politika suprantamai. Supraskite ką veikia jūsų išrinktieji. Apsispręskite ką rinkti.</p>
+  <p>Politika suprantamai. Supraskite ką veikia jūsų išrinktieji. Apsispręskite, ką rinkti.</p>
 </div>
 
 <hr/>
@@ -28,7 +28,7 @@
 
   <div class="col-md-6">
     {% if group %}
-      <h2>{% trans "Apsispręskite ką rinkti" %}</h2>
+      <h2>{% trans "Apsispręskite, ką rinkti" %}</h2>
       <p><a href="{% url 'compare-positions' group.pk group.slug %}" class="btn btn-primary btn-lg">
         {% trans "Jūs ir " %}{{ group.title }}
       </a></p>
