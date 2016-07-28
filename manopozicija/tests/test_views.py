@@ -83,7 +83,7 @@ def test_create_quote(app):
 
     resp = app.get(reverse('quote-create', args=[topic.pk, topic.slug]), user='vardenis')
     form = resp.forms['quote-form']
-    form['actor'] = actor.pk
+    form['actor'].force_value(actor.pk)
     form['source_link'] = 'http://kauno.diena.lt/naujienos/lietuva/politika/skinasi-kelia-balsavimas-internetu-740017'
     form['timestamp'] = '2016-03-22 16:34'
     form['text'] = 'Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.'
@@ -101,7 +101,7 @@ def test_create_quote(app):
 
     resp = app.get(reverse('quote-create', args=[topic.pk, topic.slug]), user='vardenis')
     form = resp.forms['quote-form']
-    form['actor'] = actor.pk
+    form['actor'].force_value(actor.pk)
     form['source_link'] = 'http://kauno.diena.lt/naujienos/lietuva/politika/skinasi-kelia-balsavimas-internetu-740017'
     form['timestamp'] = '2016-03-22 16:34'
     form['text'] = 'Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.'
@@ -122,7 +122,7 @@ def test_create_quote(app):
     # Try to add similar quote from same author and from same source
     resp = app.get(reverse('quote-create', args=[topic.pk, topic.slug]), user='vardenis')
     form = resp.forms['quote-form']
-    form['actor'] = actor.pk
+    form['actor'].force_value(actor.pk)
     form['source_link'] = 'http://kauno.diena.lt/naujienos/lietuva/politika/skinasi-kelia-balsavimas-internetu-740017'
     form['timestamp'] = '2016-03-22 16:34'
     form['text'] = 'Atidaroma nauja galimybė prekiauti balsais ir likti nebaudžiamam.'
