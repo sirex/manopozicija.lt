@@ -76,7 +76,7 @@ def topic_kpi(request, object_id, slug):
 def quote_form(request, object_id, slug):
     topic = get_object_or_404(models.Topic, pk=object_id)
     ArgumentFormSet = formset_factory(
-        forms.ArgumentForm, min_num=1, max_num=3, extra=3,
+        forms.ArgumentForm, min_num=0, max_num=3, extra=3,
         validate_min=True, validate_max=True,
     )
 
