@@ -78,19 +78,31 @@ class QuoteForm(forms.ModelForm):
             quote = None
             source = models.Source.objects.filter(actor=self.actor, source_link=self.source_link).first()
             if source:
-                quote = (
-                    models.Quote.objects.
-                    annotate(similarity=Similarity('text', Value(text))).
-                    filter(source=source, similarity__gt=0.9).
-                    first()
-                )
+                if self.instance and self.instance.pk:
+                    quote = (
+                        models.Quote.objects.
+                        annotate(similarity=Similarity('text', Value(text))).
+                        filter(source=source, similarity__gt=0.9).
+                        exclude(pk=self.instance.pk).
+                        first()
+                    )
+                else:
+                    quote = (
+                        models.Quote.objects.
+                        annotate(similarity=Similarity('text', Value(text))).
+                        filter(source=source, similarity__gt=0.9).
+                        first()
+                    )
             if quote and models.Post.objects.filter(topic=self.topic, quote=quote).exists():
                 raise forms.ValidationError(ugettext("Toks komentaras jau yra įtrauktas į „%s“ temą.") % self.topic)
         return text
 
 
 class ArgumentForm(forms.ModelForm):
-    position = forms.BooleanField(label=_("neigiamas"), required=False)
+    position = forms.BooleanField(
+        label=_("neigiamas"), required=False,
+        widget=forms.CheckboxInput(check_test=lambda v: v < 0 if v else False),
+    )
 
     class Meta:
         model = models.PostArgument

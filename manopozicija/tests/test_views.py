@@ -143,6 +143,26 @@ def test_create_quote(app):
         ' |      - (n) balsų pirkimas                                                                                ',
     ])
 
+    # Try to update an existing quote
+    quote = models.Quote.objects.get(text='Nepasiduokime paviršutiniškiems šūkiams – šiuolaikiška, modernu.')
+    post = models.Post.objects.get(topic=topic, quote=quote)
+    resp = app.get(reverse('quote-update', args=[post.pk]), user='vardenis')
+    form = resp.forms['quote-form']
+    form['timestamp'] = '2016-04-04 16:34'
+    form['text'] = 'Pasiduokime paviršutiniškiems šūkiams.'
+    form['form-0-counterargument'] = False
+    resp = form.submit()
+
+    assert resp.status == '302 Found'
+    assert resp.headers['location'] == topic.get_absolute_url()
+    assert services.dump_topic_posts(topic) == '\n'.join([
+        '( ) (-) Mantas Adomėnas (seimo narys)                                          kauno.diena.lt 2016-04-04    ',
+        ' |      Pasiduokime paviršutiniškiems šūkiams.                                                           (0)',
+        ' |      - (y) šiuolaikiška, modernu                                                                         ',
+        ' |      Atidaroma galimybė prekiauti balsais ir likti nebaudžiamam.                                      (0)',
+        ' |      - (n) balsų pirkimas                                                                                ',
+    ])
+
 
 def test_curator_apply(app):
     user = factories.UserFactory(

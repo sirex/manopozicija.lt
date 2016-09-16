@@ -6,6 +6,7 @@ from django.contrib import admin
 from manopozicija import views
 from manopozicija import autocomplete
 
+pk = r'(?P<object_id>\d+)'
 slug = r'(?P<object_id>\d+)/(?P<slug>[a-z0-9-]+)'
 
 urlpatterns = [
@@ -13,6 +14,7 @@ urlpatterns = [
     url(r'^naujas-asmuo/$', views.person_form, name='person-create'),
     url(r'^nauja-grupe/$', views.group_form, name='group-create'),
     url(r'^temos/%s/nauja-citata/$' % slug, views.quote_form, name='quote-create'),
+    url(r'^citatos/%s/keisti/$' % pk, views.quote_update_form, name='quote-update'),
     url(r'^temos/%s/naujas-ivykis/$' % slug, views.event_form, name='event-create'),
     url(r'^temos/%s/naujas-kuratorius/$' % slug, views.curator_form, name='curator-apply'),
     url(r'^temos/%s/$' % slug, views.topic_details, name='topic-details'),

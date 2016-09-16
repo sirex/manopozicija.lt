@@ -72,7 +72,7 @@ def get_posts(user, topic, posts):
                     'photo': curator.photo,
                 },
             })
-        else:
+        else:  # post['type'] == 'quote'
             source = post['source']
             actor = source.actor
             result.append({

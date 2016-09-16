@@ -6,7 +6,7 @@ from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
 from django.utils.translation import ugettext
 from django.contrib.auth.decorators import login_required
-from django.forms import formset_factory
+from django.forms import formset_factory, modelformset_factory
 from django.contrib.contenttypes.models import ContentType
 
 from manopozicija import models
@@ -97,6 +97,45 @@ def quote_form(request, object_id, slug):
             source=forms.SourceForm(),
             quote=forms.QuoteForm(topic, actor=None, source_link=None),
             arguments=ArgumentFormSet(),
+        )
+
+    return render(request, 'manopozicija/quote_form.html', {
+        'topic': topic,
+        'source_form': form['source'],
+        'quote_form': form['quote'],
+        'arguments_formset': form['arguments'],
+    })
+
+
+@login_required
+def quote_update_form(request, object_id):
+    post = get_object_or_404(models.Post, pk=object_id)
+    quote = get_object_or_404(models.Quote, post=post)
+    source = quote.source
+    topic = post.topic
+    arguments = models.PostArgument.objects.filter(post=post)
+    ArgumentFormSet = modelformset_factory(
+        models.PostArgument, form=forms.ArgumentForm,
+        min_num=0, max_num=3, extra=3, validate_min=True, validate_max=True,
+    )
+
+    if request.method == 'POST':
+        source_form = forms.SourceForm(request.POST, instance=source)
+        source_form.full_clean()
+        source = source_form.cleaned_data
+        form = forms.CombinedForms(
+            source=source_form,
+            quote=forms.QuoteForm(topic, source.get('actor'), source.get('source_link'), request.POST, instance=quote),
+            arguments=ArgumentFormSet(request.POST, queryset=arguments),
+        )
+        if form.is_valid():
+            services.update_quote(request.user, topic, post, quote, arguments, form.cleaned_data)
+            return redirect(topic)
+    else:
+        form = forms.CombinedForms(
+            source=forms.SourceForm(instance=source),
+            quote=forms.QuoteForm(topic, actor=None, source_link=None, instance=quote),
+            arguments=ArgumentFormSet(queryset=arguments),
         )
 
     return render(request, 'manopozicija/quote_form.html', {

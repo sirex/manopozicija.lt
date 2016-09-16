@@ -82,6 +82,64 @@ def create_quote(user, topic, source: dict, quote: dict, arguments: list):
     return quote
 
 
+def update_quote(user, topic, post, quote, arguments, data):
+    # XXX: candidate to merge with create_quote
+    #      save_quote(user, topic, data, post=None, quote=None, arguments=None)
+
+    data['source']['actor_title'] = data['source']['actor'].title
+    data['source']['source_title'] = get_title_from_link(data['source']['source_link'])
+    source, created = models.Source.objects.get_or_create(
+        actor=data['source']['actor'],
+        source_link=data['source']['source_link'],
+        defaults=data['source'],
+    )
+    if not created:
+        for key, value in data['source'].items():
+            setattr(source, key, value)
+        source.save()
+
+    for key, value in data['quote'].items():
+        setattr(quote, key, value)
+    quote.save()
+
+    is_curator = is_topic_curator(user, topic)
+    approved = timezone.now() if is_curator else None
+
+    post.body = topic.default_body
+    post.topic = topic
+    post.actor = source.actor
+    post.position = 0
+    post.approved = approved
+    post.timestamp = source.timestamp
+    post.upvotes = 0
+    post.content_object = quote
+
+    if is_curator:
+        # Automatically approve posts created by topic curators.
+        models.PostLog.objects.create(user=user, post=post, action=models.PostLog.VOTE, vote=1)
+
+    for argument in data['arguments']:
+        instance = argument.pop('id', None)
+        if argument.get('title'):
+            if instance:
+                for key, value in argument.items():
+                    setattr(instance, key, value)
+                instance.save()
+            else:
+                models.PostArgument.objects.create(topic=topic, post=post, quote=quote, **argument)
+            update_actor_topic_argument_position(source.actor, topic, argument['title'])
+        elif instance:
+            instance.delete()
+
+    post.position = get_quote_position(topic, quote)
+    post.save()
+
+    source.position = get_source_position(topic, source)
+    source.save()
+
+    return quote
+
+
 def create_curator(user, topic, user_data: dict, curator: dict):
     curator, created = models.Curator.objects.get_or_create(user=user, defaults=curator)
     if user_data:

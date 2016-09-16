@@ -51,6 +51,7 @@
     </div>
   </div>
   {% for argument_form in arguments_formset.forms %}
+      {{ argument_form.id }}
   <div class="row arguments-form-table">
     <div class="col-md-4">
         {{ argument_form.title|bootstrap_inline }}
