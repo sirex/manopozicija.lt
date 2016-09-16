@@ -1,3 +1,10 @@
+2016-09-16
+==========
+
+- django-autocomplete-light was upgraded to 3.1.8, where issue with html
+  rendering was fixed.
+
+
 2016-07-26
 ==========
 
