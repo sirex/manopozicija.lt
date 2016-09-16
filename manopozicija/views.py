@@ -190,7 +190,12 @@ def curator_post_vote(request, post_id):
         if form.is_valid():
             if services.is_topic_curator(request.user, post.topic):
                 curator_type = ContentType.objects.get(app_label='manopozicija', model='curator')
-                if post.content_type == curator_type and request.user == post.content_object.user:
+                voted_for_himself = (
+                    post.content_type == curator_type and
+                    request.user == post.content_object.user and
+                    not request.user.is_superuser
+                )
+                if voted_for_himself:
                     logger.debug((
                         '%r user voted for his own curator application on %r topic for %r post with vote: %r'
                     ), request.user, post.topic, post, form.cleaned_data['vote'])

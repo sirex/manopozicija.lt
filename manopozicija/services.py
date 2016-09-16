@@ -106,7 +106,10 @@ def create_curator(user, topic, user_data: dict, curator: dict):
 
 def is_topic_curator(user, topic):
     if user.is_authenticated():
-        return models.TopicCurator.objects.filter(user=user, topic=topic, approved__isnull=False).exists()
+        if user.is_superuser:
+            return True
+        else:
+            return models.TopicCurator.objects.filter(user=user, topic=topic, approved__isnull=False).exists()
     else:
         return False
 
