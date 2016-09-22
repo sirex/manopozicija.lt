@@ -80,10 +80,12 @@
           <div class="row">
             <div class="col-sm-10 col-md-11">
               <p class="quote-text">{{ quote.text }}</p>
+              {% if is_topic_curator %}
               <p class="pull-right">
                 <a href="{% url 'quote-update' quote.post.id %}" class="text-muted">{% trans "keisti" %}</a> &nbsp; &nbsp;
                 <a href="#" class="text-muted">{% trans "trinti" %}</a>
               </p>
+              {% endif %}
               <p>
                 {% for argument in quote.arguments %}
                   <a href="#" class="{{ argument.classes }}">

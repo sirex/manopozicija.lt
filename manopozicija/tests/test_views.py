@@ -1,3 +1,5 @@
+import pytest
+
 from webtest import Upload
 
 from django.core.urlresolvers import reverse
@@ -298,3 +300,35 @@ def test_compare(app):
     ])
     group = factories.GroupFactory(members=models.Actor.objects.all())
     app.get(reverse('compare-positions', args=[group.pk, group.slug]), user=user)
+
+
+def test_update_post_permission(App, app):
+    curator = factories.UserFactory(first_name='curator')
+    topic = factories.TopicFactory()
+    factories.TopicCuratorFactory(user=curator, topic=topic)
+    factories.create_topic_posts(topic, curator, [
+        ('quote', 'Eligijus Masiulis', 'seimo narys', 'delfi.lt', '2015-10-08', [
+            (0, 0, 'Mes palaikysim tokį įstatymą.', [
+                (1, 'šiuolaikiška, modernu', None),
+            ]),
+        ]),
+    ])
+    post = models.Post.objects.get(topic=topic)
+
+    # Curator can edit post.
+    resp = app.get(reverse('topic-details', args=[topic.pk, topic.slug]), user=curator)
+    resp = resp.click('keisti', href=reverse('quote-update', args=[post.pk]))
+    assert 'quote-form' in resp.forms
+
+    # Non-curator user can't edit post.
+    user = factories.UserFactory(first_name='notcurator')
+    resp = app.get(reverse('topic-details', args=[topic.pk, topic.slug]), user=user)
+    assert resp.context['request'].user.is_authenticated() is True
+    with pytest.raises(IndexError):
+        resp = resp.click('keisti', href=reverse('quote-update', args=[post.pk]))
+
+    # Annonymous user can't edit post.
+    resp = App().get(reverse('topic-details', args=[topic.pk, topic.slug]))
+    assert resp.context['request'].user.is_authenticated() is False
+    with pytest.raises(IndexError):
+        resp = resp.click('keisti', href=reverse('quote-update', args=[post.pk]))
