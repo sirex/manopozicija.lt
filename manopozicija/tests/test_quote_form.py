@@ -1,6 +1,5 @@
 from django.core.urlresolvers import reverse
 
-from manopozicija import models
 from manopozicija import services
 from manopozicija import factories
 
