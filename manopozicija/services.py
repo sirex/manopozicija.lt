@@ -162,6 +162,15 @@ def create_curator(user, topic, user_data: dict, curator: dict):
     return curator
 
 
+def delete_post(post):
+    post.delete()
+    quote = post.content_object
+    source = quote.source
+
+    source.position = get_source_position(post.topic, source)
+    source.save()
+
+
 def is_topic_curator(user, topic):
     if user.is_authenticated():
         if user.is_superuser:

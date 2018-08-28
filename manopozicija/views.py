@@ -1,6 +1,6 @@
 import logging
 
-from django.http import JsonResponse
+from django.http import JsonResponse, Http404
 from django.shortcuts import render
 from django.shortcuts import redirect
 from django.shortcuts import get_object_or_404
@@ -113,6 +113,11 @@ def quote_update_form(request, object_id):
     quote = get_object_or_404(models.Quote, post=post)
     source = quote.source
     topic = post.topic
+    is_topic_curator = services.is_topic_curator(request.user, topic)
+
+    if not is_topic_curator:
+        raise Http404('User is not a topic curator.')
+
     arguments = models.PostArgument.objects.filter(post=post)
     ArgumentFormSet = modelformset_factory(
         models.PostArgument, form=forms.ArgumentForm,
@@ -144,6 +149,16 @@ def quote_update_form(request, object_id):
         'quote_form': form['quote'],
         'arguments_formset': form['arguments'],
     })
+
+
+@login_required
+def post_delete(request, object_id):
+    post = get_object_or_404(models.Post, pk=object_id)
+    is_topic_curator = services.is_topic_curator(request.user, post.topic)
+    if not is_topic_curator:
+        raise Http404('User is not a topic curator.')
+    services.delete_post(post)
+    return redirect(post.topic)
 
 
 @login_required

@@ -332,3 +332,37 @@ def test_update_post_permission(App, app):
     assert resp.context['request'].user.is_authenticated() is False
     with pytest.raises(IndexError):
         resp = resp.click('keisti', href=reverse('quote-update', args=[post.pk]))
+
+
+def test_delete_post(App, app):
+    curator = factories.UserFactory(first_name='curator')
+    topic = factories.TopicFactory()
+    factories.TopicCuratorFactory(user=curator, topic=topic)
+    factories.create_topic_posts(topic, curator, [
+        ('quote', 'Eligijus Masiulis', 'seimo narys', 'delfi.lt', '2015-10-08', [
+            (0, 0, 'Mes palaikysim tokį įstatymą.', [
+                (1, 'šiuolaikiška, modernu', None),
+            ]),
+            (1, 0, 'Galimybė prekiauti balsais.', [
+                (-1, 'balsų pirkimas', None),
+            ]),
+        ]),
+    ])
+
+    assert services.dump_topic_posts(topic) == '\n'.join([
+        '( ) (-) Eligijus Masiulis (seimo narys)                                              delfi.lt 2015-10-08    ',
+        ' |      Mes palaikysim tokį įstatymą.                                                                    (0)',
+        ' |      - (y) šiuolaikiška, modernu                                                                         ',
+        ' |      Galimybė prekiauti balsais.                                                                      (1)',
+        ' |      - (n) balsų pirkimas                                                                                ',
+    ])
+
+    post = models.Post.objects.get(topic=topic, quote__text='Galimybė prekiauti balsais.')
+    resp = app.get(reverse('topic-details', args=[topic.pk, topic.slug]), user=curator)
+    resp.click('trinti', href=reverse('post-delete', args=[post.pk]))
+
+    assert services.dump_topic_posts(topic) == '\n'.join([
+        '( ) (y) Eligijus Masiulis (seimo narys)                                              delfi.lt 2015-10-08    ',
+        ' |      Mes palaikysim tokį įstatymą.                                                                    (0)',
+        ' |      - (y) šiuolaikiška, modernu                                                                         ',
+    ])

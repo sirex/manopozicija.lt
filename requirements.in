@@ -16,7 +16,7 @@ fake-factory
 unidecode
 markdown
 yattag
-psycopg2
+psycopg2-binary
 mock
 docutils
 exportrecipe

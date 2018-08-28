@@ -1,6 +1,3 @@
-PROJECT_NAME = manopozicija
-
-
 .PHONY: all
 all: bin/django
 
@@ -40,9 +37,9 @@ test: bin/django
 	  --tb=native \
 	  --flake8 \
 	  --doctest-modules \
-	  --cov $(PROJECT_NAME) \
+	  --cov manopozicija \
 	  --cov-report term-missing \
-	  $(PROJECT_NAME)
+	  manopozicija
 
 .PHONY: cleanpyc
 cleanpyc: ; find -iname '*.pyc' -delete
@@ -68,11 +65,21 @@ dbsuperuser:
 db:
 	createdb \
 	  --encoding=UTF-8 \
-	  --lc-collate=C.UTF-8 \
-	  --lc-ctype=C.UTF-8 \
+	  --lc-collate=C \
+	  --lc-ctype=C \
 	  --template=template0 \
 	  --owner=$(USER) \
-	  $(PROJECT_NAME)
+	  manopozicija
+
+.PHONY: testdb
+testdb:
+	createdb \
+	  --encoding=UTF-8 \
+	  --lc-collate=C \
+	  --lc-ctype=C \
+	  --template=template0 \
+	  --owner=$(USER) \
+	  test_manopozicija
 
 .PHONY: adminuser
 adminuser:

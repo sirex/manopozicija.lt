@@ -83,7 +83,7 @@
               {% if is_topic_curator %}
               <p class="pull-right">
                 <a href="{% url 'quote-update' quote.post.id %}" class="text-muted">{% trans "keisti" %}</a> &nbsp; &nbsp;
-                <a href="#" class="text-muted">{% trans "trinti" %}</a>
+                <a href="{% url 'post-delete' quote.post.id %}" class="text-muted">{% trans "trinti" %}</a>
               </p>
               {% endif %}
               <p>
