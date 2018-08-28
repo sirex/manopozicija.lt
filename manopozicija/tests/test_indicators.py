@@ -4,15 +4,19 @@ import datetime
 import pytest
 import pkg_resources as pres
 import pandas as pd
+import numpy
 
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 
 from manopozicija import factories
 from manopozicija import indicators
 from manopozicija.models import Indicator
 
-dt = datetime.datetime
 timedelta = datetime.timedelta
+
+
+def dt(*args):
+    return numpy.datetime64(datetime.datetime(*args))
 
 
 def ls(base, path):

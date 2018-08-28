@@ -75,7 +75,7 @@ class TopicFactory(DjangoModelFactory):
     @factory.post_generation
     def indicators(self, create, extracted, **kwargs):
         if create:
-            self.indicators = extracted or [IndicatorFactory()]
+            self.indicators.set(extracted or [IndicatorFactory()])
 
 
 class PartyActorFactory(DjangoModelFactory):

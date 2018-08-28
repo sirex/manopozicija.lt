@@ -31,8 +31,8 @@ def _get_post_context(post, user_votes, curator_votes):
 
 def get_posts(user, topic, posts):
     result = []
-    user_votes = services.get_user_topic_votes(user, topic) if user.is_authenticated() else {}
-    curator_votes = services.get_curator_topic_votes(user, topic) if user.is_authenticated() else {}
+    user_votes = services.get_user_topic_votes(user, topic) if user.is_authenticated else {}
+    curator_votes = services.get_curator_topic_votes(user, topic) if user.is_authenticated else {}
     for post in posts:
         if post['type'] == 'event':
             event = post['event']

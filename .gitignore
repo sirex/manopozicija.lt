@@ -19,3 +19,5 @@ prototype/static/css/main.css
 /share/
 /.cache/
 /pip-selfcheck.json
+/.pytest_cache/
+/src/

@@ -172,7 +172,7 @@ def delete_post(post):
 
 
 def is_topic_curator(user, topic):
-    if user.is_authenticated():
+    if user.is_authenticated:
         if user.is_superuser:
             return True
         else:
@@ -552,7 +552,7 @@ def get_user_argument_positions(group, user):
 def get_user_event_positions(group, user):
     return (
         models.UserPostPosition.objects.
-        filter(user=user, post__actorpostposition__actor__group=group).
+        filter(user=user, post__actorpostposition__actor__ingroup=group).
         values_list(
             'post__actorpostposition__actor',
             'post__actorpostposition__position',

@@ -4,7 +4,7 @@ from django_extensions.db.fields import CreationDateTimeField, ModificationDateT
 from sorl.thumbnail import ImageField
 
 from django.db import models
-from django.core.urlresolvers import reverse
+from django.urls import reverse
 from django.utils.translation import ugettext_lazy as _
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.fields import GenericRelation
@@ -43,7 +43,7 @@ class Term(models.Model):
         (VRK_KADENCIJOS_CSV, 'vrk/kadencijos.csv'),
     )
 
-    body = models.ForeignKey(Body)
+    body = models.ForeignKey(Body, on_delete=models.CASCADE)
     since = models.DateTimeField()
     until = models.DateTimeField(null=True, blank=True)
     title = models.CharField(max_length=255, default='', blank=True)
@@ -106,7 +106,7 @@ class Topic(models.Model):
     title = models.CharField(_("Pavadinimas"), max_length=255)
     description = models.TextField(_("Aprašymas"), blank=True)
     indicators = models.ManyToManyField(Indicator, blank=True)
-    default_body = models.ForeignKey(Body)
+    default_body = models.ForeignKey(Body, null=True, blank=True, on_delete=models.SET_NULL)
     logo = ImageField(upload_to='topics/%Y/%m/%d/', blank=True)
 
     def __str__(self):
@@ -140,7 +140,7 @@ class Actor(models.Model):
     ))
     photo = ImageField(_("Nuotrauka"), upload_to='actors/%Y/%m/%d/', blank=True)
     group = models.BooleanField(default=False)
-    body = models.ForeignKey(Body, blank=True, null=True)  # required only for group
+    body = models.ForeignKey(Body, blank=True, null=True, on_delete=models.SET_NULL)  # required only for group
 
     times_elected = models.PositiveSmallIntegerField(null=True)
     times_candidate = models.PositiveSmallIntegerField(null=True)
@@ -151,8 +151,8 @@ class Actor(models.Model):
 
 class Member(models.Model):
     """Actor's membership in a group"""
-    actor = models.ForeignKey(Actor, related_name='+')
-    group = models.ForeignKey(Actor)
+    actor = models.ForeignKey(Actor, related_name='+', on_delete=models.CASCADE)
+    group = models.ForeignKey(Actor, on_delete=models.CASCADE)
     since = models.DateTimeField()
     until = models.DateTimeField(null=True, blank=True)
 
@@ -190,9 +190,9 @@ class Post(models.Model):
     """
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
-    body = models.ForeignKey(Body)
-    topic = models.ForeignKey('Topic')
-    actor = models.ForeignKey(Actor, null=True, blank=True)
+    body = models.ForeignKey(Body, null=True, blank=True, on_delete=models.SET_NULL)
+    topic = models.ForeignKey('Topic', on_delete=models.CASCADE)
+    actor = models.ForeignKey(Actor, null=True, blank=True, on_delete=models.CASCADE)
     position = models.FloatField()
     approved = models.DateTimeField(null=True, blank=True)
     timestamp = models.DateTimeField()
@@ -201,7 +201,7 @@ class Post(models.Model):
     curator_upvotes = models.PositiveIntegerField(default=0)
     curator_downvotes = models.PositiveIntegerField(default=0)
 
-    content_type = models.ForeignKey(ContentType)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
@@ -228,8 +228,8 @@ class Curator(models.Model):
         Each new curator request is created as a post.
 
     """
-    user = models.OneToOneField(User)
-    actor = models.ForeignKey(Actor, null=True, blank=True)
+    user = models.OneToOneField(User, on_delete=models.CASCADE)
+    actor = models.ForeignKey(Actor, null=True, blank=True, on_delete=models.CASCADE)
     title = models.CharField(_("Domėjimosi sritis"), max_length=255)
     photo = ImageField(_("Nuotrauka"), upload_to='actors/%Y/%m/%d/')
     posts = GenericRelation(Post)
@@ -250,8 +250,8 @@ class TopicCurator(models.Model):
     """
     created = models.DateTimeField(auto_now_add=True)
     approved = models.DateTimeField(null=True, blank=True)
-    topic = models.ForeignKey(Topic)
-    user = models.ForeignKey(User)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
 
 
 class PostLog(models.Model):
@@ -282,8 +282,8 @@ class PostLog(models.Model):
     )
 
     created = models.DateTimeField(auto_now_add=True)
-    user = models.ForeignKey(User)
-    post = models.ForeignKey(Post)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
     action = models.PositiveSmallIntegerField(choices=ACTION_CHOICES)
     vote = models.SmallIntegerField(null=True, blank=True)
 
@@ -309,9 +309,9 @@ class Reference(models.Model):
         An object referring to the event.
 
     """
-    event = models.ForeignKey('Event')
+    event = models.ForeignKey('Event', on_delete=models.CASCADE)
 
-    content_type = models.ForeignKey(ContentType)
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
 
@@ -378,7 +378,7 @@ class Event(models.Model):
         (DOCUMENT, _("Teisės aktas")),
     )
 
-    user = models.ForeignKey(User)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
     type = models.PositiveSmallIntegerField(choices=TYPE_CHOICES)
     title = models.CharField(_("Pavadinimas"), max_length=255)
     source_link = models.URLField(_("Šaltinio nuoroda"), max_length=255, blank=True, unique=True)
@@ -387,7 +387,7 @@ class Event(models.Model):
     post = GenericRelation(Post, related_query_name='event')
     position = models.FloatField()
     references = GenericRelation(Reference, related_query_name='event')
-    group = models.ForeignKey('self', null=True, blank=True)
+    group = models.ForeignKey('self', null=True, blank=True, on_delete=models.CASCADE)
 
     def validate_unique(self, exclude=None):
         # We want database level constraints, but don't want forms to validate source_link uniqueness.
@@ -426,8 +426,8 @@ class Role(models.Model):
         (PROPOSED, _("Teikė")),
     )
 
-    actor = models.ForeignKey(Actor)
-    event = models.ForeignKey(Event)
+    actor = models.ForeignKey(Actor, on_delete=models.CASCADE)
+    event = models.ForeignKey(Event, on_delete=models.CASCADE)
     role = models.SmallIntegerField(choices=ROLE_CHOICES)
     position = models.FloatField()
 
@@ -465,7 +465,7 @@ class Source(models.Model):
         Average position calculated from assigned arguments.
 
     """
-    actor = models.ForeignKey(Actor, verbose_name=_("Citatos autorius"))
+    actor = models.ForeignKey(Actor, verbose_name=_("Citatos autorius"), on_delete=models.CASCADE)
     actor_title = models.CharField(_("Autoriaus veiklos sritis"), max_length=64, blank=True, help_text=_(
         "Autoriaus profesija arba domėjimosi sritis atitinkanti citatos tekstą."
     ))
@@ -505,8 +505,8 @@ class Quote(models.Model):
         pointing this quote to matching Event.
 
     """
-    user = models.ForeignKey(User)
-    source = models.ForeignKey(Source, null=True, blank=True)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    source = models.ForeignKey(Source, null=True, blank=True, on_delete=models.SET_NULL)
     reference_link = models.URLField(_("Cituojamo šaltinio nuoroda"), blank=True, help_text=_(
         "Nuoroda į šaltinį, apie kurį autorius kalba savo citatoje."
     ))
@@ -525,7 +525,7 @@ class Quote(models.Model):
 
 
 class Argument(models.Model):
-    topic = models.ForeignKey(Topic)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)  # Same as PostArgument.title
 
     class Meta:
@@ -564,9 +564,9 @@ class PostArgument(models.Model):
         Final position value can be inverted if counterargument is True.
 
     """
-    topic = models.ForeignKey(Topic)
-    post = models.ForeignKey(Post)
-    quote = models.ForeignKey(Quote)
+    topic = models.ForeignKey(Topic, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
+    quote = models.ForeignKey(Quote, on_delete=models.CASCADE)
     title = models.CharField(max_length=255)
     counterargument = models.BooleanField(_("Kontrargumentas"), default=False, blank=True)
     counterargument_title = models.CharField(max_length=255, blank=True)
@@ -577,8 +577,8 @@ class PostArgument(models.Model):
 
 
 class ActorPostPosition(models.Model):
-    actor = models.ForeignKey(Actor)
-    post = models.ForeignKey(Post)
+    actor = models.ForeignKey(Actor, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
     position = models.FloatField(default=0)
 
     class Meta:
@@ -586,8 +586,8 @@ class ActorPostPosition(models.Model):
 
 
 class ActorArgumentPosition(models.Model):
-    actor = models.ForeignKey(Actor)
-    argument = models.ForeignKey(Argument)
+    actor = models.ForeignKey(Actor, on_delete=models.CASCADE)
+    argument = models.ForeignKey(Argument, on_delete=models.CASCADE)
     position = models.FloatField(default=0)
 
     class Meta:
@@ -612,8 +612,8 @@ class UserPostPosition(models.Model):
         Value usually is -1, 0 or 1.
 
     """
-    user = models.ForeignKey(User)
-    post = models.ForeignKey(Post)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    post = models.ForeignKey(Post, on_delete=models.CASCADE)
     position = models.SmallIntegerField(default=0)
 
     class Meta:
@@ -621,8 +621,8 @@ class UserPostPosition(models.Model):
 
 
 class UserArgumentPosition(models.Model):
-    user = models.ForeignKey(User)
-    argument = models.ForeignKey(Argument)
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    argument = models.ForeignKey(Argument, on_delete=models.CASCADE)
     position = models.FloatField(default=0)
 
     class Meta:

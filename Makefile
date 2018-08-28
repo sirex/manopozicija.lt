@@ -85,11 +85,15 @@ testdb:
 adminuser:
 	bin/django createsuperuser --username admin --email admin@localhost.local
 
+.PHONY: requirements
+requirements: bin/pip
+	bin/pip-compile --no-index --output-file requirements.txt requirements.in
+
 buildout.cfg: ; ./scripts/genconfig.py config/env/development.cfg
 
 bin/pip:
 	virtualenv --no-site-packages --python=python3.5 .
-	bin/pip install --upgrade pip==8.1.1 pip-tools==1.6.5 wheel==0.29.0
+	bin/pip install --upgrade pip setuptools pip-tools wheel
 
 bin/buildout: bin/pip requirements.txt ; bin/pip install -e . -r requirements.txt && touch -c bin/buildout
 

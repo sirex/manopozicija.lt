@@ -5,14 +5,14 @@ django-libsass
 django-debug-toolbar
 django-extensions
 django-webtest
-django-autoslug
+-e git+https://github.com/justinmayer/django-autoslug.git@4dc75083d84265e019a900d636273c731457193d#egg=django-autoslug
 django-allauth
 django-bootstrap-form
 django-js-reverse
 django-autocomplete-light
 sorl-thumbnail
-factory_boy
-fake-factory
+fake-factory==0.7.4
+factory-boy==2.7.0
 unidecode
 markdown
 yattag

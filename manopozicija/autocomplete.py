@@ -17,7 +17,7 @@ class Person(autocomplete.Select2QuerySetView):
             return str(item)
 
     def get_queryset(self):
-        if self.request.user.is_authenticated():
+        if self.request.user.is_authenticated:
             if self.q:
                 q = Q(first_name__istartswith=self.q) | Q(last_name__istartswith=self.q)
             else:

@@ -1,40 +1,40 @@
 from django.conf import settings
-from django.conf.urls import url, include
 from django.conf.urls.static import static
 from django.contrib import admin
+from django.urls import include, path
 
 from manopozicija import views
 from manopozicija import autocomplete
 
-pk = r'(?P<object_id>\d+)'
-slug = r'(?P<object_id>\d+)/(?P<slug>[a-z0-9-]+)'
+pk = r'<int:object_id>'
+slug = r'<int:object_id>/<slug:slug>'
 
 urlpatterns = [
-    url(r'^$', views.topic_list, name='topic-list'),
-    url(r'^naujas-asmuo/$', views.person_form, name='person-create'),
-    url(r'^nauja-grupe/$', views.group_form, name='group-create'),
-    url(r'^temos/%s/nauja-citata/$' % slug, views.quote_form, name='quote-create'),
-    url(r'^citatos/%s/keisti/$' % pk, views.quote_update_form, name='quote-update'),
-    url(r'^irasai/%s/trinti/$' % pk, views.post_delete, name='post-delete'),
-    url(r'^temos/%s/naujas-ivykis/$' % slug, views.event_form, name='event-create'),
-    url(r'^temos/%s/naujas-kuratorius/$' % slug, views.curator_form, name='curator-apply'),
-    url(r'^temos/%s/$' % slug, views.topic_details, name='topic-details'),
-    url(r'^temos/%s/kpi/$' % slug, views.topic_kpi, name='topic-kpi'),
-    url(r'^palyginimas/%s/$' % slug, views.compare_positions, name='compare-positions'),
-    url(r'^autocomplete/actor/$', autocomplete.Person.as_view(), name='autocomplete-actor',),
-    url(r'', include([
-        url(r'^naudotojo-balsas/(?P<post_id>\d+)/$', views.user_post_vote, name='user-post-vote'),
-        url(r'^kuratoriaus-balsas/(?P<post_id>\d+)/$', views.curator_post_vote, name='curator-post-vote'),
-    ], namespace='js')),
+    path('', views.topic_list, name='topic-list'),
+    path('naujas-asmuo/', views.person_form, name='person-create'),
+    path('nauja-grupe/', views.group_form, name='group-create'),
+    path('temos/%s/nauja-citata/' % slug, views.quote_form, name='quote-create'),
+    path('citatos/%s/keisti/' % pk, views.quote_update_form, name='quote-update'),
+    path('irasai/%s/trinti/' % pk, views.post_delete, name='post-delete'),
+    path('temos/%s/naujas-ivykis/' % slug, views.event_form, name='event-create'),
+    path('temos/%s/naujas-kuratorius/' % slug, views.curator_form, name='curator-apply'),
+    path('temos/%s/' % slug, views.topic_details, name='topic-details'),
+    path('temos/%s/kpi/' % slug, views.topic_kpi, name='topic-kpi'),
+    path('palyginimas/%s/' % slug, views.compare_positions, name='compare-positions'),
+    path('autocomplete/actor/', autocomplete.Person.as_view(), name='autocomplete-actor'),
+    path('', include(([
+        path('naudotojo-balsas/<int:post_id>/', views.user_post_vote, name='user-post-vote'),
+        path('kuratoriaus-balsas/<int:post_id>/', views.curator_post_vote, name='curator-post-vote'),
+    ], 'js'))),
 ]
 
 urlpatterns += [
-    url(r'^accounts/', include('allauth.urls')),
-    url(r'^valdymas/', include(admin.site.urls)),
+    path('accounts/', include('allauth.urls')),
+    path('valdymas/', admin.site.urls),
 ]
 
 if settings.DEBUG:
     import debug_toolbar
-    urlpatterns += [url(r'^__debug__/', include(debug_toolbar.urls))]
+    urlpatterns += [path('__debug__/', debug_toolbar.urls)]
     urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
     urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
