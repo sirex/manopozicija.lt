@@ -7,7 +7,7 @@ THUMBNAIL_DEBUG = True
 
 EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
 
-LOGGING['loggers']['manopozicija'] = {
+LOGGING['loggers']['manopozicija'] = {  # noqa
     'level': 'DEBUG',
     'handlers': ['stdout'],
 }

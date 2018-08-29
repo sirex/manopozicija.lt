@@ -5,7 +5,7 @@ from manopozicija.settings.base import *  # noqa
 SERVER_PROTOCOL = 'http://'
 SERVER_NAME = 'localhost:80'
 
-LOGGING['loggers']['factory'] = {
+LOGGING['loggers']['factory'] = {  # noqa
     'level': 'DEBUG',
     'handlers': ['stdout'],
 }

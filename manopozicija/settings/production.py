@@ -13,12 +13,12 @@ DATABASES = {
     }
 }
 
-LOGGING['root'] = {
+LOGGING['root'] = {  # noqa
     'level': 'WARNING',
     'handlers': ['stdout'],
 }
 
-INSTALLED_APPS += (
+INSTALLED_APPS += (  # noqa
     'allauth.socialaccount.providers.google',
     'allauth.socialaccount.providers.facebook',
     'allauth.socialaccount.providers.github',
