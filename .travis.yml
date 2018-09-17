@@ -9,7 +9,7 @@ install:
   - pip install -e .
   - pip install python-coveralls
   - mkdir -p var/www/static var/www/media
-  - bin/initsettings
+  - initsettings
 
   # Install test dependencies
   - yarn global add eslint@2.11.1
