@@ -1,16 +1,19 @@
-import exportrecipe
-import pathlib
 import collections
+import json
 import os
+import pathlib
+import sys
 
 Size = collections.namedtuple('Size', ['width', 'height'])
 
 if 'MANOPOZICIJA_DIR' in os.environ:
     PROJECT_DIR = pathlib.Path(os.environ['MANOPOZICIJA_DIR'])
 else:
-    PROJECT_DIR = pathlib.Path(__file__).parents[1]
+    PROJECT_DIR = pathlib.Path(sys.executable).parents[1]
 
-config = exportrecipe.load(str(PROJECT_DIR / 'settings.json'))
+with (PROJECT_DIR / 'settings.json').open() as f:
+    print(PROJECT_DIR / 'settings.json')
+    config = json.load(f)
 
 INSTALLED_APPS = ()
 
@@ -30,7 +33,7 @@ INSTALLED_APPS += (
 
 DEBUG = False
 ROOT_URLCONF = 'manopozicija.urls'
-SECRET_KEY = config.secret_key
+SECRET_KEY = config['secret_key']
 MEDIA_URL = '/media/'
 MEDIA_ROOT = str(PROJECT_DIR / 'var/www/media')
 STATIC_URL = '/static/'
