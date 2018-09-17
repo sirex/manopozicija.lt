@@ -11,6 +11,8 @@ help:
 	@echo 'make              set up the development environment'
 	@echo 'make run          start the web server'
 	@echo 'make test         run project tests'
+	@echo 'make build        build project wheels'
+	@echo 'make deploy       deploy project to prod server'
 	@echo 'make tags         build ctags file'
 	@echo 'make clean        clean whole environment'
 	@echo 'make cleanpyc     clean all *.pyc files'
@@ -88,6 +90,21 @@ adminuser:
 .PHONY: requirements
 requirements: bin/pip
 	bin/pip-compile --no-index --output-file requirements.txt requirements.in
+
+
+.PHONY: build
+build: bin/pip
+	rm -rf wheels
+	mkdir -p wheels
+	bin/pip wheel -w wheels -r requirements.txt
+	bin/pip wheel -w wheels src/django-autoslug
+	bin/pip wheel -w wheels --no-deps .
+
+
+.PHONY: deploy
+deploy: bin/pip
+	cd deploy && ansible-playbook --inventory=inventory.cfg --ask-vault-pass playbook.yml
+
 
 buildout.cfg: ; ./scripts/genconfig.py config/env/development.cfg
 

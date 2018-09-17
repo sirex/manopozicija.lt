@@ -1,0 +1,1 @@
+recursive-include manopozicija *.html *.mo *.po *.pot *.py

@@ -1,10 +1,14 @@
 import exportrecipe
 import pathlib
 import collections
+import os
 
 Size = collections.namedtuple('Size', ['width', 'height'])
 
-PROJECT_DIR = pathlib.Path(__file__).parents[2]
+if 'MANOPOZICIJA_DIR' in os.environ:
+    PROJECT_DIR = pathlib.Path(os.environ['MANOPOZICIJA_DIR'])
+else:
+    PROJECT_DIR = pathlib.Path(__file__).parents[1]
 
 config = exportrecipe.load(str(PROJECT_DIR / 'settings.json'))
 

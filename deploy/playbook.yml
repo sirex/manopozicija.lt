@@ -1,0 +1,179 @@
+---
+- hosts: all
+  become: yes
+  gather_facts: yes
+
+  vars:
+    home: /opt/manopozicija.lt
+    server_name: manopozicija.lt
+
+  vars_files:
+    - secrets.yml
+
+  environment:
+    MANOPOZICIJA_DIR: "{{ home }}/app"
+    DJANGO_SETTINGS_MODULE: "manopozicija.settings.production"
+
+  tasks:
+
+  - name: update locale
+    locale_gen: name={{ item }} state=present
+    with_items:
+    - en_US.UTF-8
+    - lt_LT.UTF-8
+
+  - name: apt packages
+    apt: pkg={{ item }} state=latest
+    with_items:
+    - build-essential
+    - postgresql
+    - python-psycopg2
+    - python-dev
+    - python-pip
+    - python-virtualenv
+    - apache2
+    - libapache2-mod-wsgi-py3
+    - postgresql
+    - postgresql-contrib
+
+    # Lets encrypt
+    - libaugeas0
+    - libssl-dev
+    - libffi-dev
+    - ca-certificates
+
+  - name: create user
+    user: name=manopozicija system=yes group=www-data home={{ home }}
+
+  - name: postgresql database
+    postgresql_db: >
+      name=manopozicija
+      encoding='UTF-8'
+      lc_collate='C.UTF-8'
+      lc_ctype='C.UTF-8'
+      template='template0'
+    become_user: postgres
+
+  - name: postgresql user
+    postgresql_user: db=manopozicija name=manopozicija priv=ALL
+    become_user: postgres
+
+  - name: copy wheels
+    synchronize:
+      src: ../wheels/
+      dest: "{{ home }}/wheels"
+      archive: yes
+      owner: no
+      group: no
+      perms: no
+      delete: yes
+    become_user: manopozicija
+
+  - name: create virtualenv
+    pip:
+      virtualenv: "{{ home }}/app"
+      virtualenv_python: python3
+      state: latest
+      name: "{{ item }}"
+    with_items:
+      - pip
+      - setuptools
+    become_user: manopozicija
+
+  - name: install python packages
+    pip:
+      virtualenv: "{{ home }}/app"
+      virtualenv_python: python3
+      state: latest
+      name: "{{ item }}"
+      extra_args: "--find-links={{ home }}/wheels --no-index --pre --ignore-installed"
+    with_items:
+      - manopozicija-lt
+    become_user: manopozicija
+
+  - name: create media and static dirs
+    file: path={{ home }}/app/{{ item }} state=directory
+    with_items:
+      - var/www/static
+      - var/www/media
+    become_user: manopozicija
+
+  - name: set up settings.json file
+    template: src=templates/settings.json dest={{ home }}/app/settings.json
+    become_user: manopozicija
+    notify: reload apache
+
+  - name: migrate database
+    command: bin/manage migrate --noinput chdir={{ home }}/app
+    become_user: postgres
+    tags: upload
+
+  # Apache
+
+  - name: enabled apache modules
+    apache2_module: name={{ item }} state=present
+    with_items:
+    - rewrite
+    - ssl
+    notify: restart apache
+
+  - stat: path=/etc/letsencrypt/live/{{ server_name }}
+    register: letsencryptcert
+
+  - name: set up apache virtual host
+    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/manopozicija.lt.conf
+    notify: reload apache
+
+  - name: create log dir
+    file: path=/var/log/apache2/manopozicija.lt state=directory
+
+  - name: set locale for Apache
+    lineinfile: dest=/etc/apache2/envvars regexp={{ item.regexp }} line={{ item.line}}
+    with_items:
+      # https://docs.djangoproject.com/en/1.10/howto/deployment/wsgi/modwsgi/#basic-configuration
+    - {regexp: "^export LANG", line: "export LANG='C.UTF-8'"}
+    - {regexp: "^export LC_ALL", line: "export LC_ALL='C.UTF-8'"}
+
+  - name: start apache
+    service: name=apache2 state=started
+
+  # Let's Encrypt
+
+  - name: install letsencrypt
+    pip: name={{ item }} virtualenv=/opt/letsencrypt state=latest
+    with_items:
+    - letsencrypt
+    - letsencrypt-apache
+
+  - name: let's encrypt!
+    command: >
+      /opt/letsencrypt/bin/letsencrypt certonly
+        --text
+        --agree-tos
+        --non-interactive
+        --expand
+        --domain manopozicija.lt
+        --domain www.manopozicija.lt
+        --email sirexas@gmail.com
+        --authenticator apache
+      creates=/etc/letsencrypt/live/manopozicija.lt
+    notify: reload apache
+    register: letsencrypt
+
+  - stat: path=/etc/letsencrypt/live/manopozicija.lt
+    register: letsencryptcert
+    when: letsencrypt.changed
+
+  - name: apache config after letsencrypt
+    template: src=templates/apache.conf dest=/etc/apache2/sites-enabled/manopozicija.lt.conf
+    notify: reload apache
+    when: letsencrypt.changed
+
+
+  handlers:
+
+  - name: reload source code
+    command: touch --no-create {{ home }}/app/bin/wsgi.py
+
+  - name: reload apache
+    service: name=apache2 state=reloaded

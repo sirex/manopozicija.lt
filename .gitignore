@@ -21,3 +21,5 @@ prototype/static/css/main.css
 /pip-selfcheck.json
 /.pytest_cache/
 /src/
+/wheels/
+*.retry
