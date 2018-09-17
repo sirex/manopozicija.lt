@@ -120,7 +120,7 @@ deploy: bin/pip
 
 
 bin/pip:
-	python3.5 -m venv .
+	python3 -m venv .
 	bin/pip install --upgrade pip setuptools pip-tools wheel
 
 settings.json: bin/initsettings
@@ -134,7 +134,7 @@ requirements-dev.txt: requirements.in requirements-dev.in
 	bin/pip-compile --no-index --output-file requirements-dev.txt requirements.in requirements-dev.in
 
 bin/initsettings: bin/pip requirements.txt requirements-dev.txt
-	bin/pip install -e . -r requirements-dev.txt
+	bin/pip install -r requirements-dev.txt -e .
 
 var/www/static: ; mkdir -p $@
 

@@ -11,7 +11,7 @@ attrs==18.2.0             # via pytest
 beautifulsoup4==4.6.3
 certifi==2018.8.24        # via requests
 chardet==3.0.4            # via requests
-coverage==4.5.1           # via pytest-cov
+coverage==4.0.3           # via pytest-cov
 defusedxml==0.5.0         # via python3-openid
 django-allauth==0.37.1
 django-appconf==1.0.2     # via django-compressor
@@ -49,7 +49,7 @@ py==1.6.0                 # via pytest, pytest-catchlog
 pycodestyle==2.3.1        # via flake8
 pyflakes==1.6.0           # via flake8
 pytest-catchlog==1.2.2
-pytest-cov==2.6.0
+pytest-cov==2.5.1
 pytest-django==3.4.3
 pytest-flake8==1.0.2
 pytest==3.8.0

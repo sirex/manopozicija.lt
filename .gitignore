@@ -23,3 +23,4 @@ prototype/static/css/main.css
 /wheels/
 *.retry
 /node_modules/
+/pyvenv.cfg
