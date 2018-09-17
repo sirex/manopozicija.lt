@@ -30,6 +30,7 @@ setup(
     entry_points={
         'console_scripts': [
             'manage = manopozicija.scripts.manage:main',
+            'initsettings = manopozicija.scripts.initsettings:main',
         ],
     },
     scripts=[
