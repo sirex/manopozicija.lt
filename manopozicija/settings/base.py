@@ -2,14 +2,13 @@ import collections
 import json
 import os
 import pathlib
-import sys
 
 Size = collections.namedtuple('Size', ['width', 'height'])
 
 if 'MANOPOZICIJA_DIR' in os.environ:
     PROJECT_DIR = pathlib.Path(os.environ['MANOPOZICIJA_DIR'])
 else:
-    PROJECT_DIR = pathlib.Path(sys.executable).parents[1]
+    PROJECT_DIR = pathlib.Path().resolve()
 
 with (PROJECT_DIR / 'settings.json').open() as f:
     print(PROJECT_DIR / 'settings.json')

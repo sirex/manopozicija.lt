@@ -14,6 +14,8 @@ def set_up_environment():
     venv_dir = pathlib.Path(sys.executable).resolve().parents[1]
     settings_file = venv_dir / 'settings.json'
     if not settings_file.exists():
+        settings_file = pathlib.Path().resolve() / 'settings.json'
+    if not settings_file.exists():
         settings = {
             'project_dir': str(venv_dir),
             'settings': 'manopozicija.settings.development',
