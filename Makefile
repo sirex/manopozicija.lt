@@ -1,5 +1,6 @@
 .PHONY: all
-all: bin/django
+all: settings.json var/www/static var/www/media
+
 
 .PHONY: help
 help:
@@ -17,23 +18,28 @@ help:
 	@echo 'make clean        clean whole environment'
 	@echo 'make cleanpyc     clean all *.pyc files'
 
+
 .PHONY: ubuntu
 ubuntu:
 	sudo apt-get update
 	sudo apt-get -y build-dep python-psycopg2 python-imaging python-lxml
 	sudo apt-get -y install build-essential python-dev exuberant-ctags postgresql postgresql-contrib
 
+
 .PHONY: migrate
-migrate: bin/django ; bin/django migrate
+migrate: all ; bin/django migrate
+
 
 .PHONY: run
-run: bin/django ; bin/django runserver
+run: all ; bin/django runserver
+
 
 .PHONY: tags
-tags: bin/django ; bin/ctags -v --tag-relative
+tags: all ; bin/ctags -v --tag-relative
+
 
 .PHONY: test
-test: bin/django
+test: all
 	bin/py.test \
 	  -vvra \
 	  --tb=native \
@@ -43,8 +49,10 @@ test: bin/django
 	  --cov-report term-missing \
 	  manopozicija
 
+
 .PHONY: cleanpyc
 cleanpyc: ; find -iname '*.pyc' -delete
+
 
 .PHONY: clean
 clean: cleanpyc
@@ -57,11 +65,14 @@ clean: cleanpyc
 	  lib \
 	  parts \
 	  settings.json \
-	  var/www/static/
+	  var/www/static/ \
+	  wheels
+
 
 .PHONY: dbsuperuser
 dbsuperuser:
 	sudo --user=postgres createuser --superuser $(USER)
+
 
 .PHONY: db
 db:
@@ -73,6 +84,7 @@ db:
 	  --owner=$(USER) \
 	  manopozicija
 
+
 .PHONY: testdb
 testdb:
 	createdb \
@@ -83,13 +95,14 @@ testdb:
 	  --owner=$(USER) \
 	  test_manopozicija
 
+
 .PHONY: adminuser
 adminuser:
 	bin/django createsuperuser --username admin --email admin@localhost.local
 
+
 .PHONY: requirements
-requirements: bin/pip
-	bin/pip-compile --no-index --output-file requirements.txt requirements.in
+requirements: bin/pip requirements.txt requirements-dev.txt ;
 
 
 .PHONY: build
@@ -106,21 +119,23 @@ deploy: bin/pip
 	cd deploy && ansible-playbook --inventory=inventory.cfg --ask-vault-pass playbook.yml
 
 
-buildout.cfg: ; ./scripts/genconfig.py config/env/development.cfg
-
 bin/pip:
-	virtualenv --no-site-packages --python=python3.5 .
+	python3.5 -m venv .
 	bin/pip install --upgrade pip setuptools pip-tools wheel
 
-bin/buildout: bin/pip requirements.txt ; bin/pip install -e . -r requirements.txt && touch -c bin/buildout
+settings.json: bin/initsettings
+	bin/initsettings
+	touch -c settings.json
 
-var/www/static var/www/media: ; mkdir -p $@
+requirements.txt: requirements.in
+	bin/pip-compile --no-index --output-file requirements.txt requirements.in
 
-bin/django: \
-  bin/buildout \
-  buildout.cfg \
-  $(wildcard config/*.cfg) \
-  $(wildcard config/env/*.cfg) \
-  var/www/static \
-  var/www/media
-	bin/buildout && touch -c bin/django
+requirements-dev.txt: requirements.in requirements-dev.in
+	bin/pip-compile --no-index --output-file requirements-dev.txt requirements.in requirements-dev.in
+
+bin/initsettings: bin/pip requirements.txt requirements-dev.txt
+	bin/pip install -e . -r requirements-dev.txt
+
+var/www/static: ; mkdir -p $@
+
+var/www/media: ; mkdir -p $@

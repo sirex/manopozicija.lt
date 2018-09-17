@@ -5,10 +5,11 @@ install:
   - pip install --upgrade pip==8.1.1 wheel==0.29.0
 
   # Instal and build project
-  - pip install -r requirements.txt
+  - pip install -r requirements-dev.txt
   - pip install -e .
   - pip install python-coveralls
   - mkdir -p var/www/static var/www/media
+  - buildout
   - initsettings
 
   # Install test dependencies

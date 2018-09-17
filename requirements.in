@@ -1,40 +1,26 @@
 django
-django-nose
 django-compressor
 django-libsass
 django-debug-toolbar
 django-extensions
-django-webtest
 -e git+https://github.com/justinmayer/django-autoslug.git@4dc75083d84265e019a900d636273c731457193d#egg=django-autoslug
 django-allauth
 django-bootstrap-form
 django-js-reverse
 django-autocomplete-light
 sorl-thumbnail
-fake-factory==0.7.4
-factory-boy==2.7.0
 unidecode
 markdown
 yattag
 psycopg2-binary
-mock
 docutils
-exportrecipe
 beautifulsoup4
 pyyaml
 panavatar
 pillow
-livereload
 requests
 requests-cache
 lxml
 
 # key performance indicators
 pandas
-
-# testing
-pytest
-pytest-cov
-pytest-django
-pytest-flake8
-pytest-catchlog

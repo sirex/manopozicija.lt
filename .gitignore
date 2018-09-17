@@ -1,6 +1,5 @@
 .installed.cfg
 bin
-buildout.cfg
 settings.json
 develop-eggs
 include
@@ -23,3 +22,4 @@ prototype/static/css/main.css
 /src/
 /wheels/
 *.retry
+/node_modules/
