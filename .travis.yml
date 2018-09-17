@@ -5,15 +5,13 @@ install:
   - pip install --upgrade pip==8.1.1 wheel==0.29.0
 
   # Instal and build project
-  - pip install -e .
   - pip install -r requirements.txt
+  - pip install -e .
   - pip install python-coveralls
   - mkdir -p var/www/static var/www/media
-  - scripts/genconfig.py config/env/production.cfg
-  - buildout
 
   # Install test dependencies
-  - npm install -g eslint@2.11.1
+  - yarn global add eslint@2.11.1
 script:
   - py.test -vvra --tb=native --flake8 --doctest-modules --cov manopozicija --cov-report term-missing manopozicija
 after_success:

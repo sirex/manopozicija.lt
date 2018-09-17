@@ -6,7 +6,7 @@ def read_requirements(filename):
         for line in f:
             line = line.strip()
 
-            # Deltect editable dependencies.
+            # Detect editable dependencies.
             if line.startswith('-e'):
                 if '#egg=' not in line:
                     raise Exception("Editable deps must have #egg=<name> fragment.")
