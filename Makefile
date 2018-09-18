@@ -105,13 +105,18 @@ adminuser:
 requirements: bin/pip requirements.txt requirements-dev.txt ;
 
 
+build/bin/pip:
+	python3.5 -m venv build
+	build/bin/pip install --upgrade pip setuptools wheel
+
+
 .PHONY: build
-build: bin/pip
+build: build/bin/pip
 	rm -rf wheels
 	mkdir -p wheels
-	bin/pip wheel -w wheels -r requirements.txt
-	bin/pip wheel -w wheels src/django-autoslug
-	bin/pip wheel -w wheels --no-deps .
+	build/bin/pip wheel -w wheels -r requirements.txt
+	build/bin/pip wheel -w wheels src/django-autoslug
+	build/bin/pip wheel -w wheels --no-deps .
 
 
 .PHONY: deploy

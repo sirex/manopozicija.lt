@@ -24,3 +24,4 @@ prototype/static/css/main.css
 *.retry
 /node_modules/
 /pyvenv.cfg
+/build/
