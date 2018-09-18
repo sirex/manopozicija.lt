@@ -159,16 +159,6 @@ INSTALLED_APPS += (
 )
 
 
-# django-nose
-# https://pypi.python.org/pypi/django-nose
-
-TEST_RUNNER = 'django_nose.NoseTestSuiteRunner'
-
-INSTALLED_APPS += (
-    'django_nose',
-)
-
-
 # App settings
 
 SERVER_PROTOCOL = 'http://'

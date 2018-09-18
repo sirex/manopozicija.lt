@@ -127,6 +127,9 @@ settings.json: bin/initsettings
 	bin/initsettings
 	touch -c settings.json
 
+parts: buildout.cfg
+	bin/buildout
+
 requirements.txt: requirements.in
 	bin/pip-compile --no-index --output-file requirements.txt requirements.in
 
@@ -136,6 +139,8 @@ requirements-dev.txt: requirements.in requirements-dev.in
 bin/initsettings: bin/pip requirements.txt requirements-dev.txt
 	bin/pip install -r requirements-dev.txt -e .
 
-var/www/static: ; mkdir -p $@
+var/www/static: parts
+	mkdir -p $@
+	bin/manage collectstatic --no-input
 
 var/www/media: ; mkdir -p $@
