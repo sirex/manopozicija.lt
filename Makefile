@@ -27,11 +27,11 @@ ubuntu:
 
 
 .PHONY: migrate
-migrate: all ; bin/django migrate
+migrate: all ; bin/manage migrate
 
 
 .PHONY: run
-run: all ; bin/django runserver
+run: all ; bin/manage runserver
 
 
 .PHONY: tags
@@ -98,7 +98,7 @@ testdb:
 
 .PHONY: adminuser
 adminuser:
-	bin/django createsuperuser --username admin --email admin@localhost.local
+	bin/manage createsuperuser --username admin --email admin@localhost.local
 
 
 .PHONY: requirements

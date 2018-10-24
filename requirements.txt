@@ -4,7 +4,6 @@
 #
 #    pip-compile --no-index --output-file requirements.txt requirements.in
 #
-
 -e git+https://github.com/justinmayer/django-autoslug.git@4dc75083d84265e019a900d636273c731457193d#egg=django-autoslug
 beautifulsoup4==4.6.3
 certifi==2018.8.24        # via requests
@@ -19,7 +18,7 @@ django-debug-toolbar==1.9.1
 django-extensions==2.1.2
 django-js-reverse==0.8.2
 django-libsass==0.7
-django==2.1
+django==2.1.2
 docutils==0.14
 idna==2.7                 # via requests
 libsass==0.14.5           # via django-libsass
