@@ -125,7 +125,7 @@ deploy: bin/pip
 
 
 bin/pip:
-	python3 -m venv .
+	python3.5 -m venv .
 	bin/pip install --upgrade pip setuptools pip-tools wheel
 
 settings.json: bin/initsettings

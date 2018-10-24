@@ -23,24 +23,24 @@
     - lt_LT.UTF-8
 
   - name: apt packages
-    apt: pkg={{ item }} state=latest
-    with_items:
-    - build-essential
-    - postgresql
-    - python-psycopg2
-    - python-dev
-    - python-pip
-    - python-virtualenv
-    - apache2
-    - libapache2-mod-wsgi-py3
-    - postgresql
-    - postgresql-contrib
-
-    # Lets encrypt
-    - libaugeas0
-    - libssl-dev
-    - libffi-dev
-    - ca-certificates
+    apt:
+      name:
+        - build-essential
+        - postgresql
+        - python-psycopg2
+        - python-dev
+        - python-pip
+        - python-virtualenv
+        - apache2
+        - libapache2-mod-wsgi-py3
+        - postgresql
+        - postgresql-contrib
+        # Lets encrypt
+        - libaugeas0
+        - libssl-dev
+        - libffi-dev
+        - ca-certificates
+      state: latest
 
   - name: create user
     user: name=manopozicija system=yes group=www-data home={{ home }}
@@ -74,10 +74,9 @@
       virtualenv: "{{ home }}/app"
       virtualenv_python: python3
       state: latest
-      name: "{{ item }}"
-    with_items:
-      - pip
-      - setuptools
+      name:
+        - pip
+        - setuptools
     become_user: manopozicija
 
   - name: install python packages
@@ -85,10 +84,8 @@
       virtualenv: "{{ home }}/app"
       virtualenv_python: python3
       state: latest
-      name: "{{ item }}"
+      name: manopozicija-lt
       extra_args: "--find-links={{ home }}/wheels --no-index --pre --ignore-installed"
-    with_items:
-      - manopozicija-lt
     become_user: manopozicija
 
   - name: create media and static dirs
@@ -140,10 +137,12 @@
   # Let's Encrypt
 
   - name: install letsencrypt
-    pip: name={{ item }} virtualenv=/opt/letsencrypt state=latest
-    with_items:
-    - letsencrypt
-    - letsencrypt-apache
+    pip:
+      virtualenv: /opt/letsencrypt
+      state: latest
+      name:
+        - letsencrypt
+        - letsencrypt-apache
 
   - name: let's encrypt!
     command: >
