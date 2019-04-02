@@ -1,0 +1,5 @@
+{
+    "project-dir": "{{ home }}/app",
+    "settings": "manopozicija.settings.production",
+    "secret_key": "{{ secrets.django_secret_key }}"
+}

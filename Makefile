@@ -98,7 +98,7 @@ testdb:
 
 .PHONY: adminuser
 adminuser:
-	bin/django createsuperuser --username admin --email admin@localhost.local
+	bin/manage createsuperuser --username admin --email admin@localhost.local
 
 
 requirements.txt: requirements.in
@@ -139,7 +139,7 @@ deploy: bin/pip
 
 
 bin/pip:
-	python3 -m venv .
+	python3.5 -m venv .
 	bin/pip install --upgrade pip setuptools pip-tools wheel
 
 settings.json: bin/initsettings

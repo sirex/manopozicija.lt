@@ -5,7 +5,6 @@ pytest
 pytest-cov
 pytest-django
 pytest-flake8
-pytest-catchlog
 django-webtest
 fake-factory==0.7.4
 factory-boy==2.7.0

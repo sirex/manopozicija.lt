@@ -25,7 +25,7 @@
   - name: apt packages
     apt:
       state: latest
-      pkg:
+      name:
         - build-essential
         - postgresql
         - python-psycopg2
