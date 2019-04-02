@@ -48,7 +48,7 @@ py==1.8.0                 # via pytest, pytest-catchlog
 pycodestyle==2.5.0        # via flake8
 pyflakes==2.1.1           # via flake8
 pytest-catchlog==1.2.2
-pytest-cov==2.6.1
+pytest-cov==2.5.0
 pytest-django==3.4.8
 pytest-flake8==1.0.4
 pytest==4.4.0
