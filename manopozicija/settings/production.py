@@ -25,11 +25,7 @@ INSTALLED_APPS += (  # noqa
 )
 
 SOCIALACCOUNT_PROVIDERS = {
-    'openid': {
-        'SERVERS': [
-            dict(id='yahoo', name='Yahoo', openid_url='http://me.yahoo.com'),
-        ],
-    },
+    'openid': {},
     'google': {
         'SCOPE': ['profile', 'email'],
         'AUTH_PARAMS': {

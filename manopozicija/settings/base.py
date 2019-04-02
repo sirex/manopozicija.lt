@@ -67,6 +67,7 @@ STATICFILES_FINDERS = (
 
 _TEMPLATE_CONTEXT_PROCESSORS = [
     'django.contrib.auth.context_processors.auth',
+    'django.contrib.messages.context_processors.messages',
 ]
 TEMPLATES = [
     {
@@ -204,9 +205,9 @@ INSTALLED_APPS += (
 )
 
 SORTED_AUTH_PROVIDERS = (
-    ('persona', STATIC_URL + 'auth/persona.png'),
+    # ('persona', STATIC_URL + 'auth/persona.png'),
     ('google', STATIC_URL + 'auth/google.png'),
-    ('openid.yahoo', STATIC_URL + 'auth/yahoo.png'),
+    # ('openid.yahoo', STATIC_URL + 'auth/yahoo.png'),
     ('facebook', STATIC_URL + 'auth/facebook.png'),
     ('linkedin', STATIC_URL + 'auth/linkedin.png'),
     ('twitter', STATIC_URL + 'auth/twitter.png'),

@@ -4,76 +4,72 @@
 #
 #    pip-compile --no-index --output-file requirements-dev.txt requirements.in requirements-dev.in
 #
-
 -e git+https://github.com/justinmayer/django-autoslug.git@4dc75083d84265e019a900d636273c731457193d#egg=django-autoslug
-atomicwrites==1.2.1       # via pytest
-attrs==18.2.0             # via pytest
-beautifulsoup4==4.6.3
-certifi==2018.8.24        # via requests
+atomicwrites==1.3.0       # via pytest
+attrs==19.1.0             # via pytest
+beautifulsoup4==4.7.1
+certifi==2019.3.9         # via requests
 chardet==3.0.4            # via requests
-coverage==4.0.3           # via pytest-cov
+coverage==4.5.3           # via pytest-cov
 defusedxml==0.5.0         # via python3-openid
-django-allauth==0.37.1
-django-appconf==1.0.2     # via django-compressor
-django-autocomplete-light==3.3.1
+django-allauth==0.39.1
+django-appconf==1.0.3     # via django-compressor
+django-autocomplete-light==3.3.2
 django-bootstrap-form==3.4
 django-compressor==2.2
-django-debug-toolbar==1.10.1
-django-extensions==2.1.2
+django-debug-toolbar==1.11
+django-extensions==2.1.6
 django-js-reverse==0.8.2
 django-libsass==0.7
-django-webtest==1.9.3
-django==2.1.1
+django-webtest==1.9.4
+django==2.2
 docutils==0.14
+entrypoints==0.3          # via flake8
 factory-boy==2.7.0
 fake-factory==0.7.4
-flake8==3.5.0             # via pytest-flake8
-idna==2.7                 # via requests
-libsass==0.15.0           # via django-libsass
-livereload==2.5.2
-lxml==4.2.5
-markdown==2.6.11
+flake8==3.7.7             # via pytest-flake8
+idna==2.8                 # via requests
+libsass==0.18.0           # via django-libsass
+livereload==2.6.0
+lxml==4.3.3
+markdown==3.1
 mccabe==0.6.1             # via flake8
 mock==2.0.0
-more-itertools==4.3.0     # via pytest
-numpy==1.15.1             # via pandas
-oauthlib==2.1.0           # via requests-oauthlib
+more-itertools==7.0.0     # via pytest
+numpy==1.16.2             # via pandas
+oauthlib==3.0.1           # via requests-oauthlib
 panavatar==0.3.3
-pandas==0.23.4
-pathlib2==2.3.2           # via pytest
-pbr==4.2.0                # via mock
-pillow==5.2.0
-pluggy==0.7.1             # via pytest
-psycopg2-binary==2.7.5
-py==1.6.0                 # via pytest, pytest-catchlog
-pycodestyle==2.3.1        # via flake8
-pyflakes==1.6.0           # via flake8
+pandas==0.24.2
+pbr==5.1.3                # via mock
+pillow==6.0.0
+pluggy==0.9.0             # via pytest
+psycopg2-binary==2.7.7
+py==1.8.0                 # via pytest, pytest-catchlog
+pycodestyle==2.5.0        # via flake8
+pyflakes==2.1.1           # via flake8
 pytest-catchlog==1.2.2
-pytest-cov==2.5.1
-pytest-django==3.4.3
-pytest-flake8==1.0.2
-pytest==3.8.0
-python-dateutil==2.7.3    # via fake-factory, pandas
+pytest-cov==2.6.1
+pytest-django==3.4.8
+pytest-flake8==1.0.4
+pytest==4.4.0
+python-dateutil==2.8.0    # via fake-factory, pandas
 python3-openid==3.1.0     # via django-allauth
-pytz==2018.5              # via django, pandas
-pyyaml==3.13
+pytz==2018.9              # via django, pandas
+pyyaml==5.1
 rcssmin==1.0.6            # via django-compressor
 requests-cache==0.4.13
-requests-oauthlib==1.0.0  # via django-allauth
-requests==2.19.1
+requests-oauthlib==1.2.0  # via django-allauth
+requests==2.21.0
 rjsmin==1.0.12            # via django-compressor
-six==1.11.0               # via django-extensions, fake-factory, libsass, livereload, mock, more-itertools, pathlib2, pytest, python-dateutil, webtest
+six==1.12.0               # via django-appconf, django-extensions, fake-factory, libsass, livereload, mock, pytest, python-dateutil, webtest
 sorl-thumbnail==12.5.0
-sqlparse==0.2.4           # via django-debug-toolbar
-tornado==5.1.1            # via livereload
-unidecode==1.0.22
-urllib3==1.23             # via requests
-waitress==1.1.0           # via webtest
-WebOb==1.8.2              # via webtest
-webtest==2.0.30           # via django-webtest
-yattag==1.10.0
-zc.buildout==2.12.2
-
-# The following packages are commented out because they are
-# considered to be unsafe in a requirements file:
-# setuptools                # via pytest, zc.buildout
+soupsieve==1.9            # via beautifulsoup4
+sqlparse==0.3.0           # via django, django-debug-toolbar
+tornado==6.0.2            # via livereload
+unidecode==1.0.23
+urllib3==1.24.1           # via requests
+waitress==1.2.1           # via webtest
+webob==1.8.5              # via webtest
+webtest==2.0.33           # via django-webtest
+yattag==1.11.1
+zc.buildout==2.13.1

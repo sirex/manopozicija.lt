@@ -27,11 +27,11 @@ ubuntu:
 
 
 .PHONY: migrate
-migrate: all ; bin/django migrate
+migrate: all ; bin/manage migrate
 
 
 .PHONY: run
-run: all ; bin/django runserver
+run: all ; bin/manage runserver
 
 
 .PHONY: tags
@@ -101,8 +101,22 @@ adminuser:
 	bin/django createsuperuser --username admin --email admin@localhost.local
 
 
+requirements.txt: requirements.in
+	bin/pip-compile --no-index --output-file requirements.txt requirements.in
+
+
+requirements-dev.txt: requirements.in requirements-dev.in
+	bin/pip-compile --no-index --output-file requirements-dev.txt requirements.in requirements-dev.in
+
+
 .PHONY: requirements
 requirements: bin/pip requirements.txt requirements-dev.txt ;
+ 
+
+.PHONY: update-requirements
+upgrade-requirements: bin/pip
+	bin/pip-compile --no-index --upgrade requirements.in -o requirements.txt
+	bin/pip-compile --no-index --upgrade requirements.in requirements-dev.in -o requirements-dev.txt
 
 
 build/bin/pip:
@@ -134,12 +148,6 @@ settings.json: bin/initsettings
 
 parts: buildout.cfg
 	bin/buildout
-
-requirements.txt: requirements.in
-	bin/pip-compile --no-index --output-file requirements.txt requirements.in
-
-requirements-dev.txt: requirements.in requirements-dev.in
-	bin/pip-compile --no-index --output-file requirements-dev.txt requirements.in requirements-dev.in
 
 bin/initsettings: bin/pip requirements.txt requirements-dev.txt
 	bin/pip install -r requirements-dev.txt -e .
