@@ -22,8 +22,13 @@ help:
 .PHONY: ubuntu
 ubuntu:
 	sudo apt-get update
-	sudo apt-get -y build-dep python-psycopg2 python-imaging python-lxml
-	sudo apt-get -y install build-essential python-dev exuberant-ctags postgresql postgresql-contrib
+	sudo apt-get -y build-dep python3-psycopg2 python3-lxml
+	# Pillow build deps from https://pillow.readthedocs.io/en/stable/installation.html
+	# minus tcl/tk and x11 stuff
+	sudo apt-get -y install libtiff5-dev libjpeg8-dev libopenjp2-7-dev zlib1g-dev \
+		libfreetype6-dev liblcms2-dev libwebp-dev \
+		libharfbuzz-dev libfribidi-dev
+	sudo apt-get -y install build-essential python3-dev exuberant-ctags postgresql postgresql-contrib
 
 
 .PHONY: migrate
@@ -120,7 +125,7 @@ upgrade-requirements: bin/pip
 
 
 build/bin/pip:
-	python3.5 -m venv build
+	python3 -m venv build
 	build/bin/pip install --upgrade pip setuptools wheel
 
 
@@ -139,7 +144,7 @@ deploy: bin/pip
 
 
 bin/pip:
-	python3.5 -m venv .
+	python3 -m venv .
 	bin/pip install --upgrade pip setuptools pip-tools wheel
 
 settings.json: bin/initsettings
